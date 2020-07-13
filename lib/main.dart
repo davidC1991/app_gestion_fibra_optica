@@ -1,3 +1,4 @@
+import 'package:audicol_fiber/pages/calculo_punto.dart';
 import 'package:audicol_fiber/pages/mapa_fiber.dart';
 import 'package:audicol_fiber/provider/direcctionsProvider.dart';
 import 'package:flutter/material.dart';
@@ -23,9 +24,10 @@ class MyApp extends StatelessWidget {
           // closer together (more dense) than on mobile platforms.
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        initialRoute: 'home',
+        initialRoute: 'calculoCoordenada',
         routes: {
-          'home': (BuildContext context) => MapaRutas(),
+          'mapa': (BuildContext context) => MapaRutas(),
+          'calculoCoordenada': (BuildContext context) => CalculoCoordenada(),
         },
       ),
     );

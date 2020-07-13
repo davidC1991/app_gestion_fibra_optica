@@ -2,6 +2,10 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:geo/geo.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:uuid/uuid.dart';
+
+final clientes = Firestore.instance.collection('clientes');
 
 class CalculoCoordenada extends StatefulWidget {
   @override
@@ -10,8 +14,9 @@ class CalculoCoordenada extends StatefulWidget {
 
 class _CalculoCoordenadaState extends State<CalculoCoordenada> {
   TextEditingController distanciaController = TextEditingController();
-  String distanciaString;
+  String distanciaString = "";
   int distancia;
+  String clienteId = Uuid().v4();
 
   @override
   Widget build(BuildContext context) {
@@ -71,15 +76,27 @@ class _CalculoCoordenadaState extends State<CalculoCoordenada> {
             const p1 = LatLng(11.226940, -74.198010);
             const p2 = LatLng(11.225604, -74.196796);
             final angulo = computeHeading(p1, p2);
+            print('angulo: $angulo grados');
             print(
                 'distancia entre los dos puntos: ${computeDistanceBetween(p1, p2)} metros');
-            print('angulo: $angulo grados');
 
             print(
                 'coordenadas del punto de falla: ${computeOffset(p1, 20, angulo)}');
 
             distanciaController.clear();
             distanciaString = "";
+
+            clientes.document(clienteId).setData({
+              'id': clienteId,
+              'username': 'Laura Vicuña',
+              'photoUrl': '',
+              'email': 'lauraVicuña@hotmail.com',
+              'ruta': 'R1-R2-R3',
+              'hilo': '34',
+              'celular': '3459589655',
+              'activo': true,
+              'tipoCliente': 'publico',
+            });
             //print(v);
             //distanciaController.clear();
           },

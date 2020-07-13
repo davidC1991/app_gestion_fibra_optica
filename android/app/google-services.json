@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "663727216778",
+    "firebase_url": "https://audicol.firebaseio.com",
+    "project_id": "audicol",
+    "storage_bucket": "audicol.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:663727216778:android:04b5dea558e74f18d07573",
+        "android_client_info": {
+          "package_name": "com.example.audicol_fiber"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "663727216778-62h9d1c2qote78t209uj01lrtsrp10ek.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.audicol_fiber",
+            "certificate_hash": "dca145f375cbe0c176ac867c6f990c132b0fe6b5"
+          }
+        },
+        {
+          "client_id": "663727216778-4tjl0qhh5i4jf94pa8tu7bqb44668gvq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDraNYgaTmJOEwLOjbK8KqJtNR8jl3OQug"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "663727216778-4tjl0qhh5i4jf94pa8tu7bqb44668gvq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,11 +1,13 @@
 import 'dart:ui';
 
+import 'package:audicol_fiber/bloc/peticiones_firebase.dart';
 import 'package:flutter/material.dart';
 import 'package:geo/geo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:uuid/uuid.dart';
 
 final clientes = Firestore.instance.collection('clientes');
+final rutas = Firestore.instance.collection('rutas');
 
 class CalculoCoordenada extends StatefulWidget {
   @override
@@ -14,6 +16,8 @@ class CalculoCoordenada extends StatefulWidget {
 
 class _CalculoCoordenadaState extends State<CalculoCoordenada> {
   TextEditingController distanciaController = TextEditingController();
+  DatosRedFibra datosRedFibra = DatosRedFibra();
+
   String distanciaString = "";
   int distancia;
   String clienteId = Uuid().v4();
@@ -85,20 +89,19 @@ class _CalculoCoordenadaState extends State<CalculoCoordenada> {
 
             distanciaController.clear();
             distanciaString = "";
-
-            clientes.document(clienteId).setData({
+            datosRedFibra.getCliente();
+            datosRedFibra.getRutas();
+            /*  clientes.document('celustar').setData({
               'id': clienteId,
-              'username': 'Laura Vicuña',
+              'username': 'celustar',
               'photoUrl': '',
-              'email': 'lauraVicuña@hotmail.com',
-              'ruta': 'R1-R2-R3',
-              'hilo': '34',
+              'email': 'celustar@hotmail.com',
+              'ruta': 'R1',
+              'hilo': '37',
               'celular': '3459589655',
               'activo': true,
-              'tipoCliente': 'publico',
-            });
-            //print(v);
-            //distanciaController.clear();
+              'tipoCliente': 'privado',
+            }); */
           },
         )
       ],

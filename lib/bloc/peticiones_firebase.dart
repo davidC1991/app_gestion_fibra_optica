@@ -5,9 +5,10 @@ import 'package:audicol_fiber/pages/calculo_punto.dart';
 
 class DatosRedFibra {
   getCliente() async {
-    DocumentSnapshot snapshot = await clientes.document('celustar').get();
+    QuerySnapshot snapshot = await clientes.getDocuments();
 
-    // print(snapshot.data['ruta']);
+    print(snapshot.documents[0].documentID);
+    return snapshot.documents;
   }
 
   getRutas() async {

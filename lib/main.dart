@@ -1,6 +1,9 @@
 import 'package:audicol_fiber/pages/calculo_punto.dart';
 import 'package:audicol_fiber/pages/mapa_fiber.dart';
-import 'package:audicol_fiber/pages/registro_rutas.dart';
+import 'package:audicol_fiber/pages/configuracion_rutas.dart';
+import 'package:audicol_fiber/pages/registro_reserva.dart';
+import 'package:audicol_fiber/pages/registro_sangria.dart';
+import 'package:audicol_fiber/pages/registro_vertices.dart';
 import 'package:audicol_fiber/provider/direcctionsProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -29,7 +32,10 @@ class MyApp extends StatelessWidget {
         routes: {
           'mapa': (BuildContext context) => MapaRutas(),
           'calculoCoordenada': (BuildContext context) => CalculoCoordenada(),
-          'registroRutas': (BuildContext context) => RegistrarRuta(),
+          'registroRutas': (BuildContext context) => ResgistrarRuta(),
+          'registroVertices': (BuildContext context) => RegistrarVertice(),
+          'registroReservas': (BuildContext context) => RegistrarReserva(),
+          'registroSangrias': (BuildContext context) => RegistrarSangria(),
         },
       ),
     );

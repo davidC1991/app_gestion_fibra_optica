@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:audicol_fiber/bloc/peticiones_firebase.dart';
+import 'package:audicol_fiber/search/search_delegate.dart';
 import 'package:flutter/material.dart';
 import 'package:geo/geo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,7 +10,10 @@ import 'package:uuid/uuid.dart';
 final clientes = Firestore.instance.collection('clientes');
 final rutas = Firestore.instance.collection('rutas');
 
+// ignore: must_be_immutable
 class CalculoCoordenada extends StatefulWidget {
+  String cliente = 'a';
+  CalculoCoordenada({Key key, @required this.cliente}) : super(key: key);
   @override
   _CalculoCoordenadaState createState() => _CalculoCoordenadaState();
 }
@@ -17,26 +21,51 @@ class CalculoCoordenada extends StatefulWidget {
 class _CalculoCoordenadaState extends State<CalculoCoordenada> {
   TextEditingController distanciaController = TextEditingController();
   DatosRedFibra datosRedFibra = DatosRedFibra();
-
+  String clienteAux = '';
   String distanciaString = "";
   int distancia;
   String clienteId = Uuid().v4();
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    if (widget.cliente == null) {
+      clienteAux = '';
+    } else {
+      print(widget.cliente);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Calculo de punto de falla'),
-      ),
-      body: Column(
-        children: <Widget>[
-          SizedBox(height: 30),
-          titulo(),
-          SizedBox(height: 30),
-          entradaDistancia(),
-          SizedBox(height: 20),
-          botonCalcular()
+        backgroundColor: Colors.white,
+        title: Text('Buscar nombre del cliente',
+            style: TextStyle(fontSize: 20.0, color: Colors.grey)),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.search, color: Colors.grey),
+            onPressed: () {
+              showSearch(context: context, delegate: DataSearch());
+            },
+          ),
         ],
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            SizedBox(height: 30),
+            widget.cliente == null ? Container() : descripcionCliente(),
+            SizedBox(height: 30),
+            titulo(),
+            SizedBox(height: 30),
+            entradaDistancia(),
+            SizedBox(height: 90),
+            botonCalcular()
+          ],
+        ),
       ),
     );
   }
@@ -70,7 +99,8 @@ class _CalculoCoordenadaState extends State<CalculoCoordenada> {
       alignment: MainAxisAlignment.center,
       children: <Widget>[
         RaisedButton(
-          color: Colors.blueAccent,
+          color: Colors.blueAccent.withOpacity(0.5),
+          elevation: 15,
           child: Text('Calcular'),
           onPressed: () {
             print('----------------------');
@@ -105,6 +135,29 @@ class _CalculoCoordenadaState extends State<CalculoCoordenada> {
           },
         )
       ],
+    );
+  }
+
+  Widget descripcionCliente() {
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      child: Column(
+        children: <Widget>[
+          ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: FadeInImage(
+              image: NetworkImage(
+                  'https://www.opinioncaribe.com/wp-content/uploads/2018/01/WhatsApp-Image-2018-01-12-at-6.13.09-PM.jpeg'),
+              placeholder: AssetImage('assets/img/no.image.jpg'),
+              width: 350.0,
+              fit: BoxFit.contain,
+            ),
+          ),
+          Text(widget.cliente),
+        ],
+      ),
     );
   }
 }

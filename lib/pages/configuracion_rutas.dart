@@ -14,53 +14,31 @@ class ResgistrarRuta extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        /* appBar: AppBar(
+      /* appBar: AppBar(
         // title: Center(child: Text('Crear Ruta')),
         backgroundColor: Colors.lightBlue,
       ), */
-        body: Center(
-          child: Container(
-            alignment: Alignment.center,
-            // color: Colors.blue.withOpacity(0.2),
-            height: double.infinity,
-            width: double.infinity,
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    begin: FractionalOffset(0.0, 0.6),
-                    end: FractionalOffset(0.0, 1.0),
-                    colors: [
-                  Color.fromRGBO(52, 54, 101, 1.0),
-                  Color.fromRGBO(35, 37, 57, 1.0)
-                ])),
-            child: _tablaOpciones(context),
-          ),
+      body: Center(
+        child: Container(
+          alignment: Alignment.center,
+          // color: Colors.blue.withOpacity(0.2),
+          height: double.infinity,
+          width: double.infinity,
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  begin: FractionalOffset(0.0, 0.6),
+                  end: FractionalOffset(0.0, 1.0),
+                  colors: [
+                Color.fromRGBO(52, 54, 101, 1.0),
+                Color.fromRGBO(35, 37, 57, 1.0)
+              ])),
+          child: _tablaOpciones(context),
         ),
-        bottomNavigationBar: _bottomNavigationBar(context));
-  }
-
-  Widget _bottomNavigationBar(BuildContext context) {
-    return Theme(
-      data: Theme.of(context).copyWith(
-          canvasColor: Color.fromRGBO(55, 57, 84, 1.0),
-          primaryColor: Colors.pinkAccent,
-          textTheme: Theme.of(context).textTheme.copyWith(
-              caption: TextStyle(color: Color.fromRGBO(116, 117, 152, 1.0)))),
-      child: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.toll, size: 30.0), title: Container()),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.pan_tool, size: 30.0), title: Container()),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.supervised_user_circle, size: 30.0),
-              title: Container())
-        ],
       ),
     );
   }
 
   Widget _tablaOpciones(BuildContext context) {
-    int cont_pantalla = 0;
     return Table(
       children: [
         TableRow(children: [
@@ -73,7 +51,7 @@ class ResgistrarRuta extends StatelessWidget {
           _crearBotonRedondeado(
               Colors.green, Icons.directions_car, 'Registrar Sangria', context),
           _crearBotonRedondeado(Colors.brown, Icons.directions_railway,
-              'Protocolo de Rutas', context),
+              'Registrar Cliente', context),
         ]),
       ],
     );
@@ -95,8 +73,9 @@ class ResgistrarRuta extends StatelessWidget {
           print('Se presionó Sangria');
           Navigator.pushNamed(context, 'registroSangrias');
         }
-        if (texto.contains('Descripción')) {
-          print('Descripción');
+        if (texto.contains('Registrar Cliente')) {
+          print('Registrar Cliente');
+          Navigator.pushNamed(context, 'RegistroClientes');
         }
       },
       child: BackdropFilter(

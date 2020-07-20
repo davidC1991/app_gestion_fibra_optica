@@ -27,10 +27,10 @@ class _RegistrarSangriaState extends State<RegistrarSangria> {
   }
 
   getCientes() async {
-    List<DocumentSnapshot> cliente_db = await datosRedFibra.getCliente();
+    List<String> cliente_db = await datosRedFibra.getCliente();
     //print(cliente_db[0].documentID);
     for (var i = 0; i < cliente_db.length; i++) {
-      clientes.add(cliente_db[i].documentID);
+      clientes.add(cliente_db[i]);
     }
     print(clientes);
   }

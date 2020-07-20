@@ -1,9 +1,11 @@
 import 'package:audicol_fiber/pages/calculo_punto.dart';
 import 'package:audicol_fiber/pages/mapa_fiber.dart';
 import 'package:audicol_fiber/pages/configuracion_rutas.dart';
+import 'package:audicol_fiber/pages/registro_cliente.dart';
 import 'package:audicol_fiber/pages/registro_reserva.dart';
 import 'package:audicol_fiber/pages/registro_sangria.dart';
 import 'package:audicol_fiber/pages/registro_vertices.dart';
+import 'package:audicol_fiber/pages/selector_pantalla.dart';
 import 'package:audicol_fiber/provider/direcctionsProvider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -28,7 +30,7 @@ class MyApp extends StatelessWidget {
           // closer together (more dense) than on mobile platforms.
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        initialRoute: 'registroRutas',
+        initialRoute: 'SelectorPantalla',
         routes: {
           'mapa': (BuildContext context) => MapaRutas(),
           'calculoCoordenada': (BuildContext context) => CalculoCoordenada(),
@@ -36,6 +38,8 @@ class MyApp extends StatelessWidget {
           'registroVertices': (BuildContext context) => RegistrarVertice(),
           'registroReservas': (BuildContext context) => RegistrarReserva(),
           'registroSangrias': (BuildContext context) => RegistrarSangria(),
+          'SelectorPantalla': (BuildContext context) => SelectorPantalla(),
+          'RegistroClientes': (BuildContext context) => RegistrarCliente(),
         },
       ),
     );

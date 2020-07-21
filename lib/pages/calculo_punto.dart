@@ -25,6 +25,8 @@ class _CalculoCoordenadaState extends State<CalculoCoordenada> {
   String distanciaString = "";
   int distancia;
   String clienteId = Uuid().v4();
+  Map<String, Object> datosClientes = new Map();
+  String clienteName;
   @override
   void initState() {
     // TODO: implement initState
@@ -33,8 +35,20 @@ class _CalculoCoordenadaState extends State<CalculoCoordenada> {
     if (widget.cliente == null) {
       clienteAux = '';
     } else {
-      print(widget.cliente);
+      print('widget.cliente-->${widget.cliente}');
+
+      getDatosCliente(widget.cliente);
     }
+  }
+
+  getDatosCliente(String cliente) async {
+    datosClientes = await datosRedFibra.getClienteAux(widget.cliente);
+    print('clienteName_1:$clienteName');
+    print('Calculo punto.....');
+
+    clienteName = datosClientes['nombre'];
+    print('clienteName_2:$clienteName');
+    setState(() {});
   }
 
   @override
@@ -57,12 +71,12 @@ class _CalculoCoordenadaState extends State<CalculoCoordenada> {
         child: Column(
           children: <Widget>[
             SizedBox(height: 30),
-            widget.cliente == null ? Container() : descripcionCliente(),
+            clienteName == null ? Container() : descripcionCliente(),
             SizedBox(height: 30),
             titulo(),
             SizedBox(height: 30),
             entradaDistancia(),
-            SizedBox(height: 90),
+            SizedBox(height: 30),
             botonCalcular()
           ],
         ),
@@ -119,8 +133,8 @@ class _CalculoCoordenadaState extends State<CalculoCoordenada> {
 
             distanciaController.clear();
             distanciaString = "";
-            datosRedFibra.getCliente();
-            datosRedFibra.getRutas();
+            //datosRedFibra.getCliente();
+            // datosRedFibra.getRutas();
             /*  clientes.document('celustar').setData({
               'id': clienteId,
               'username': 'celustar',
@@ -139,6 +153,7 @@ class _CalculoCoordenadaState extends State<CalculoCoordenada> {
   }
 
   Widget descripcionCliente() {
+    print('entro a descripcion del cliente');
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10.0),
@@ -148,14 +163,70 @@ class _CalculoCoordenadaState extends State<CalculoCoordenada> {
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: FadeInImage(
-              image: NetworkImage(
-                  'https://www.opinioncaribe.com/wp-content/uploads/2018/01/WhatsApp-Image-2018-01-12-at-6.13.09-PM.jpeg'),
-              placeholder: AssetImage('assets/img/no.image.jpg'),
+              image: NetworkImage(datosClientes['photoUrl']),
+              placeholder: AssetImage('assets/cargando.gif'),
               width: 350.0,
               fit: BoxFit.contain,
+              // fadeInDuration: ,
             ),
           ),
-          Text(widget.cliente),
+          Container(
+            //alignment: Alignment.topLeft,
+            height: 20,
+            //color: Colors.grey,
+            child: ListTile(
+                // contentPadding: EdgeInsets.symmetric(vertical: 0),
+                dense: true,
+                leading: Text('Nombre:'),
+                //title: ,
+                trailing: Text(widget.cliente)),
+          ),
+          Container(
+            height: 20,
+            child: ListTile(
+                // contentPadding: EdgeInsets.symmetric(vertical: 0),
+                dense: true,
+                leading: Text('Celular:'),
+                //title: ,
+                trailing: Text(datosClientes['celular'])),
+          ),
+          Container(
+            height: 20,
+            child: ListTile(
+                // contentPadding: EdgeInsets.symmetric(vertical: 0),
+                dense: true,
+                leading: Text('Email:'),
+                //title: ,
+                trailing: Text(datosClientes['email'])),
+          ),
+          Container(
+            height: 20,
+            child: ListTile(
+                // contentPadding: EdgeInsets.symmetric(vertical: 0),
+                dense: true,
+                leading: Text('Hilo:'),
+                //title: ,
+                trailing: Text(datosClientes['hilo'])),
+          ),
+          Container(
+            height: 20,
+            child: ListTile(
+                // contentPadding: EdgeInsets.symmetric(vertical: 0),
+                dense: true,
+                leading: Text('Rutas:'),
+                //title: ,
+                trailing: Text('ruta1')),
+          ),
+          Container(
+            height: 20,
+            child: ListTile(
+                // contentPadding: EdgeInsets.symmetric(vertical: 0),
+                dense: true,
+                leading: Text('Tipo de cliente:'),
+                //title: ,
+                trailing: Text(datosClientes['tipoCliente'])),
+          ),
+          Text(''),
         ],
       ),
     );

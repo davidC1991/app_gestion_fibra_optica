@@ -19,14 +19,21 @@ class DatosRedFibra {
 
   // ignore: missing_return
   getClienteAux(String query) async {
-    String cliente;
-    String snapshot = await clientes.document(query).get().then((value) {
+    Map<String, Object> datosClientes = new Map();
+    QuerySnapshot snapshot = await clientes.document(query).get().then((value) {
       // value.data['nombre'];
-      //print('----');
-      print(value.data['nombre']);
-      cliente = value.data['nombre'].toString();
-      return cliente;
+      // print('----');
+      value.data.forEach((key, value) {
+        datosClientes[key] = value;
+      });
+      //print(datosClientes);
+      if (value.exists) {
+        /*  for (var i = 0; i < value.data.length; i++) {
+          materiasYcursos[b.data['cursoInd'][i]] = b.data['curso'][b.data['cursoInd'][i]];
+        } */
+      }
     }).catchError((error) {});
+    return datosClientes;
   }
 
   getRutas() async {

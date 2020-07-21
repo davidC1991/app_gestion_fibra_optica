@@ -25,6 +25,40 @@ class _RegistrarClienteState extends State<RegistrarCliente> {
 
   TextEditingController estadoController = TextEditingController();
 
+  static const menuRutas = [
+    'ruta1',
+    'ruta2',
+    'ruta3',
+    'ruta4',
+    'ruta5',
+    'ruta6',
+    'ruta7',
+    'ruta8',
+    'ruta9',
+    'ruta10',
+    'ruta11',
+    'ruta12',
+    'ruta13',
+    'ruta14',
+    'ruta15',
+    'ruta16',
+    'ruta17',
+    'ruta18',
+    'ruta19',
+    'ruta20',
+    'ruta21',
+    'ruta22',
+    'ruta23'
+  ];
+
+  final List<DropdownMenuItem<String>> dropDownMenuItems = menuRutas
+      .map((String value) => DropdownMenuItem<String>(
+            value: value,
+            child: Text(value),
+          ))
+      .toList();
+  String rutaId = 'ruta1';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +68,6 @@ class _RegistrarClienteState extends State<RegistrarCliente> {
         child: Column(
           children: <Widget>[
             SizedBox(height: 30),
-            SizedBox(height: 20),
             Text('Ingrese los datos del cliente'),
             SizedBox(height: 20),
             TextFormField(
@@ -92,7 +125,7 @@ class _RegistrarClienteState extends State<RegistrarCliente> {
                   border: UnderlineInputBorder(),
                   filled: false,
                   hintText: 'Verificar los registros',
-                  labelText: 'Escoja las rutas del cliente'),
+                  labelText: 'Ingrese las rutas del cliente'),
               controller: rutaController,
             ),
             SizedBox(height: 20),
@@ -153,21 +186,22 @@ class _RegistrarClienteState extends State<RegistrarCliente> {
     String foto = fotoController.text;
     String tipoCliente = tipoClienteController.text;
     String estado = estadoController.text;
+    print(rutas.split(','));
 
-    if (nombre.isNotEmpty ||
-        celular.isNotEmpty ||
-        email.isNotEmpty ||
-        hilo.isNotEmpty ||
-        foto.isNotEmpty ||
-        tipoCliente.isNotEmpty ||
-        estado.isNotEmpty ||
+    if (nombre.isNotEmpty &&
+        celular.isNotEmpty &&
+        email.isNotEmpty &&
+        hilo.isNotEmpty &&
+        foto.isNotEmpty &&
+        tipoCliente.isNotEmpty &&
+        estado.isNotEmpty &&
         rutas.isNotEmpty) {
       clientes.document(nombre).setData({
         'activo': estado,
         'celular': celular,
         'email': email,
         'hilo': hilo,
-        'rutas': rutas,
+        'rutas': rutas.split(','),
         'photoUrl': foto,
         'tipoCliente': tipoCliente,
         'nombre': nombre

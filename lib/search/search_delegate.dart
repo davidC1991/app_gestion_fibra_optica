@@ -62,7 +62,7 @@ class DataSearch extends SearchDelegate {
           final cliente = snapshot.data;
           final clientesFiltrados =
               cliente.where((c) => c.toLowerCase().startsWith(query)).toList();
-          print('clientesFiltrados: $clientesFiltrados');
+          //print('clientesFiltrados: $clientesFiltrados');
           return ListView(
               children: clientesFiltrados.map((cliente) {
             return ListTile(

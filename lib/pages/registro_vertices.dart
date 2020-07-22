@@ -189,12 +189,10 @@ class _RegistrarVerticeState extends State<RegistrarVertice> {
           .collection('muflas')
           .document(idVertice.toUpperCase())
           .setData({
-        'datos': {
-          'longNodoCentral': double.parse(longNodoCentral),
-          'longVertices': double.parse(longVertices),
-          'latitud': double.parse(latitud),
-          'longitud': double.parse(longitud)
-        },
+        'longNodoCentral': double.parse(longNodoCentral),
+        'longVertices': double.parse(longVertices),
+        'latitud': double.parse(latitud),
+        'longitud': double.parse(longitud)
       });
       Fluttertoast.showToast(
           msg: 'El vertice fue guardado con exito!',

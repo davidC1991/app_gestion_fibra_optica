@@ -36,10 +36,23 @@ class DatosRedFibra {
     return datosClientes;
   }
 
-  getRutas() async {
+  getVertices(List<dynamic> rutasCliente) async {
     // QuerySnapshot snapshot = await rutas.getDocuments();
-    DocumentSnapshot snapshot = await rutas.document('ruta1').get();
+    QuerySnapshot snapshot;
+    print('-------|--------');
+    List<QuerySnapshot> listVertices = new List();
+    // ignore: missing_return
+    //QuerySnapshot snapshot = await rutas.getDocuments();
 
-    print(snapshot.data);
+    for (var i = 0; i < rutasCliente.length; i++) {
+      snapshot = await rutas
+          .document(rutasCliente[i])
+          .collection('muflas')
+          .getDocuments();
+      listVertices.add(snapshot);
+    }
+    print('longitud de la cantidad de rutas: ${listVertices.length}');
+    //print(listVertices[0].documents);
+    return listVertices;
   }
 }

@@ -267,7 +267,7 @@ class _RegistrarSangriaState extends State<RegistrarSangria> {
           .collection(clienteId)
           .document(idVertice.toUpperCase())
           .setData({
-        'Datos': {
+        idVertice.toUpperCase(): {
           'longNodoCentral': double.parse(longNodoCentral),
           'longVertices': double.parse(longVertice),
           'latitud': double.parse(latitud),

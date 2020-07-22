@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:audicol_fiber/bloc/peticiones_firebase.dart';
+import 'package:audicol_fiber/clases/test_otdr.dart';
 import 'package:audicol_fiber/search/search_delegate.dart';
 import 'package:flutter/material.dart';
 import 'package:geo/geo.dart';
@@ -20,6 +21,7 @@ class CalculoCoordenada extends StatefulWidget {
 
 class _CalculoCoordenadaState extends State<CalculoCoordenada> {
   TextEditingController distanciaController = TextEditingController();
+  TestOtdr testOtdr = TestOtdr();
   DatosRedFibra datosRedFibra = DatosRedFibra();
   String clienteAux = '';
   String distanciaString = "";
@@ -118,7 +120,9 @@ class _CalculoCoordenadaState extends State<CalculoCoordenada> {
           child: Text('Calcular'),
           onPressed: () {
             print('----------------------');
-            print(distanciaString);
+            testOtdr.buscarRutas(
+                datosClientes['nombre'], datosClientes['rutas']);
+            /*  print(distanciaString);
 
             distancia = int.tryParse(distanciaString);
             const p1 = LatLng(11.226940, -74.198010);
@@ -132,7 +136,7 @@ class _CalculoCoordenadaState extends State<CalculoCoordenada> {
                 'coordenadas del punto de falla: ${computeOffset(p1, 20, angulo)}');
 
             distanciaController.clear();
-            distanciaString = "";
+            distanciaString = ""; */
             //datosRedFibra.getCliente();
             // datosRedFibra.getRutas();
             /*  clientes.document('celustar').setData({

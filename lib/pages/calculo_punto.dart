@@ -25,10 +25,12 @@ class _CalculoCoordenadaState extends State<CalculoCoordenada> {
   DatosRedFibra datosRedFibra = DatosRedFibra();
   String clienteAux = '';
   String distanciaString = "";
-  int distancia;
+  double distancia;
   String clienteId = Uuid().v4();
   Map<String, Object> datosClientes = new Map();
+  Map<String, dynamic> verticesElegidos = Map();
   String clienteName;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -119,12 +121,12 @@ class _CalculoCoordenadaState extends State<CalculoCoordenada> {
           elevation: 15,
           child: Text('Calcular'),
           onPressed: () {
+            distancia = double.tryParse(distanciaString);
             print('----------------------');
-            testOtdr.buscarRutas(
-                datosClientes['nombre'], datosClientes['rutas']);
+            getVerticesOTDR();
             /*  print(distanciaString);
 
-            distancia = int.tryParse(distanciaString);
+           
             const p1 = LatLng(11.226940, -74.198010);
             const p2 = LatLng(11.225604, -74.196796);
             final angulo = computeHeading(p1, p2);
@@ -154,6 +156,39 @@ class _CalculoCoordenadaState extends State<CalculoCoordenada> {
         )
       ],
     );
+  }
+
+  void getVerticesOTDR() async {
+    verticesElegidos = await testOtdr.getVerticesElegidos(
+        datosClientes['nombre'],
+        datosClientes['rutas'],
+        datosClientes['sangria'],
+        distancia);
+
+    print('Vertices elegidos: $verticesElegidos');
+    calcularCoordenada(
+        verticesElegidos['latitudA'],
+        verticesElegidos['longitudA'],
+        verticesElegidos['latitudB'],
+        verticesElegidos['longitudB'],
+        verticesElegidos['distancia']);
+  }
+
+  void calcularCoordenada(double latitudA, double longitudA, double latitudB,
+      double longitudB, double distancia) {
+    var p1 = LatLng(latitudA, longitudA);
+    var p2 = LatLng(latitudB, longitudB);
+
+    //var p1 = LatLng(11.243911, -74.211836);
+    //var p2 = LatLng(11.24318, -74.207468);
+
+    final angulo = computeHeading(p1, p2);
+    print('angulo: $angulo grados');
+    print(
+        'distancia entre los dos puntos: ${computeDistanceBetween(p1, p2)} metros');
+
+    print(
+        'coordenadas del punto de falla: ${computeOffset(p1, distancia, angulo)}');
   }
 
   Widget descripcionCliente() {

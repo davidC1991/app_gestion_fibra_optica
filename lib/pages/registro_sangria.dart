@@ -17,7 +17,7 @@ class _RegistrarSangriaState extends State<RegistrarSangria> {
   TextEditingController longitudController = TextEditingController();
   //TextEditingController idRutaController = TextEditingController();
   TextEditingController idVerticeController = TextEditingController();
-  List<String> clientes = new List();
+  List<String> clientes_aux = new List();
 
   @override
   void initState() {
@@ -30,9 +30,9 @@ class _RegistrarSangriaState extends State<RegistrarSangria> {
     List<String> cliente_db = await datosRedFibra.getCliente();
     //print(cliente_db[0].documentID);
     for (var i = 0; i < cliente_db.length; i++) {
-      clientes.add(cliente_db[i]);
+      clientes_aux.add(cliente_db[i]);
     }
-    print(clientes);
+    print(clientes_aux);
   }
 
   static const menuRutas = [
@@ -150,7 +150,7 @@ class _RegistrarSangriaState extends State<RegistrarSangria> {
                     clienteId = neValue;
                   });
                 },
-                items: clientes.map((String a) {
+                items: clientes_aux.map((String a) {
                   return new DropdownMenuItem<String>(
                       value: a, child: new Text(a));
                 }).toList(),
@@ -267,13 +267,16 @@ class _RegistrarSangriaState extends State<RegistrarSangria> {
           .collection(clienteId)
           .document(idVertice.toUpperCase())
           .setData({
-        idVertice.toUpperCase(): {
-          'longNodoCentral': double.parse(longNodoCentral),
-          'longVertices': double.parse(longVertice),
-          'latitud': double.parse(latitud),
-          'longitud': double.parse(longitud)
-        },
+        //idVertice.toUpperCase(): {
+        'longNodoCentral': double.parse(longNodoCentral),
+        'longVertices': double.parse(longVertice),
+        'latitud': double.parse(latitud),
+        'longitud': double.parse(longitud)
+        //},
       });
+      //GUARDAMOS LA SANGRIA AL CLIENTE QUE SELECCIONÓ EL USUARIO
+      clientes.document(clienteId).updateData({'sangria': sangriaId});
+
       Fluttertoast.showToast(
           msg: 'La sangria fue guardada con exito!',
           toastLength: Toast.LENGTH_SHORT,

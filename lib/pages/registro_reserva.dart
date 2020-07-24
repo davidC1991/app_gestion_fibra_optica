@@ -189,13 +189,14 @@ class _RegistrarReservaState extends State<RegistrarReserva> {
           .collection('reservas')
           .document(idReserva.toUpperCase())
           .setData({
-        'datos': {
-          'longNodoCentral': double.parse(longNodoCentral),
-          'longReserva': double.parse(longReserva),
-          'latitud': double.parse(latitud),
-          'longitud': double.parse(longitud)
-        },
+        //idReserva.toUpperCase(): {
+        'longNodoCentral': double.parse(longNodoCentral),
+        'longReserva': double.parse(longReserva),
+        'latitud': double.parse(latitud),
+        'longitud': double.parse(longitud)
+        //},
       });
+
       Fluttertoast.showToast(
           msg: 'El reserva fue guardada con exito!',
           toastLength: Toast.LENGTH_SHORT,

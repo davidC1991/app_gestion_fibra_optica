@@ -14,20 +14,6 @@ class TestOtdr {
 
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-    //CREAMOS LA LISTA DE VERTICES DE LAS RUTAS DEL CLIENTE
-    //NO ES CONVENIENTE INDEPENDIZAR LAS LONGITUDES DE NODO CENTRAL
-    //DE LA LISTA DE MAPAS GENERAL DE LAS RUTAS, POR QUE AL REALIZAR LAS RESTAS NO SE VA PODER UBICAR EL VERTICE
-    List<DocumentSnapshot> listVertices =
-        await datosRedFibra.getVertices(rutas);
-    print(
-        '-------LISTA DE VERTICES DE LAS RUTAS-----------------------------------');
-    print(listVertices);
-    //OBTENIENDO LA LONGITUD DEL VERTICE HACIA NODO CENTRAL A TRAVES DE LA LISTA DE MAPAS
-    print(listVertices[0].data["longVertices"]);
-    print('------------------------------------------');
-
-    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
     //CREAMOS LA LISTA DE SANGRIAS DE LAS RUTAS DEL CLIENTE
     List<DocumentSnapshot> listReservas =
         await datosRedFibra.getReservas(rutas);
@@ -53,6 +39,27 @@ class TestOtdr {
       print(listVerticesSangria[0].data['longNodoCentral']);
     }
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+    //CREAMOS LA LISTA DE VERTICES DE LAS RUTAS DEL CLIENTE
+    //NO ES CONVENIENTE INDEPENDIZAR LAS LONGITUDES DE NODO CENTRAL
+    //DE LA LISTA DE MAPAS GENERAL DE LAS RUTAS, POR QUE AL REALIZAR LAS RESTAS NO SE VA PODER UBICAR EL VERTICE
+    List<DocumentSnapshot> listVertices =
+        await datosRedFibra.getVertices(rutas);
+    //OBTENIENDO LA LONGITUD DEL VERTICE HACIA NODO CENTRAL A TRAVES DE LA LISTA DE MAPAS
+    //print(listVertices[0].data["longVertices"]);
+    print('------------------------------------------');
+    List<DocumentSnapshot> _listVertices = List();
+    for (var i = 0; i < listVertices.length; i++) {
+      if (listVertices[i].data['longNodoCentral'] <
+          listVerticesSangria[0].data['longNodoCentral']) {
+        _listVertices.add(listVertices[i]);
+      }
+    }
+    print(
+        '-------LISTA DE VERTICES DE LAS RUTAS-----------------------------------');
+    print(_listVertices);
+
     print(
         '-------ITERANDO LA DISTANCIA DEL OTDR CON LAS LISTAS DE VECTORES RESERVAS, VERTICES RUTAS Y VERTICES SANGRIAS-----------------------------------');
     //RESTAR EL RECORRIDO DE LAS RESERVAS DE LAS RUTAS A LA DISTANCIA ENTREGADA POR EL OTDR
@@ -62,8 +69,8 @@ class TestOtdr {
       for (var i = 0; i < listReservas.length; i++) {
         lonReserva = listReservas[i].data['longReserva'];
         lonNodoCentral = listReservas[i].data['longNodoCentral'];
-        print(lonReserva);
-        print(lonNodoCentral);
+        //print(lonReserva);
+        //print(lonNodoCentral);
         //VALIDACION DE LA DISTANCIA CON LA RESERVA, SI ES MAYOR A LA DISTANCIA DE LA RESERVA
         //Y MAYOR A LA DISTANCIA DE LA RESERVA MAS LA LONGITUD DE LA RESERVA ENTONCES RESTE
         if (distancia > lonNodoCentral &&
@@ -85,20 +92,29 @@ class TestOtdr {
       print('No hay reservas en estas rutas');
     }
     print('Distancia: $distancia');
+    List<DocumentSnapshot> listVerticesSangriasRutas = List();
+    //CONCATENANDO LA LISTA DE VERTICES DE RUTAS CON LA LISTA DE VERTICES DE SANGRIAS
+    for (var i = 0; i < _listVertices.length; i++) {
+      listVerticesSangriasRutas.add(_listVertices[i]);
+    }
+    for (var i = 0; i < listVerticesSangria.length; i++) {
+      listVerticesSangriasRutas.add(listVerticesSangria[i]);
+    }
+    print(listVerticesSangriasRutas);
     //ITERAR LA DISTANCIA CON EL LA LISTA DE VERTICES DE RUTAS, PREGUNTANDO POR EL VERTICE CUYA LONGITUD
     // HACIA EL NODO CENTRAL SEA MENOR A ESTA DISTANCIA
     Map<String, dynamic> verticeA = Map();
     Map<String, dynamic> verticeB = Map();
     print('ITERANDO LA DISTANCIA CON LOS VERTICES DE LAS RUTAS DEL CLIENTE');
-    for (var i = 0; i < listVertices.length; i++) {
-      print(listVertices[i].data["longNodoCentral"]);
-      if (distancia <= listVertices[i].data["longNodoCentral"]) {
-        verticeA = listVertices[i - 1].data;
-        verticeB = listVertices[i].data;
+    for (var i = 0; i < listVerticesSangriasRutas.length; i++) {
+      print(listVerticesSangriasRutas[i].data["longNodoCentral"]);
+      if (distancia <= listVerticesSangriasRutas[i].data["longNodoCentral"]) {
+        verticeA = listVerticesSangriasRutas[i - 1].data;
+        verticeB = listVerticesSangriasRutas[i].data;
         break;
       }
     }
-
+/* 
     //ITERAR LA DISTANCIA CON LA LISTA DE VERTICE DE LA SANGRIA DEL CLIENTE, PREGUNTANDO POR EL VERTICE CUYA
     // LONGITUD HACIA EL NODO CENTRAL SEA MENOR A ESTA DISTANCIA
     if (verticeA.isEmpty && verticeB.isEmpty) {
@@ -111,7 +127,7 @@ class TestOtdr {
           break;
         }
       }
-    }
+    } */
     print('verticeA: $verticeA');
     print('verticeB: $verticeB');
     //SI INNGRESAN UNA DISTANCIA MAYOR A LA SUMATORIA DE LAS RUTAS Y LA SANGRIA DEL CLIENTE
@@ -123,7 +139,10 @@ class TestOtdr {
           'Ditancia del OTDR es mayor a la distancia de la ruta y la sangira del cliente');
       return {};
     }
-    print('latitud escogida:${verticeA['latitud']}');
+    double distanciaEnVertice = verticeB['longNodoCentral'] - distancia;
+    distanciaEnVertice = verticeB['longVertices'] - distanciaEnVertice;
+    print(distanciaEnVertice);
+    //print('latitud escogida:${verticeA['latitud']}');
     return {
       'latitudA': verticeA['latitud'],
       'longitudA': verticeA['longitud'],
@@ -133,7 +152,7 @@ class TestOtdr {
       'longitudB': verticeB['longitud'],
       'longNodoCentralB': verticeB['longNodoCentral'],
       'longVerticesB': verticeB['longVertices'],
-      'distancia': distancia
+      'distancia': distanciaEnVertice
     };
   }
 }

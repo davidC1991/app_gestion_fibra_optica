@@ -45,7 +45,7 @@ class DatosRedFibra {
     //QuerySnapshot snapshot = await rutas.getDocuments();
 
     for (var i = 0; i < rutasCliente.length; i++) {
-      print('uno');
+      // print('uno');
       snapshot = await rutas
           .document(rutasCliente[i])
           .collection('muflas')

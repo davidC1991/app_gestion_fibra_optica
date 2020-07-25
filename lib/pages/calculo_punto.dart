@@ -181,8 +181,11 @@ class _CalculoCoordenadaState extends State<CalculoCoordenada> {
 
     //var p1 = LatLng(11.243911, -74.211836);
     //var p2 = LatLng(11.24318, -74.207468);
-
-    final angulo = computeHeading(p1, p2);
+    //si angulo negativo  sumar 360
+    var angulo = computeHeading(p1, p2);
+    if (angulo < 0.0) {
+      angulo = angulo + 360.0;
+    }
     print('angulo: $angulo grados');
     print(
         'distancia entre los dos puntos: ${computeDistanceBetween(p1, p2)} metros');

@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:audicol_fiber/bloc/peticiones_firebase.dart';
 import 'package:audicol_fiber/clases/test_otdr.dart';
+import 'package:audicol_fiber/pages/mapa_fiber.dart';
 import 'package:audicol_fiber/search/search_delegate.dart';
 import 'package:flutter/material.dart';
 import 'package:geo/geo.dart';
@@ -165,20 +166,20 @@ class _CalculoCoordenadaState extends State<CalculoCoordenada> {
         datosClientes['sangria'],
         distancia);
 
-    /* print('Vertices elegidos: $verticesElegidos');
+    print('Vertices elegidos: $verticesElegidos');
     calcularCoordenada(
         verticesElegidos['latitudA'],
         verticesElegidos['longitudA'],
         verticesElegidos['latitudB'],
         verticesElegidos['longitudB'],
-        verticesElegidos['distancia']); */
+        verticesElegidos['distancia']);
   }
 
   void calcularCoordenada(double latitudA, double longitudA, double latitudB,
       double longitudB, double distancia) {
     var p1 = LatLng(latitudA, longitudA);
     var p2 = LatLng(latitudB, longitudB);
-
+    LatLng coordenadaFalla;
     //var p1 = LatLng(11.243911, -74.211836);
     //var p2 = LatLng(11.24318, -74.207468);
     //si angulo negativo  sumar 360
@@ -189,9 +190,14 @@ class _CalculoCoordenadaState extends State<CalculoCoordenada> {
     print('angulo: $angulo grados');
     print(
         'distancia entre los dos puntos: ${computeDistanceBetween(p1, p2)} metros');
+    coordenadaFalla = computeOffset(p1, distancia, angulo);
 
-    print(
-        'coordenadas del punto de falla: ${computeOffset(p1, distancia, angulo)}');
+    print('coordenadas del punto de falla: $coordenadaFalla');
+
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (context) => MapaRutas(coordenadaFalla: coordenadaFalla)));
   }
 
   Widget descripcionCliente() {

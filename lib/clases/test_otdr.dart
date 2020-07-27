@@ -55,9 +55,9 @@ class TestOtdr {
     //print(listVertices[0].data["longVertices"]);
     print('');
     print('');
-    for (var i = 0; i < listVertices.length; i++) {
+    /* for (var i = 0; i < listVertices.length; i++) {
       print(listVertices[i].documentID);
-    }
+    } */
     print(
         '-------LISTA DE VERTICES DE LAS RUTAS-----------------------------------');
     List<DocumentSnapshot> _listVertices = List();
@@ -77,7 +77,7 @@ class TestOtdr {
     print('');
     print('');
     //RESTAR EL RECORRIDO DE LAS RESERVAS DE LAS RUTAS A LA DISTANCIA ENTREGADA POR EL OTDR
-    /*  var lonReserva;
+    var lonReserva;
     var lonNodoCentral;
     if (listReservas.isNotEmpty) {
       for (var i = 0; i < listReservas.length; i++) {
@@ -112,8 +112,8 @@ class TestOtdr {
       print('--------------NO HAY RESERVAS EN LA RUTA----------------------');
       print('');
       print('');
-    } */
-/*
+    }
+
     print('DISTANCIA INGRESADA: $distancia');
     print('');
     print('');
@@ -136,9 +136,11 @@ class TestOtdr {
     print('');
     //ITERAR LA DISTANCIA CON EL LA LISTA DE VERTICES DE RUTAS, PREGUNTANDO POR EL VERTICE CUYA LONGITUD
     // HACIA EL NODO CENTRAL SEA MENOR A ESTA DISTANCIA
-       Map<String, dynamic> verticeA = Map();
+    Map<String, dynamic> verticeA = Map();
     Map<String, dynamic> verticeB = Map();
+
     print('ITERANDO LA DISTANCIA CON LOS VERTICES DE LAS RUTAS DEL CLIENTE');
+
     for (var i = 0; i < listVerticesSangriasRutas.length; i++) {
       print(listVerticesSangriasRutas[i].data["longNodoCentral"]);
       if (distancia <= listVerticesSangriasRutas[i].data["longNodoCentral"]) {
@@ -147,7 +149,7 @@ class TestOtdr {
         break;
       }
     }
-/* 
+
     //ITERAR LA DISTANCIA CON LA LISTA DE VERTICE DE LA SANGRIA DEL CLIENTE, PREGUNTANDO POR EL VERTICE CUYA
     // LONGITUD HACIA EL NODO CENTRAL SEA MENOR A ESTA DISTANCIA
     if (verticeA.isEmpty && verticeB.isEmpty) {
@@ -160,7 +162,7 @@ class TestOtdr {
           break;
         }
       }
-    } */
+    }
     print('');
     print('');
     print('verticeA: $verticeA');
@@ -190,6 +192,6 @@ class TestOtdr {
       'longNodoCentralB': verticeB['longNodoCentral'],
       'longVerticesB': verticeB['longVertices'],
       'distancia': distanciaEnVertice
-    }; */
+    };
   }
 }

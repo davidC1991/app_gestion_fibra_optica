@@ -1,8 +1,8 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_swiper/flutter_swiper.dart';
 
+// ignore: must_be_immutable
 class ResgistrarRuta extends StatelessWidget {
   List opciones = [
     'Agregar Vertice',
@@ -112,7 +112,8 @@ class ResgistrarRuta extends StatelessWidget {
         }
         if (contPantalla == 1) {
           print('agregar reserva');
-          // Navigator.pushNamed(context, 'registroReservas');
+          // 
+          pushNamed(context, 'registroReservas');
         }
         if (contPantalla == 2) {
           print('agregar sangria');

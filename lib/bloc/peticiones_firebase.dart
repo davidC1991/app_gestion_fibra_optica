@@ -39,7 +39,7 @@ class DatosRedFibra {
   getVertices(List<dynamic> rutasCliente) async {
     // QuerySnapshot snapshot = await rutas.getDocuments();
     QuerySnapshot snapshot;
-    print('------CREANDO EL VECTOR DE VERTICES-------');
+
     List<DocumentSnapshot> listVertices = new List();
     // ignore: missing_return
     //QuerySnapshot snapshot = await rutas.getDocuments();
@@ -93,6 +93,8 @@ class DatosRedFibra {
 
   getSangria(String cliente, List<dynamic> rutasCliente, String sangria) async {
     QuerySnapshot snapshot;
+    print('');
+    print('');
     print(
         '------CREANDO LA LISTA DE VERTICES DE LA SANGRIA DEL CLIENTE: $cliente -------');
     List<DocumentSnapshot> listVerticesSangria = new List();

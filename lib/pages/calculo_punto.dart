@@ -165,13 +165,13 @@ class _CalculoCoordenadaState extends State<CalculoCoordenada> {
         datosClientes['sangria'],
         distancia);
 
-    print('Vertices elegidos: $verticesElegidos');
+    /* print('Vertices elegidos: $verticesElegidos');
     calcularCoordenada(
         verticesElegidos['latitudA'],
         verticesElegidos['longitudA'],
         verticesElegidos['latitudB'],
         verticesElegidos['longitudB'],
-        verticesElegidos['distancia']);
+        verticesElegidos['distancia']); */
   }
 
   void calcularCoordenada(double latitudA, double longitudA, double latitudB,

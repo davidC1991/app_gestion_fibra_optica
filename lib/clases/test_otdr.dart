@@ -9,6 +9,8 @@ class TestOtdr {
   //ENCONTRAMOS LAS RUTAS POR LA QUE PASA EL CLIENTE
   getVerticesElegidos(String cliente, List<dynamic> rutas, String sangria,
       double distancia) async {
+    print('');
+    print('');
     print('las rutas del $cliente son $rutas');
     List<DocumentSnapshot> listVerticesSangria = new List();
 
@@ -17,6 +19,8 @@ class TestOtdr {
     //CREAMOS LA LISTA DE SANGRIAS DE LAS RUTAS DEL CLIENTE
     List<DocumentSnapshot> listReservas =
         await datosRedFibra.getReservas(rutas);
+    print('');
+    print('');
     print(
         '-------LISTA DE RESERVAS DE LAS RUTAS-----------------------------------');
     if (listReservas.isEmpty) {
@@ -34,10 +38,11 @@ class TestOtdr {
     if (listVerticesSangria.isEmpty) {
       print('lista de vertices de sangria esta vacia');
     } else {
-      print(listVerticesSangria);
-      //OBTENIENDO LA LONGITUD DE LA RESERVA HACIA NODO CENTRAL A TRAVES DE LA LISTA DE MAPAS
-      print(listVerticesSangria[0].data['longNodoCentral']);
+      for (var i = 0; i < listVerticesSangria.length; i++) {
+        print(listVerticesSangria[i].documentID);
+      }
     }
+
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     //::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 
@@ -48,22 +53,31 @@ class TestOtdr {
         await datosRedFibra.getVertices(rutas);
     //OBTENIENDO LA LONGITUD DEL VERTICE HACIA NODO CENTRAL A TRAVES DE LA LISTA DE MAPAS
     //print(listVertices[0].data["longVertices"]);
-    print('------------------------------------------');
+    print('');
+    print('');
+    for (var i = 0; i < listVertices.length; i++) {
+      print(listVertices[i].documentID);
+    }
+    print(
+        '-------LISTA DE VERTICES DE LAS RUTAS-----------------------------------');
     List<DocumentSnapshot> _listVertices = List();
     for (var i = 0; i < listVertices.length; i++) {
-      if (listVertices[i].data['longNodoCentral'] <
+      if (listVertices[i].data['longNodoCentral'] <=
           listVerticesSangria[0].data['longNodoCentral']) {
         _listVertices.add(listVertices[i]);
       }
     }
-    print(
-        '-------LISTA DE VERTICES DE LAS RUTAS-----------------------------------');
-    print(_listVertices);
-
+    for (var i = 0; i < _listVertices.length; i++) {
+      print(_listVertices[i].documentID);
+    }
+    print('');
+    print('');
     print(
         '-------ITERANDO LA DISTANCIA DEL OTDR CON LAS LISTAS DE VECTORES RESERVAS, VERTICES RUTAS Y VERTICES SANGRIAS-----------------------------------');
+    print('');
+    print('');
     //RESTAR EL RECORRIDO DE LAS RESERVAS DE LAS RUTAS A LA DISTANCIA ENTREGADA POR EL OTDR
-    var lonReserva;
+    /*  var lonReserva;
     var lonNodoCentral;
     if (listReservas.isNotEmpty) {
       for (var i = 0; i < listReservas.length; i++) {
@@ -75,9 +89,13 @@ class TestOtdr {
         //Y MAYOR A LA DISTANCIA DE LA RESERVA MAS LA LONGITUD DE LA RESERVA ENTONCES RESTE
         if (distancia > lonNodoCentral &&
             distancia > (lonNodoCentral + lonReserva)) {
+          print('');
+          print('');
           print(
               'se restó a la distancia la reserva ${listReservas[i].documentID}');
           distancia = distancia - listReservas[i].data['longReserva'];
+          print('');
+          print('');
           break;
         }
         //SI NO SE CUMPLE LA CONDICION ANTERIOR ENTONCES SE PREGUNTA SI LA DISTANCIA ESTA ENTRE EL INTERVALO DE LA RESERVA
@@ -89,9 +107,16 @@ class TestOtdr {
         }
       }
     } else {
-      print('No hay reservas en estas rutas');
-    }
-    print('Distancia: $distancia');
+      print('');
+      print('');
+      print('--------------NO HAY RESERVAS EN LA RUTA----------------------');
+      print('');
+      print('');
+    } */
+/*
+    print('DISTANCIA INGRESADA: $distancia');
+    print('');
+    print('');
     List<DocumentSnapshot> listVerticesSangriasRutas = List();
     //CONCATENANDO LA LISTA DE VERTICES DE RUTAS CON LA LISTA DE VERTICES DE SANGRIAS
     for (var i = 0; i < _listVertices.length; i++) {
@@ -100,10 +125,18 @@ class TestOtdr {
     for (var i = 0; i < listVerticesSangria.length; i++) {
       listVerticesSangriasRutas.add(listVerticesSangria[i]);
     }
-    print(listVerticesSangriasRutas);
+    print('');
+    print('');
+    print(
+        '--------------LISTA DE VERTICES DE LA RUTAS MAS LOS VERTICES DE LA SANGRIA----------------------');
+    for (var i = 0; i < listVerticesSangriasRutas.length; i++) {
+      print(listVerticesSangriasRutas[i].documentID);
+    }
+    print('');
+    print('');
     //ITERAR LA DISTANCIA CON EL LA LISTA DE VERTICES DE RUTAS, PREGUNTANDO POR EL VERTICE CUYA LONGITUD
     // HACIA EL NODO CENTRAL SEA MENOR A ESTA DISTANCIA
-    Map<String, dynamic> verticeA = Map();
+       Map<String, dynamic> verticeA = Map();
     Map<String, dynamic> verticeB = Map();
     print('ITERANDO LA DISTANCIA CON LOS VERTICES DE LAS RUTAS DEL CLIENTE');
     for (var i = 0; i < listVerticesSangriasRutas.length; i++) {
@@ -128,8 +161,12 @@ class TestOtdr {
         }
       }
     } */
+    print('');
+    print('');
     print('verticeA: $verticeA');
     print('verticeB: $verticeB');
+    print('');
+    print('');
     //SI INNGRESAN UNA DISTANCIA MAYOR A LA SUMATORIA DE LAS RUTAS Y LA SANGRIA DEL CLIENTE
     //ENTONCES RETORNA VACIO
     if (distancia >
@@ -141,7 +178,7 @@ class TestOtdr {
     }
     double distanciaEnVertice = verticeB['longNodoCentral'] - distancia;
     distanciaEnVertice = verticeB['longVertices'] - distanciaEnVertice;
-    print(distanciaEnVertice);
+    print('distanciaReal: $distanciaEnVertice');
     //print('latitud escogida:${verticeA['latitud']}');
     return {
       'latitudA': verticeA['latitud'],
@@ -153,6 +190,6 @@ class TestOtdr {
       'longNodoCentralB': verticeB['longNodoCentral'],
       'longVerticesB': verticeB['longVertices'],
       'distancia': distanciaEnVertice
-    };
+    }; */
   }
 }

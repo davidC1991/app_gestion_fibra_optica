@@ -1,7 +1,7 @@
-import 'dart:convert';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:audicol_fiber/pages/calculo_punto.dart';
+import 'package:geo/geo.dart' as geo;
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class DatosRedFibra {
   Future<List<String>> getCliente() async {
@@ -120,5 +120,56 @@ class DatosRedFibra {
     //print(listVerticesSangria);
 
     return listVerticesSangria;
+  }
+
+  // ignore: missing_return
+  Future<List<String>> codificarRutas() async {
+    QuerySnapshot _rutas = await rutas.getDocuments();
+    List<QuerySnapshot> listVertices = new List();
+    print(_rutas.documents);
+    List<geo.LatLng> listLatLng = List();
+    geo.LatLng coordenada;
+    double lat;
+    double lng;
+    String encode;
+
+    for (var i = 0; i < _rutas.documents.length; i++) {
+      QuerySnapshot vertices = await rutas
+          .document(_rutas.documents[i].documentID)
+          .collection('muflas')
+          .getDocuments();
+      print('ruta : ${_rutas.documents[i].documentID} ---------');
+      listLatLng.clear();
+      for (var j = 0; j < vertices.documents.length; j++) {
+        lat = vertices.documents[j].data['latitud'];
+        lng = vertices.documents[j].data['longitud'];
+        coordenada = geo.LatLng(lat, lng);
+        listLatLng.add(coordenada);
+      }
+
+      encode = const geo.PolylineCodec().encode(listLatLng);
+
+      rutas
+          .document(_rutas.documents[i].documentID)
+          .setData({'polyline': encode});
+      print(encode);
+    }
+
+    //---------------------------------------------
+
+    /*  listLatLng.clear();
+      for (var j = 0; j < verticesC.documents.length; j++) {
+        lat = verticesC.documents[j].data['latitud'];
+        lng = verticesC.documents[j].data['longitud'];
+        coordenada = geo.LatLng(lat, lng);
+        listLatLng.add(coordenada);
+      }
+
+      encode = const geo.PolylineCodec().encode(listLatLng);
+
+      rutas
+          .document(_rutas.documents[i].documentID)
+          .setData({'polyline': encode});
+      print(encode); */
   }
 }

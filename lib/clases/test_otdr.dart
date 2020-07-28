@@ -1,6 +1,6 @@
 import 'package:audicol_fiber/bloc/peticiones_firebase.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:geo/geo.dart';
+import 'package:geo/geo.dart' as geo;
 
 class TestOtdr {
   int distancia = 0;
@@ -134,6 +134,20 @@ class TestOtdr {
     }
     print('');
     print('');
+    double lat;
+    double lng;
+    geo.LatLng coordenada;
+    List<geo.LatLng> listLatLng = List();
+    String encode;
+
+    for (var j = 0; j < listVerticesSangriasRutas.length; j++) {
+      lat = listVerticesSangriasRutas[j].data['latitud'];
+      lng = listVerticesSangriasRutas[j].data['longitud'];
+      coordenada = geo.LatLng(lat, lng);
+      listLatLng.add(coordenada);
+    }
+    encode = const geo.PolylineCodec().encode(listLatLng);
+    print('encode:$encode');
     //ITERAR LA DISTANCIA CON EL LA LISTA DE VERTICES DE RUTAS, PREGUNTANDO POR EL VERTICE CUYA LONGITUD
     // HACIA EL NODO CENTRAL SEA MENOR A ESTA DISTANCIA
     Map<String, dynamic> verticeA = Map();
@@ -191,7 +205,8 @@ class TestOtdr {
       'longitudB': verticeB['longitud'],
       'longNodoCentralB': verticeB['longNodoCentral'],
       'longVerticesB': verticeB['longVertices'],
-      'distancia': distanciaEnVertice
+      'distancia': distanciaEnVertice,
+      'encode': encode
     };
   }
 }

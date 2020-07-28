@@ -172,11 +172,12 @@ class _CalculoCoordenadaState extends State<CalculoCoordenada> {
         verticesElegidos['longitudA'],
         verticesElegidos['latitudB'],
         verticesElegidos['longitudB'],
-        verticesElegidos['distancia']);
+        verticesElegidos['distancia'],
+        verticesElegidos['encode']);
   }
 
   void calcularCoordenada(double latitudA, double longitudA, double latitudB,
-      double longitudB, double distancia) {
+      double longitudB, double distancia, String encode) {
     var p1 = LatLng(latitudA, longitudA);
     var p2 = LatLng(latitudB, longitudB);
     LatLng coordenadaFalla;
@@ -197,7 +198,8 @@ class _CalculoCoordenadaState extends State<CalculoCoordenada> {
     Navigator.push(
         context,
         MaterialPageRoute(
-            builder: (context) => MapaRutas(coordenadaFalla: coordenadaFalla)));
+            builder: (context) =>
+                MapaRutas(coordenadaFalla: coordenadaFalla, encode: encode)));
   }
 
   Widget descripcionCliente() {

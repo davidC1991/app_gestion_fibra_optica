@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:audicol_fiber/bloc/peticiones_firebase.dart';
 import 'package:flutter/material.dart';
 
 // ignore: must_be_immutable
@@ -11,6 +12,9 @@ class ResgistrarRuta extends StatelessWidget {
     'Agregar Descripcion'
   ];
   int contPantalla = 0;
+
+  DatosRedFibra datosRedFibra = DatosRedFibra();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -53,6 +57,12 @@ class ResgistrarRuta extends StatelessWidget {
           _crearBotonRedondeado(Colors.brown, Icons.directions_railway,
               'Registrar Cliente', context),
         ]),
+        TableRow(children: [
+          _crearBotonRedondeado(Colors.blueGrey, Icons.directions_car,
+              'Codificar coordenadas', context),
+          _crearBotonRedondeado(
+              Colors.pink, Icons.directions_car, 'Opciones', context),
+        ]),
       ],
     );
   }
@@ -77,6 +87,9 @@ class ResgistrarRuta extends StatelessWidget {
           print('Registrar Cliente');
           Navigator.pushNamed(context, 'RegistroClientes');
         }
+        if (texto.contains('Codificar coordenadas')) {
+          codificarCoordenadasRutas();
+        }
       },
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 0.0, sigmaY: 0.0),
@@ -100,6 +113,11 @@ class ResgistrarRuta extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void codificarCoordenadasRutas() async {
+    print('Codificar coordenadas');
+    await datosRedFibra.codificarRutas();
   }
 
   /* Widget _crearBotonRedondeado(String opciones, int i, BuildContext context) {

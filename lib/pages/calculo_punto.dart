@@ -11,6 +11,7 @@ import 'package:uuid/uuid.dart';
 
 final clientes = Firestore.instance.collection('clientes');
 final rutas = Firestore.instance.collection('rutas');
+final ordenesServicio = Firestore.instance.collection('OrdenesServicio');
 
 // ignore: must_be_immutable
 class CalculoCoordenada extends StatefulWidget {

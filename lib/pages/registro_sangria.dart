@@ -1,8 +1,8 @@
-import 'package:audicol_fiber/bloc/peticiones_firebase.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:audicol_fiber/bloc/peticiones_firebase.dart';
 import 'package:audicol_fiber/pages/calculo_punto.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+
 
 class RegistrarSangria extends StatefulWidget {
   @override
@@ -276,7 +276,11 @@ class _RegistrarSangriaState extends State<RegistrarSangria> {
       });
       //GUARDAMOS LA SANGRIA AL CLIENTE QUE SELECCIONÓ EL USUARIO
       clientes.document(clienteId).updateData({'sangria': sangriaId});
-
+      rutas
+          .document(rutaId)
+          .collection('sangrias')
+          .document(sangriaId)
+          .setData({'a': 'a'});
       Fluttertoast.showToast(
           msg: 'La sangria fue guardada con exito!',
           toastLength: Toast.LENGTH_SHORT,

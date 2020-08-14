@@ -90,6 +90,7 @@ class ResgistrarRuta extends StatelessWidget {
         if (texto.contains('Codificar coordenadas')) {
           codificarCoordenadasRutas();
         }
+        
       },
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 0.0, sigmaY: 0.0),

@@ -1,9 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:audicol_fiber/pages/calculo_punto.dart';
 import 'package:geo/geo.dart' as geo;
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class DatosRedFibra {
+
+
+   getOrdenesServicio()async{
+
+     List<DocumentSnapshot> oSs= new List();
+      QuerySnapshot snapshot = await ordenesServicio.getDocuments(); 
+    // print(snapshot.documents[0].data);
+      oSs=snapshot.documents;
+      return oSs;
+   }
+           
+     
+      
+
+
+
   Future<List<String>> getCliente() async {
     QuerySnapshot snapshot = await clientes.getDocuments();
     List<String> clientesList = new List();

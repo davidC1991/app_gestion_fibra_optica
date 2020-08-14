@@ -124,7 +124,7 @@ class _MapaRutasState extends State<MapaRutas> {
 
     tmp.add(Marker(
         icon: myIcon,
-        markerId: MarkerId("Punto de falla"),
+        markerId: MarkerId("Audicol"),
         position: widget.audicol,
         infoWindow: InfoWindow(title: "Audicol")));
     /* tmp.add(Marker(

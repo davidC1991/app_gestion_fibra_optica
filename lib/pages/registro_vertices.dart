@@ -196,6 +196,7 @@ class _RegistrarVerticeState extends State<RegistrarVertice> {
         'longitud': double.parse(longitud)
         // }
       });
+      rutas.document(rutaId).setData({'a': 'a'});
       Fluttertoast.showToast(
           msg: 'El vertice fue guardado con exito!',
           toastLength: Toast.LENGTH_SHORT,

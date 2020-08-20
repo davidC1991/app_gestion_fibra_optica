@@ -1,4 +1,7 @@
 import 'package:audicol_fiber/bloc/provider.dart';
+import 'package:audicol_fiber/pages/Ordenes_Servicio/formularioOS_adicionFibra.dart';
+import 'package:audicol_fiber/pages/Ordenes_Servicio/tiposDeOS.dart';
+import 'package:audicol_fiber/pages/selector_pantalla.dart';
 import 'package:flutter/material.dart';
 //import 'package:provider/provider.dart';
 //import 'package:audicol_fiber/pages/calculo_punto.dart';
@@ -10,9 +13,9 @@ import 'package:audicol_fiber/pages/registro_sangria.dart';
 import 'package:audicol_fiber/pages/registro_vertices.dart';
 //import 'package:audicol_fiber/pages/selector_pantalla.dart';
 import 'package:audicol_fiber/pages/Ordenes_Servicio/estudioPrefactibilidad.dart';
-import 'package:audicol_fiber/pages/Ordenes_Servicio/detallesOS.dart';
-import 'package:audicol_fiber/pages/Ordenes_Servicio/CrearOS.dart';
-import 'package:audicol_fiber/pages/Ordenes_Servicio/visualizarOs.dart';
+
+
+import 'package:audicol_fiber/pages/Ordenes_Servicio/agendaOs.dart';
 //import 'package:audicol_fiber/provider/direcctionsProvider.dart';
 
 
@@ -27,13 +30,16 @@ class MyApp extends StatelessWidget {
     return Provider(
      // create: (BuildContext context) => DirectionProvider(),
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Flutter Demo',
+        
         theme: ThemeData(
+          
           primarySwatch: Colors.blue,
-          accentColor: Colors.blue,
+          accentColor: Colors.black,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        initialRoute: 'PantallaOrdenesServicio',
+        initialRoute: 'SelectorPantalla',
         routes: {
           //'mapa': (BuildContext context) => MapaRutas(),
           //'calculoCoordenada': (BuildContext context) => CalculoCoordenada(),
@@ -41,7 +47,7 @@ class MyApp extends StatelessWidget {
           'registroVertices': (BuildContext context) => RegistrarVertice(),
           'registroReservas': (BuildContext context) => RegistrarReserva(),
           'registroSangrias': (BuildContext context) => RegistrarSangria(),
-          //'SelectorPantalla': (BuildContext context) => SelectorPantalla(),
+          'SelectorPantalla': (BuildContext context) => SelectorPantalla(),
           'RegistroClientes': (BuildContext context) => RegistrarCliente(),
           'EstudioPrefactibilidad': (BuildContext context) => EstudioPrefactibilidad(),
           'CrearOS': (BuildContext context) => CrearOS(),

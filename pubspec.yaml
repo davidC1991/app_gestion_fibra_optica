@@ -68,6 +68,11 @@ flutter:
    - assets/loading.gif
    - assets/no-image.jpg
    - assets/audicol.PNG
+   - assets/iconoUtil.png
+   - assets/cliente.png
+   - assets/ordenCasa.png
+   - assets/ordenCasa2.png
+   - assets/adicionFibra1.png
   #   - images/a_dot_burr.jpeg
   #   - images/a_dot_ham.jpeg
 

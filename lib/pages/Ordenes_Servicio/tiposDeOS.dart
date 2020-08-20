@@ -56,7 +56,26 @@ class _CrearOSState extends State<CrearOS> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //appBar: AppBar(),
+      appBar: AppBar(
+         title: Center(
+           child: Text(
+                'Crear Orden de Servicio',
+                 style: TextStyle(
+                          fontSize: 15.0,
+                          color: Colors.grey[400]
+                  )
+               
+        ),
+         ), 
+        backgroundColor: Colors.white24,
+        elevation: 0.0,
+        actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.account_circle,size: 30.0, color: Colors.blue,),
+              onPressed: (){},
+            )
+        ],
+      ),
       body: Center(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(30),

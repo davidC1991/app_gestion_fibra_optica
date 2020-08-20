@@ -1,15 +1,17 @@
-import 'package:audicol_fiber/bloc/peticiones_firebase.dart';
-import 'package:audicol_fiber/pages/calculo_punto.dart';
-import 'package:audicol_fiber/pages/configuracion_rutas.dart';
-import 'package:audicol_fiber/pages/registro_reserva.dart';
-import 'package:audicol_fiber/pages/registro_vertices.dart';
 import 'package:flutter/material.dart';
+import 'package:audicol_fiber/bloc/peticiones_firebase.dart';
+import 'package:audicol_fiber/pages/Ordenes_Servicio/tiposDeOS.dart';
+import 'package:audicol_fiber/pages/Ordenes_Servicio/agendaOs.dart';
+import 'package:audicol_fiber/pages/configuracion_rutas.dart';
+
+
+
 
 // ignore: must_be_immutable
 class SelectorPantalla extends StatefulWidget {
   String cliente;
 
-  SelectorPantalla({Key key, @required this.cliente}) : super(key: key);
+  SelectorPantalla({this.cliente});
   @override
   _SelectorPantallaState createState() => _SelectorPantallaState();
 }
@@ -41,8 +43,9 @@ class _SelectorPantallaState extends State<SelectorPantalla> {
           physics: NeverScrollableScrollPhysics(),
           children: <Widget>[
             ResgistrarRuta(),
-            RegistrarReserva(),
-            CalculoCoordenada(cliente: widget.cliente),
+            PantallaOrdenesServicio(),
+            CrearOS(),
+            //CalculoCoordenada(cliente: widget.cliente),
           ],
           controller: pageController,
           onPageChanged: cuandoPaginaCambie,

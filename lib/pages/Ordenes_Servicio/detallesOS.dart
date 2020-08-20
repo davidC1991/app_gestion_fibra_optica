@@ -1,216 +1,112 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:audicol_fiber/pages/calculo_punto.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
-
-// ignore: must_be_immutable
-class DetallesOSadicionFibra extends StatefulWidget {
-  
- 
-
+class DetallesOrdenServicio extends StatefulWidget {
   @override
-  _DetallesOSadicionFibraState createState() => _DetallesOSadicionFibraState();
+  _DetallesOrdenServicioState createState() => _DetallesOrdenServicioState();
 }
 
-class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
- 
- TextEditingController idOSController = TextEditingController();
- TextEditingController idDiasController = TextEditingController();
- TextEditingController objetivoController = TextEditingController();
-
- 
-
- static const contratistas = [
-    'Orlando xxxxxx',
-    'Macias xxxxxx',
-    'Gerson xxxxxx',
-  ];
-
-  static const proyectos = [
-    'Audicol',
-    'Conectividad Wifi',
-  ];  
-
-  final List<DropdownMenuItem<String>> dropDownProyectos = proyectos
-      .map((String value) => DropdownMenuItem<String>(
-            value: value,
-            child: Text(value),
-          ))
-      .toList();
-
-  String proyectosID = 'Conectividad Wifi';
-
-  final List<DropdownMenuItem<String>> dropDownMenuItems = contratistas
-      .map((String value) => DropdownMenuItem<String>(
-            value: value,
-            child: Text(value),
-          ))
-      .toList();
-
-  String contratistasID = 'Gerson xxxxxx';
-
-
+class _DetallesOrdenServicioState extends State<DetallesOrdenServicio> {
+  Color colorTextTitulo= Colors.grey[700];
+  Color colorText= Colors.grey[500];
 
   @override
   Widget build(BuildContext context) {
-   
+    final widthPantalla = MediaQuery.of(context).size.width;
+
     return Scaffold(
-      //appBar: AppBar(),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(30),
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            SizedBox(height: 20),
-            Row(
-              children: [
-                Text(
-                  'Nombre del Proyecto',
-                   style: TextStyle(
-                        fontSize: 16.0,
-                        color: Colors.grey[600]
-                )
-                ),
-                SizedBox(width: 30),
-                DropdownButton(
-                value: proyectosID,
-                onChanged: (String newValue) {
-                  setState(() {
-                    proyectosID = newValue;
-                  });
-                },
-                items: this.dropDownProyectos,
-              ),  
-              ],
-            ),
-            
-            
-            TextFormField(
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                  border: UnderlineInputBorder(),
-                  filled: false,
-                  hintText: '',
-                  labelText: 'Numero de Orden de Servicio'),
-              controller: idOSController,
-            ),
-            SizedBox(height: 20),
-            TextFormField(
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                  border: UnderlineInputBorder(),
-                  filled: false,
-                  hintText: 'Ingresar parametro en dias',
-                  labelText: 'Tiempo estimado de ejecución'),
-              controller: idDiasController,
-            ),
-            SizedBox(height: 20),
-             ListTile(
-               contentPadding: EdgeInsets.symmetric(horizontal: 0),
-              title: Text(
-                'Contratista a asignar O.S.',
-                style: TextStyle(
-                        fontSize: 16.0,
-                        //fontWeight: FontWeight.bold,
-                        color: Colors.grey[600]
-                )
-              ),
-              
-              trailing: DropdownButton(
-                value: contratistasID,
-                onChanged: (String newValue) {
-                  setState(() {
-                    contratistasID = newValue;
-                  });
-                },
-                items: this.dropDownMenuItems,
-              ),
-            ),
-            TextFormField(
-              keyboardType: TextInputType.text,
-              maxLines: 5,
-              decoration: InputDecoration(
-                  border: UnderlineInputBorder(),
-                  filled: false,
-                  hintText: 'Descripcion de la O.S.',
-                  labelText: 'Objetivo de Orden de Servicio'),
-              controller: objetivoController,
-            ),
-            SizedBox(height: 20),
-            
-            botonCrear()
-           
-         
-          ],
-        ),
+      
+       appBar: AppBar(
+         title: Text(
+           'Detalles',
+            style: TextStyle(fontSize: 15.0,color: Colors.grey[600])
+         ),  
+         iconTheme: CupertinoIconThemeData(color: Colors.grey),
+         shadowColor: Colors.red,
+         backgroundColor: Colors.white70,
+         elevation: 0.0,
+         actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.account_circle,size: 30.0, color: Colors.blue,),
+              onPressed: (){},
+            )
+        ],
       ),
+      body: Container(
+        padding: EdgeInsets.only(top: 10, left: 15, right: 15),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('GENERAL',style: TextStyle(color: colorTextTitulo, fontSize: 17, fontWeight: FontWeight.bold,)),
+              ListTile(
+              dense: true,  
+              contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+              leading: Text('Proyecto:',style: TextStyle(fontSize: 16.0,color: colorText)),  
+              title: Text('Conectividad Wifi',style: TextStyle(fontSize: 16.0,color: colorText)),
+             
+            ),
+             ListTile(
+               dense: true,
+               contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+              leading: Text('Tipo:',style: TextStyle(fontSize: 16.0,color: colorText)),
+              title: Text('Adición fibra',style: TextStyle(fontSize: 16.0,color: colorText)),
+            ),
+             ListTile(
+               dense: true,
+               contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+              leading: Text('Numero de orden:',style: TextStyle(fontSize: 16.0,color: colorText)),
+              title: Text('2',style: TextStyle(fontSize: 16.0,color: colorText)),
+            ),
+             ListTile(
+               dense: true,
+               contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+              leading: Text('Prioridad:',style: TextStyle(fontSize: 16.0,color: colorText)),
+              title: Text('Alta',style: TextStyle(fontSize: 16.0,color: colorText)),
+            ),
+            lineaSeparador(widthPantalla),
+            SizedBox(height: 8.0,),
+            Text('REQUERIMIENTOS',style: TextStyle(color: colorTextTitulo, fontSize: 17, fontWeight: FontWeight.bold,)),
+              ListTile(
+              dense: true,  
+              contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+              leading: Text('Proyecto:',style: TextStyle(fontSize: 16.0,color: colorText)),  
+              title: Text('Conectividad Wifi',style: TextStyle(fontSize: 16.0,color: colorText)),
+             
+            ),
+             ListTile(
+               dense: true,
+               contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+              leading: Text('Tipo:',style: TextStyle(fontSize: 16.0,color: colorText)),
+              title: Text('Adición fibra',style: TextStyle(fontSize: 16.0,color: colorText)),
+            ),
+             ListTile(
+               dense: true,
+               contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+              leading: Text('Numero de orden:',style: TextStyle(fontSize: 16.0,color: colorText)),
+              title: Text('2',style: TextStyle(fontSize: 16.0,color: colorText)),
+            ),
+             ListTile(
+               dense: true,
+               contentPadding: EdgeInsets.symmetric(horizontal: 0, vertical: 0),
+              leading: Text('Prioridad:',style: TextStyle(fontSize: 16.0,color: colorText)),
+              title: Text('Alta',style: TextStyle(fontSize: 16.0,color: colorText)),
+            ),
+            lineaSeparador(widthPantalla)
+          ],
+        )),
     );
   }
 
-  Widget botonCrear() {
-    print('----------------------');
-
-    return ButtonBar(
-      alignment: MainAxisAlignment.center,
-      children: <Widget>[
-        RaisedButton(
-          color: Colors.blueAccent.withOpacity(0.5),
-          elevation: 15,
-          child: Text('Crear'),
-          onPressed: () {
-            //print('----------------------');
-
-            sendBaseDatos();
-          },
-        )
-      ],
-    );
-  }
-
-  void sendBaseDatos() {
-    //String idRuta = idRutaController.text;
-    //String idReserva = proyectosID;
-    String idOS = idOSController.text;
-    String tiempoEstimado = idDiasController.text;
-    String objetivo = objetivoController.text;
-  
-
-   
-    if (tiempoEstimado.isNotEmpty || idOS.isNotEmpty || objetivo.isNotEmpty) {
-
-      ordenesServicio
-          .document(idOS)
-          .setData({
-        
-        'proyecto':proyectosID,
-        'NumeroOS': double.parse(idOS),
-        'tiempoEstimado': double.parse(tiempoEstimado),
-        'contratista': contratistasID,
-        'objetivo' : objetivo
-        
-      });
-
-      Fluttertoast.showToast(
-          msg: 'La Orden de serivio fue guardada con exito!',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          fontSize: 10,
-          backgroundColor: Colors.grey);
-
-      //idNombreProyecto.clear();
-      idOSController.clear();
-      idDiasController.clear();
-      objetivoController.clear();
-     // longitudController.clear();
-    } else {
-      Fluttertoast.showToast(
-          msg: 'LLene todos los campos!',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          fontSize: 10,
-          backgroundColor: Colors.grey);
-    }
+  Container lineaSeparador(double widthPantalla) {
+    return Container(
+            width: widthPantalla,
+            height: 1,
+            color: Colors.black38
+          );
   }
 }
+              
+       
+               

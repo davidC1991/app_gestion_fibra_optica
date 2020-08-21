@@ -18,6 +18,19 @@ import 'package:audicol_fiber/pages/Ordenes_Servicio/estudioPrefactibilidad.dart
 import 'package:audicol_fiber/pages/Ordenes_Servicio/agendaOs.dart';
 //import 'package:audicol_fiber/provider/direcctionsProvider.dart';
 
+Map<int, Color> color =
+{
+50:Color.fromRGBO(136,14,79, .1),
+100:Color.fromRGBO(136,14,79, .2),
+200:Color.fromRGBO(136,14,79, .3),
+300:Color.fromRGBO(136,14,79, .4),
+400:Color.fromRGBO(136,14,79, .5),
+500:Color.fromRGBO(136,14,79, .6),
+600:Color.fromRGBO(136,14,79, .7),
+700:Color.fromRGBO(136,14,79, .8),
+800:Color.fromRGBO(136,14,79, .9),
+900:Color.fromRGBO(136,14,79, 1),
+};
 
 void main() {
   runApp(MyApp());
@@ -25,6 +38,11 @@ void main() {
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
+
+MaterialColor colorAppBar = MaterialColor(0xFFFFAFAFA, color);
+MaterialColor colorPickEnable = MaterialColor(0xFFFF6C63FF, color);
+MaterialColor colorPickDisable = MaterialColor(0xFFFFE6E6E6, color);
+
   @override
   Widget build(BuildContext context) {
     return Provider(
@@ -34,9 +52,13 @@ class MyApp extends StatelessWidget {
         title: 'Flutter Demo',
         
         theme: ThemeData(
-          
-          primarySwatch: Colors.blue,
-          accentColor: Colors.black,
+           
+          primaryColor: colorAppBar,
+          //primarySwatch: Colors.blue,
+          //bottomAppBarColor: Colors.yellow,
+          buttonColor: Colors.red,
+          accentColor: colorPickEnable,
+          cursorColor: colorPickDisable,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         initialRoute: 'SelectorPantalla',

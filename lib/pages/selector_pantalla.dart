@@ -1,3 +1,4 @@
+import 'package:audicol_fiber/widgets/header.dart';
 import 'package:flutter/material.dart';
 import 'package:audicol_fiber/bloc/peticiones_firebase.dart';
 import 'package:audicol_fiber/pages/Ordenes_Servicio/tiposDeOS.dart';
@@ -17,9 +18,12 @@ class SelectorPantalla extends StatefulWidget {
 }
 
 class _SelectorPantallaState extends State<SelectorPantalla> {
+  
   PageController pageController;
   int pageIndex = 0;
   DatosRedFibra datosRedFibra = DatosRedFibra();
+  
+  
   @override
   void initState() {
     super.initState();
@@ -32,20 +36,23 @@ class _SelectorPantallaState extends State<SelectorPantalla> {
     } else {
       pageIndex = 2;
     }
-    //datosRedFibra.getClienteAux('liceo celedon');
+   
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: header('', context),
+        drawer: _crearMenu(),
         body: PageView(
-          //pageSnapping: false,
+          
           physics: NeverScrollableScrollPhysics(),
           children: <Widget>[
-            ResgistrarRuta(),
             PantallaOrdenesServicio(),
+            ResgistrarRuta(),
             CrearOS(),
-            //CalculoCoordenada(cliente: widget.cliente),
+            
+           
           ],
           controller: pageController,
           onPageChanged: cuandoPaginaCambie,
@@ -53,13 +60,47 @@ class _SelectorPantallaState extends State<SelectorPantalla> {
         bottomNavigationBar: _bottomNavigationBar(context));
   }
 
+  Drawer _crearMenu() {
+    
+    final drawerHeader= UserAccountsDrawerHeader(
+     
+      accountName: Text('usuario'),
+      accountEmail: Text('usuario@audicol.com'),
+      currentAccountPicture:Container(
+        decoration: BoxDecoration(
+          //color: new Color(0xFF0062ac),
+          borderRadius: BorderRadius.circular(10.0),
+          image: DecorationImage(
+             image: AssetImage('assets/audicol.PNG'),
+             fit: BoxFit.cover 
+          )
+        ),      
+      )
+       
+        
+      
+    ); 
+    return Drawer(
+      
+      child: ListView(
+        padding: EdgeInsets.zero,
+        children: [
+         drawerHeader
+        ],
+      ),
+    );
+  }
+
+             
+              
+
   Widget _bottomNavigationBar(BuildContext context) {
     return Theme(
       data: Theme.of(context).copyWith(
-          canvasColor: Color.fromRGBO(55, 57, 84, 1.0),
-          primaryColor: Colors.pinkAccent,
+          canvasColor: Theme.of(context).primaryColor,
+          primaryColor: Theme.of(context).accentColor,
           textTheme: Theme.of(context).textTheme.copyWith(
-              caption: TextStyle(color: Color.fromRGBO(116, 117, 152, 1.0)))),
+              caption: TextStyle(color: Theme.of(context).cursorColor))),
       child: BottomNavigationBar(
         currentIndex: pageIndex,
         onTap: onTapChangePage,

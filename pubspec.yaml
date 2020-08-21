@@ -43,6 +43,7 @@ dependencies:
   uuid:
   flutter_swiper: ^1.1.6
   fluttertoast: ^7.0.1
+  jumping_bottom_nav_bar_flutter: ^0.0.2
 
 dev_dependencies:
   flutter_test:

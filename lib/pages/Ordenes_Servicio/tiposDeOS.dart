@@ -56,26 +56,7 @@ class _CrearOSState extends State<CrearOS> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-         title: Center(
-           child: Text(
-                'Crear Orden de Servicio',
-                 style: TextStyle(
-                          fontSize: 15.0,
-                          color: Colors.grey[400]
-                  )
-               
-        ),
-         ), 
-        backgroundColor: Colors.white24,
-        elevation: 0.0,
-        actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.account_circle,size: 30.0, color: Colors.blue,),
-              onPressed: (){},
-            )
-        ],
-      ),
+     
       body: Center(
         child: SingleChildScrollView(
           padding: EdgeInsets.all(30),
@@ -85,9 +66,7 @@ class _CrearOSState extends State<CrearOS> {
               ListTile(
                 title: Column(
                   children: [
-                    Text('Seleccione el tipo de orden de servicio:',
-                        style: TextStyle(
-                            fontSize: 22.0, fontWeight: FontWeight.bold)),
+                    Text('Seleccione el tipo de orden de servicio:',style: TextStyle(fontSize: 22.0, fontWeight: FontWeight.bold,color: Colors.grey[600])),
                     SizedBox(height: 50),
                     DropdownButton(
                       value: osId,
@@ -117,17 +96,18 @@ class _CrearOSState extends State<CrearOS> {
       alignment: MainAxisAlignment.center,
       children: <Widget>[
         RaisedButton(
-          color: Colors.blueAccent.withOpacity(0.5),
-          elevation: 15,
-          child: Text('Siguiente'),
-          onPressed: () {
-            //print('----------------------');
+            color: Theme.of(context).buttonColor,
+            elevation: 15,
+            child: Text('Siguiente'),
+            onPressed: () {
+              //print('----------------------');
 
-            if (osId.contains('Adicion de Fibra Optica')) {
-              Navigator.pushNamed(context, 'DetallesOSadicionFibra');
-            }
-          },
-        )
+              if (osId.contains('Adicion de Fibra Optica')) {
+                Navigator.pushNamed(context, 'DetallesOSadicionFibra');
+              }
+            },
+          ),
+        
       ],
     );
   }

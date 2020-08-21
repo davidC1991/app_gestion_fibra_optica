@@ -28,14 +28,14 @@ class ResgistrarRuta extends StatelessWidget {
           // color: Colors.blue.withOpacity(0.2),
           height: double.infinity,
           width: double.infinity,
-          decoration: BoxDecoration(
+         /*  decoration: BoxDecoration(
               gradient: LinearGradient(
                   begin: FractionalOffset(0.0, 0.6),
                   end: FractionalOffset(0.0, 1.0),
                   colors: [
                 Color.fromRGBO(52, 54, 101, 1.0),
                 Color.fromRGBO(35, 37, 57, 1.0)
-              ])),
+              ])), */
           child: _tablaOpciones(context),
         ),
       ),
@@ -98,7 +98,7 @@ class ResgistrarRuta extends StatelessWidget {
           height: 150.0,
           margin: EdgeInsets.all(10.0),
           decoration: BoxDecoration(
-              color: Color.fromRGBO(62, 66, 107, 0.7).withOpacity(0.7),
+              color: Theme.of(context).cardColor,
               borderRadius: BorderRadius.circular(20.0)),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -108,7 +108,7 @@ class ResgistrarRuta extends StatelessWidget {
                 radius: 35.0,
                 child: Icon(icono, color: Colors.white, size: 30.0),
               ),
-              Text(texto, style: TextStyle(color: Colors.white)),
+              Text(texto, style: TextStyle(color: Theme.of(context).textSelectionColor)),
             ],
           ),
         ),

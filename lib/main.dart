@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
 
 MaterialColor colorAppBar = MaterialColor(0xFFFFAFAFA, color);
-MaterialColor colorPickEnable = MaterialColor(0xFFFF6C63FF, color);
+MaterialColor morado = MaterialColor(0xFFFF6C63FF, color);
 MaterialColor colorPickDisable = MaterialColor(0xFFFFE6E6E6, color);
 
   @override
@@ -56,8 +56,11 @@ MaterialColor colorPickDisable = MaterialColor(0xFFFFE6E6E6, color);
           primaryColor: colorAppBar,
           //primarySwatch: Colors.blue,
           //bottomAppBarColor: Colors.yellow,
-          buttonColor: Colors.red,
-          accentColor: colorPickEnable,
+          textSelectionColor: Colors.grey[600],
+          cardColor: Colors.blue.withOpacity(0.5),
+        
+          buttonColor: morado,
+          accentColor: morado,
           cursorColor: colorPickDisable,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),

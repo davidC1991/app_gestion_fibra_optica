@@ -259,7 +259,8 @@ class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
         'objetivo' : objetivo,
         'tipo': 'Adición de fibra óptica',
         'Estado': 'No iniciada',
-        'Prioridad': prioridadID
+        'Prioridad': prioridadID,
+        'insumos': 'Bodega'
         
       });
 
@@ -275,6 +276,7 @@ class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
       idDiasController.clear();
       objetivoController.clear();
      // longitudController.clear();
+     Navigator.pop(context);
     } else {
       Fluttertoast.showToast(
           msg: 'LLene todos los campos!',

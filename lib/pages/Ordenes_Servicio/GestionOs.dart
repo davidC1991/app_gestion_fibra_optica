@@ -1,12 +1,15 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+
 class GestionOrdenServicio extends StatefulWidget {
   @override
   _GestionOrdenServicioState createState() => _GestionOrdenServicioState();
 }
 
 class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
+ 
+ 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -27,9 +30,12 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
             )
         ],
       ),
-      body: Center(child: Text('gestion orden de servicio')),
+      body:  Text("THIRD TAB"),
     );
   }
 }
+            
+        
+      
        
                

@@ -1,4 +1,6 @@
 import 'package:audicol_fiber/widgets/header.dart';
+import 'package:audicol_fiber/widgets/menu.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:audicol_fiber/bloc/peticiones_firebase.dart';
 import 'package:audicol_fiber/pages/Ordenes_Servicio/tiposDeOS.dart';
@@ -7,7 +9,7 @@ import 'package:audicol_fiber/pages/configuracion_rutas.dart';
 import 'package:jumping_bottom_nav_bar_flutter/jumping_bottom_nav_bar_flutter.dart';
 import 'package:jumping_bottom_nav_bar_flutter/source/tab_icon.dart';
 
-
+final inventario = Firestore.instance.collection('inventario');
 
 // ignore: must_be_immutable
 class SelectorPantalla extends StatefulWidget {
@@ -86,7 +88,7 @@ class _SelectorPantallaState extends State<SelectorPantalla> {
       length: iconList.length,
       child: Scaffold(
           appBar: header(tituloPagina, context),
-          drawer: _crearMenu(context),
+          drawer: Menu(),
           body: TabBarView(
             children: <Widget>[
               PantallaOrdenesServicio(),
@@ -111,94 +113,11 @@ class _SelectorPantallaState extends State<SelectorPantalla> {
       )
     );
   }
+}
             
          
               
              
            
 
-  Drawer _crearMenu(BuildContext context) {
-    
-    final drawerHeader= UserAccountsDrawerHeader(
-     
-      accountName: Text('Jesus David Callejas C.', style: TextStyle(color:Theme.of(context).accentColor, fontWeight: FontWeight.bold, fontSize: 15.0  ),),
-      accountEmail: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Ingeniero Electrónico'),
-          Text('CallejasDavid@audicol.com'),
-        ],
-      ),
-      currentAccountPicture:Container(
-        margin: EdgeInsets.all(10),
-        alignment: Alignment.centerLeft,
-        //padding: EdgeInsets.only(bottom: 40.0),
-        decoration: BoxDecoration(
-          //color: new Color(0xFF0062ac),
-          borderRadius: BorderRadius.circular(10.0),
-          image: DecorationImage(
-             image: AssetImage('assets/audicol.PNG'),
-             fit: BoxFit.cover 
-          )
-        ),      
-      )
-       
-        
-      
-    ); 
-    return Drawer(
-      
-      child: ListView(
-        padding: EdgeInsets.zero,
-        children: [
-         drawerHeader
-        ],
-      ),
-    );
-  }
-
-             
-              
-/* 
-  Widget _bottomNavigationBar(BuildContext context) {
-    return Theme(
-      data: Theme.of(context).copyWith(
-          canvasColor: Theme.of(context).primaryColor,
-          primaryColor: Theme.of(context).accentColor,
-          textTheme: Theme.of(context).textTheme.copyWith(
-              caption: TextStyle(color: Theme.of(context).cursorColor))),
-      child: BottomNavigationBar(
-        currentIndex: pageIndex,
-        onTap: onTapChangePage,
-        items: [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.toll, size: 30.0), title: Text('Agregar')),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.pan_tool, size: 30.0), title: Text('Ajustes')),
-          BottomNavigationBarItem(
-              icon: Icon(Icons.supervised_user_circle, size: 30.0),
-              title: Text('Clientes'))
-        ],
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    pageController.dispose();
-    super.dispose();
-  }
-
-  cuandoPaginaCambie(int pageIndex) {
-    setState(() {
-      this.pageIndex = pageIndex;
-    });
-    // print('pagina actual: $pageIndex');
-  }
-
-  onTapChangePage(int pageIndex) {
-    //pageController.jumpToPage(pageIndex);
-    pageController.animateToPage(pageIndex,
-        duration: Duration(milliseconds: 200), curve: Curves.decelerate);
-  } */
-}
+  

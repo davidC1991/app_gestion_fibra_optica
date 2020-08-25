@@ -16,7 +16,7 @@ final ordenesServicio = Firestore.instance.collection('OrdenesServicio');
 // ignore: must_be_immutable
 class CalculoCoordenada extends StatefulWidget {
   String cliente = 'a';
-  CalculoCoordenada({Key key, @required this.cliente}) : super(key: key);
+  CalculoCoordenada({this.cliente});
   @override
   _CalculoCoordenadaState createState() => _CalculoCoordenadaState();
 }

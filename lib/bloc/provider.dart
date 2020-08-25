@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:audicol_fiber/bloc/login_bloc.dart';
+export 'package:audicol_fiber/bloc/login_bloc.dart';
 import 'package:audicol_fiber/bloc/dbBloc.dart';
+export 'package:audicol_fiber/bloc/dbBloc.dart';
 
-import 'package:audicol_fiber/bloc/peticiones_firebase.dart';
-export 'package:audicol_fiber/bloc/peticiones_firebase.dart';
 
 
 class Provider extends InheritedWidget{
 
-  static Provider _instancia;
+ 
+  final _loginBloc = new LoginBloc();
   final _firebaseBloc = new FirebaseBloc();
-
+   static Provider _instancia;
 
   factory Provider({Key key, Widget child}){
     if (_instancia==null){
@@ -25,6 +27,9 @@ class Provider extends InheritedWidget{
   @override
   bool updateShouldNotify(InheritedWidget oldWidget) => true;
 
+   static LoginBloc of (BuildContext context){
+     return context.dependOnInheritedWidgetOfExactType<Provider>()._loginBloc;
+  }
   
   static FirebaseBloc firebaseBloc (BuildContext context){
     return (context.dependOnInheritedWidgetOfExactType<Provider>()._firebaseBloc);

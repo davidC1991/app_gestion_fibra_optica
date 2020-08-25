@@ -9,8 +9,12 @@ class FirebaseBloc{
   DatosRedFibra datosRedFibra= DatosRedFibra();
 
   final _ordenesServicioController = new BehaviorSubject<List<DocumentSnapshot>>();
+  final itemsSeleccionadosController = new BehaviorSubject<DocumentSnapshot>();
+  final itemController = new BehaviorSubject<String>();
   
   Stream<List<DocumentSnapshot>> get ordenServicioStream => _ordenesServicioController;
+  Stream<DocumentSnapshot> get itemsSeleccionadosStream => itemsSeleccionadosController;
+  Stream<String> get itemStream => itemController;
    
 
   getOservicios()async {
@@ -20,15 +24,17 @@ class FirebaseBloc{
 
     // print(oSs.length);
   }
-    
-    
-     
-  
-  
 
-
- dispose(){
+  getItemsSeleccionados(String item) async {
+     itemController.sink.add(item);
+   //final items = datosRedFibra.getListaProductos();
+    // itemsSeleccionadosController.sink.add(items);
+  }
+    
+   dispose(){
     _ordenesServicioController?.close();
+    itemsSeleccionadosController?.close();
+    itemController?.close();
   }
 
 

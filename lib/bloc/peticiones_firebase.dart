@@ -1,3 +1,4 @@
+import 'package:audicol_fiber/pages/selector_pantalla.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:audicol_fiber/pages/calculo_punto.dart';
 import 'package:geo/geo.dart' as geo;
@@ -105,6 +106,31 @@ class DatosRedFibra {
     //print(snapshot.documents[0].data[snapshot.documents[0].documentID]['latitud']);
     return listReservas;
   }
+
+  getItemInventario()async{
+     QuerySnapshot snapshot = await inventario
+        .document('productos')
+        .collection('productoA')
+        .getDocuments();
+
+        print('snapshot: ${snapshot.documents[0].data}');
+        return snapshot.documents;
+  }
+
+  Future<List<DocumentSnapshot>> getListaProductos()async{
+
+     QuerySnapshot snapshot = await inventario
+        .document('productos')
+        .collection('productoA')
+        .getDocuments();
+       
+     
+        return snapshot.documents;
+  }
+       
+          
+        
+     
 
   getSangria(String cliente, List<dynamic> rutasCliente, String sangria) async {
     QuerySnapshot snapshot;

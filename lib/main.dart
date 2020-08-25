@@ -1,7 +1,12 @@
 import 'package:audicol_fiber/bloc/provider.dart';
 import 'package:audicol_fiber/pages/Ordenes_Servicio/formularioOS_adicionFibra.dart';
 import 'package:audicol_fiber/pages/Ordenes_Servicio/tiposDeOS.dart';
+import 'package:audicol_fiber/pages/calculo_punto.dart';
+import 'package:audicol_fiber/pages/inicio_sesion/login.dart';
+import 'package:audicol_fiber/pages/inicio_sesion/registro.dart';
+import 'package:audicol_fiber/pages/inventario/crear_producto.dart';
 import 'package:audicol_fiber/pages/selector_pantalla.dart';
+import 'package:audicol_fiber/preferencias/preferencias_usuarios.dart';
 import 'package:flutter/material.dart';
 //import 'package:provider/provider.dart';
 //import 'package:audicol_fiber/pages/calculo_punto.dart';
@@ -32,14 +37,18 @@ Map<int, Color> color =
 900:Color.fromRGBO(136,14,79, 1),
 };
 
-void main() {
+void main()async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final prefs = new PreferenciasUsuario();
+  await prefs.initPrefs();
   runApp(MyApp());
 }
 
+// ignore: must_be_immutable
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
 
-MaterialColor colorAppBar = MaterialColor(0xFFFFAFAFA, color);
+MaterialColor blanco = MaterialColor(0xFFFFAFAFA, color);
 MaterialColor morado = MaterialColor(0xFFFF6C63FF, color);
 MaterialColor colorPickDisable = MaterialColor(0xFFFFE6E6E6, color);
 
@@ -53,18 +62,25 @@ MaterialColor colorPickDisable = MaterialColor(0xFFFFE6E6E6, color);
         
         theme: ThemeData(
            
-          primaryColor: colorAppBar,
+          primaryColor: blanco,
+          hoverColor: Colors.blue,
           //primarySwatch: Colors.blue,
           //bottomAppBarColor: Colors.yellow,
           textSelectionColor: Colors.grey[600],
           cardColor: Colors.blue.withOpacity(0.5),
-        
+          textTheme: TextTheme(
+            headline1: TextStyle(
+              fontWeight: FontWeight.w400,
+              fontSize: 15,
+              color: Colors.grey[600]
+            )
+          ),
           buttonColor: morado,
           accentColor: morado,
           cursorColor: colorPickDisable,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        initialRoute: 'SelectorPantalla',
+        initialRoute: 'LoginPage',
         routes: {
           //'mapa': (BuildContext context) => MapaRutas(),
           //'calculoCoordenada': (BuildContext context) => CalculoCoordenada(),
@@ -78,6 +94,12 @@ MaterialColor colorPickDisable = MaterialColor(0xFFFFE6E6E6, color);
           'CrearOS': (BuildContext context) => CrearOS(),
           'DetallesOSadicionFibra': (BuildContext context) => DetallesOSadicionFibra(),
           'PantallaOrdenesServicio': (BuildContext context) => PantallaOrdenesServicio(),
+          'LoginPage': (BuildContext context) => LoginPage(),
+          'RegistroPage': (BuildContext context) => RegistroPage(),
+          'CalculoCoordenada': (BuildContext context) => CalculoCoordenada(),
+          'CrearProducto': (BuildContext context) => CrearProducto()
+          
+          
 
           
         },

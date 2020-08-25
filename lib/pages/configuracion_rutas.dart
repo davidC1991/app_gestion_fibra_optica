@@ -98,7 +98,7 @@ class ResgistrarRuta extends StatelessWidget {
           height: 150.0,
           margin: EdgeInsets.all(10.0),
           decoration: BoxDecoration(
-              color: Theme.of(context).cardColor,
+              color: Colors.blue.withOpacity(0.1),
               borderRadius: BorderRadius.circular(20.0)),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceAround,

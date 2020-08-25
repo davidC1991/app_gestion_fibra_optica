@@ -21,12 +21,12 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
   int cont_tarjetas=0;
   List<Color> coloresTarjetas=[
     Colors.blue.withOpacity(0.1),
+   /*  Colors.blue.withOpacity(0.1),
     Colors.blue.withOpacity(0.1),
-    Colors.blue.withOpacity(0.1),
-    Colors.blue.withOpacity(0.1),
-    //Colors.purple.withOpacity(0.1),
-    //Colors.green.withOpacity(0.1),
-    //Colors.grey.withOpacity(0.1)
+    Colors.blue.withOpacity(0.1), */
+    Colors.purple.withOpacity(0.1),
+    Colors.green.withOpacity(0.1),
+    Colors.grey.withOpacity(0.1)
   ];
 
   static const estadoOs = [
@@ -46,16 +46,15 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
   @override
   void initState() {
     super.initState();
-    
+    dbBloc.getOservicios();
     
   }
 
   @override
   Widget build(BuildContext context) {
-    dbBloc.getOservicios();
+    
     return Scaffold(
-     
-      body:  streamAgendaOrdenes()
+     body:  streamAgendaOrdenes()
   );
   }
 
@@ -122,7 +121,15 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
             margin: EdgeInsets.only(left:20.0,right: 20.0,top: 10,bottom: 10),
              decoration: BoxDecoration(
               color: color,
-              borderRadius: BorderRadius.circular(15.0)
+              borderRadius: BorderRadius.circular(10.0),
+              boxShadow: <BoxShadow>[
+                          BoxShadow(
+                          color: Colors.white,
+                          blurRadius: 1.0,
+                          offset: Offset(2.0, 2.0),
+                          spreadRadius: 1.0
+                          ),
+                       ]  
              ), 
              child: Column(
              mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -221,8 +228,16 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
                     //color: Color.fromRGBO(62,66,107,0.7).withOpacity(0.2),
                     color: Colors.white,
                     borderRadius: BorderRadius.only(bottomLeft:  Radius.circular(10),bottomRight:  Radius.circular(10)),
+                       boxShadow: <BoxShadow>[
+                          BoxShadow(
+                          color: Colors.black12,
+                          blurRadius: 5.0,
+                          offset: Offset(2.0, 2.0),
+                          spreadRadius: 1.0
+                          ),
+                       ] 
+                   ), 
                     
-                  ), 
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     mainAxisSize: MainAxisSize.max,

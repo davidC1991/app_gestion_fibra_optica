@@ -62,8 +62,8 @@ MaterialColor colorPickDisable = MaterialColor(0xFFFFE6E6E6, color);
         
         theme: ThemeData(
            
-          primaryColor: blanco,
-          hoverColor: Colors.blue,
+          primaryColor: morado,
+          //hoverColor: Colors.blue,
           //primarySwatch: Colors.blue,
           //bottomAppBarColor: Colors.yellow,
           textSelectionColor: Colors.grey[600],
@@ -80,7 +80,7 @@ MaterialColor colorPickDisable = MaterialColor(0xFFFFE6E6E6, color);
           cursorColor: colorPickDisable,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        initialRoute: 'LoginPage',
+        initialRoute: 'SelectorPantalla',
         routes: {
           //'mapa': (BuildContext context) => MapaRutas(),
           //'calculoCoordenada': (BuildContext context) => CalculoCoordenada(),

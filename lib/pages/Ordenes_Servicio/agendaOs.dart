@@ -15,8 +15,9 @@ class PantallaOrdenesServicio extends StatefulWidget {
 class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
 
 
-  DatosRedFibra datosRedFibra= DatosRedFibra();
+  
   FirebaseBloc dbBloc = FirebaseBloc();
+  
   Color colorText= Colors.grey[500];
   int cont_tarjetas=0;
   List<Color> coloresTarjetas=[

@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 AppBar header(String titulo, BuildContext context){
   return AppBar(
      title: Center(child: Text(titulo,style: TextStyle(fontSize: 17.0,color: Colors.grey[600]))),  
-     //iconTheme: CupertinoIconThemeData(color: Theme.of(context).accentColor),
+     iconTheme: CupertinoIconThemeData(color: Theme.of(context).accentColor),
      //shadowColor: Colors.red,
-     //backgroundColor: Colors.white70,
+     backgroundColor: Colors.white70,
      elevation: 0.0,
      actions: <Widget>[
             IconButton(

@@ -227,6 +227,7 @@ class _CrearProductoState extends State<CrearProducto> {
     }
 
   handleTakePhoto() async {
+    
     file= await takePhoto.getFoto(context);
     setState((){ }); 
   }  

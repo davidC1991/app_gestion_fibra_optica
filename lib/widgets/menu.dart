@@ -7,7 +7,7 @@ class Menu extends StatelessWidget {
 
    final drawerHeader= UserAccountsDrawerHeader(
      
-      accountName: Text('Jesus David Callejas C.', style: TextStyle(color:Colors.blue, fontWeight: FontWeight.bold, fontSize: 15.0  ),),
+      accountName: Text('Jesus David Callejas C.', style: TextStyle(color:Colors.white, fontWeight: FontWeight.bold, fontSize: 15.0  ),),
       accountEmail: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

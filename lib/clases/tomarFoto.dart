@@ -20,7 +20,7 @@ class TomarFoto{
  final picker = ImagePicker();
 
  Future<File> getFoto(BuildContext context)async {
-      Navigator.pop(context);
+     Navigator.pop(context);
      final file = await picker.getImage(
       source: ImageSource.camera,
       maxHeight: 675,

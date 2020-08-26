@@ -1,5 +1,6 @@
 import 'package:audicol_fiber/bloc/dbBloc.dart';
 import 'package:audicol_fiber/bloc/peticiones_firebase.dart';
+import 'package:audicol_fiber/bloc/provider.dart';
 import 'package:audicol_fiber/pages/Ordenes_Servicio/GestionOs.dart';
 import 'package:audicol_fiber/pages/selector_pantalla.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,7 +9,7 @@ import 'package:flutter/material.dart';
 class DataSearch_OS extends SearchDelegate {
   String seleccion = '';
   DatosRedFibra datosRedFibra = new DatosRedFibra();
-  FirebaseBloc firebaseBloc = FirebaseBloc();
+ 
   @override
   List<Widget> buildActions(BuildContext context) {
     // las acciones de nuestro appbar
@@ -52,6 +53,7 @@ class DataSearch_OS extends SearchDelegate {
   @override
   Widget buildSuggestions(BuildContext context) {
     //son las sugerencias que aparecen cuando la persona escribe
+    final firebaseBloc  = Provider.firebaseBloc(context);
 
     if (query.isEmpty) {
       return Container();
@@ -89,12 +91,13 @@ class DataSearch_OS extends SearchDelegate {
                 int i= listaItem.indexWhere((element) => element==item);
                 print('------>i$i');
                 //firebaseBloc.itemsSeleccionadosController.sink.add(datos[i]);
-               firebaseBloc.getItemsSeleccionados(item);
+                firebaseBloc.getItemsSeleccionados(datos[i]);
+               //firebaseBloc.getItemsSeleccionados('burro');
                 Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                            GestionOrdenServicio(item:item, datos:datos[i])));
+                            GestionOrdenServicio()));
 
                 //Navigator.pop(context);
               },

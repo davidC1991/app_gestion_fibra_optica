@@ -11,10 +11,14 @@ class FirebaseBloc{
   final _ordenesServicioController = new BehaviorSubject<List<DocumentSnapshot>>();
   final itemsSeleccionadosController = new BehaviorSubject<DocumentSnapshot>();
   final itemController = new BehaviorSubject<String>();
+  final anchoPantallaController = new BehaviorSubject<double>();
+  final altoPantallaController = new BehaviorSubject<double>();
   
   Stream<List<DocumentSnapshot>> get ordenServicioStream => _ordenesServicioController;
   Stream<DocumentSnapshot> get itemsSeleccionadosStream => itemsSeleccionadosController;
   Stream<String> get itemStream => itemController;
+  Stream<double> get altoPantallaStream => altoPantallaController;
+  Stream<double> get anchoPantallaStream => anchoPantallaController;
    
 
   getOservicios()async {
@@ -25,8 +29,9 @@ class FirebaseBloc{
     // print(oSs.length);
   }
 
-  getItemsSeleccionados(String item) async {
-     itemController.sink.add(item);
+  getItemsSeleccionados(DocumentSnapshot datositem) async {
+    print('entro a getItemSeleccionado--$datositem');
+     itemsSeleccionadosController.sink.add(datositem);
    //final items = datosRedFibra.getListaProductos();
     // itemsSeleccionadosController.sink.add(items);
   }
@@ -35,6 +40,8 @@ class FirebaseBloc{
     _ordenesServicioController?.close();
     itemsSeleccionadosController?.close();
     itemController?.close();
+    anchoPantallaController?.close();
+    altoPantallaController?.close();
   }
 
 

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:audicol_fiber/bloc/peticiones_firebase.dart';
@@ -16,6 +18,8 @@ class FirebaseBloc{
   final altoPantallaController = new BehaviorSubject<double>();
   final checkBoxAereaController = new BehaviorSubject<bool>();
   final checkBoxCanalizadaController = new BehaviorSubject<bool>();
+  final fotoCajaEmpalmeController = new BehaviorSubject<File>();
+  final fotoPosteController = new BehaviorSubject<File>();
   
    
    final lineaTransmisionPosteIdController = new BehaviorSubject<String>();
@@ -41,6 +45,8 @@ class FirebaseBloc{
   Stream<String> get tipoPosteIDStream => tipoPosteIDController;
   Stream<String> get materialPosteIDStream => materialPosteIDController;
   Stream<String> get estadoPostesStream => estadoPostesIDController;
+  Stream<File> get fotoCajaEmpalmeStream => fotoCajaEmpalmeController;
+  Stream<File> get fotoPosteEmpalmeStream => fotoPosteController;
 
    
 
@@ -74,6 +80,8 @@ class FirebaseBloc{
     materialPosteIDController?.close();
     estadoPostesIDController?.close();
     checkBoxCanalizadaController?.close();
+    fotoCajaEmpalmeController?.close();
+    fotoPosteController?.close();
   }
 
 

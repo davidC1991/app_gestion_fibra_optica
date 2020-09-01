@@ -268,7 +268,7 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
                         setState(() {
                           estadoId=newValue;
                           if(estadoId=='Iniciar'){
-                             Navigator.push(context, MaterialPageRoute(builder: (context)=> GestionOrdenServicio()));
+                             Navigator.push(context, MaterialPageRoute(builder: (context)=> GestionOrdenServicio(numeroOrdenS:datoOs.data['NumeroOS'])));
                              }
                         });
                         },

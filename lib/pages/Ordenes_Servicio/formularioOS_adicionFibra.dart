@@ -1,3 +1,4 @@
+import 'package:audicol_fiber/bloc/peticiones_firebase.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:audicol_fiber/pages/calculo_punto.dart';
@@ -15,10 +16,10 @@ class DetallesOSadicionFibra extends StatefulWidget {
 
 class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
  
- TextEditingController idOSController = TextEditingController();
+ 
  TextEditingController idDiasController = TextEditingController();
  TextEditingController objetivoController = TextEditingController();
-
+ int numeroOrdenServicio;
  
 
  static const contratistas = [
@@ -66,6 +67,7 @@ class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
 
   String prioridadID = 'Media';
 
+  DatosRedFibra datosRedFibra= DatosRedFibra();
 
   @override
   Widget build(BuildContext context) {
@@ -125,17 +127,7 @@ class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
             
                 
             
-            TextFormField(
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10))
-                  ),
-                  filled: false,
-                  hintText: '',
-                  labelText: 'Numero de Orden de Servicio'),
-              controller: idOSController,
-            ),
+           
             SizedBox(height: 20),
             TextFormField(
               keyboardType: TextInputType.number,
@@ -237,53 +229,71 @@ class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
     );
   }
 
-  void sendBaseDatos() {
+  void sendBaseDatos() async{
     //String idRuta = idRutaController.text;
     //String idReserva = proyectosID;
-    String idOS = idOSController.text;
+    String idOS ='';
     String tiempoEstimado = idDiasController.text;
     String objetivo = objetivoController.text;
   
+    idOS= await datosRedFibra.getUltimoNumueroOrdenes();
 
-   
+    print('idOs: $idOS');
+    int numeroOs= int.parse(idOS)+1;
+    print('numeroOs: $numeroOs');
+
+    if(numeroOs>9){
+      idOS='000' + numeroOs.toString();
+    }else if(numeroOs>99){
+      idOS='00' + numeroOs.toString();
+    }else if(numeroOs>999){
+      idOS='0' + numeroOs.toString();
+    }else{
+      idOS='0000' + numeroOs.toString();
+    }
+  
+    
+
+
     if (tiempoEstimado.isNotEmpty || idOS.isNotEmpty || objetivo.isNotEmpty) {
 
       ordenesServicio
           .document(idOS)
           .setData({
         
-        'proyecto':proyectosID,
-        'NumeroOS': double.parse(idOS),
-        'tiempoEstimado': double.parse(tiempoEstimado),
-        'contratista': contratistasID,
-        'objetivo' : objetivo,
-        'tipo': 'Adición de fibra óptica',
-        'Estado': 'No iniciada',
-        'Prioridad': prioridadID,
-        'insumos': 'Bodega'
+        'proyecto'       : proyectosID,
+        'NumeroOS'       : idOS,
+        'tiempoEstimado' : double.parse(tiempoEstimado),
+        'contratista'    : contratistasID,
+        'objetivo'       : objetivo,
+        'tipo'           : 'Adición de fibra óptica',
+        'Estado'         : 'No iniciada',
+        'Prioridad'      : prioridadID,
+        'insumos'        : 'Bodega',
+        'timestamp'      : DateTime.now(),
         
       });
 
       Fluttertoast.showToast(
-          msg: 'La Orden de serivio fue guardada con exito!',
+          msg: 'La Orden de servicio fue guardada con exito!',
           toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          fontSize: 10,
-          backgroundColor: Colors.grey);
+          gravity: ToastGravity.CENTER,
+          fontSize: 13,
+          backgroundColor: Theme.of(context).primaryColor
+      );
 
-      //idNombreProyecto.clear();
-      idOSController.clear();
+     
       idDiasController.clear();
       objetivoController.clear();
-     // longitudController.clear();
-     Navigator.pop(context);
+      Navigator.pop(context);
     } else {
       Fluttertoast.showToast(
           msg: 'LLene todos los campos!',
           toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.BOTTOM,
-          fontSize: 10,
-          backgroundColor: Colors.grey);
+          gravity: ToastGravity.CENTER,
+          fontSize: 13,
+          backgroundColor: Theme.of(context).primaryColor
+      );
     }
   }
 }

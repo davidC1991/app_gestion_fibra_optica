@@ -41,6 +41,7 @@ class TomarFoto{
     
     final tempDir = await getTemporaryDirectory();
     print('file--------------3---------------->$file');
+    productoId= Uuid().v4();
     final path = tempDir.path;
     Im.Image imageFile = Im.decodeImage(file.readAsBytesSync());
     final compressedImageFile= File('$path/img_$productoId.jpg')..writeAsBytesSync(Im.encodeJpg(imageFile,quality: 85));

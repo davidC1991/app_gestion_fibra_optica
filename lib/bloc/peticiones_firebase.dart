@@ -4,7 +4,21 @@ import 'package:audicol_fiber/pages/calculo_punto.dart';
 import 'package:geo/geo.dart' as geo;
 
 class DatosRedFibra {
-
+  
+  
+  getGestionOs()async{
+    
+   /*   QuerySnapshot snapshot = await ordenesServicio.
+                                    document()  */
+  }
+ 
+  getNumeroPoste()async{
+    print('-------fff--------');
+    QuerySnapshot snapshot= await ordenesServicio.document('00001').get().then((value){
+      print(value.documentID);
+    });
+     print(snapshot);
+   }
 
    getOrdenesServicio()async{
 
@@ -15,7 +29,19 @@ class DatosRedFibra {
       return oSs;
    }
            
-     
+  Future<String> getUltimoNumueroOrdenes()async{
+    String ultimoNumeroOrden='';
+    QuerySnapshot snapshot= await ordenesServicio.getDocuments();
+    if(snapshot.documents.length==1){
+      ultimoNumeroOrden=snapshot.documents[0].documentID;
+    }else{
+       ultimoNumeroOrden=snapshot.documents[snapshot.documents.length-1].documentID;
+    }
+    print(ultimoNumeroOrden);
+    return ultimoNumeroOrden;
+  }  
+    
+
       
 
 
@@ -196,21 +222,11 @@ class DatosRedFibra {
       print(encode);
     }
 
-    //---------------------------------------------
+ 
+  
 
-    /*  listLatLng.clear();
-      for (var j = 0; j < verticesC.documents.length; j++) {
-        lat = verticesC.documents[j].data['latitud'];
-        lng = verticesC.documents[j].data['longitud'];
-        coordenada = geo.LatLng(lat, lng);
-        listLatLng.add(coordenada);
-      }
 
-      encode = const geo.PolylineCodec().encode(listLatLng);
-
-      rutas
-          .document(_rutas.documents[i].documentID)
-          .setData({'polyline': encode});
-      print(encode); */
+    
+ 
   }
 }

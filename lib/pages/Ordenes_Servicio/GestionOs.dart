@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:audicol_fiber/pages/Ordenes_Servicio/detallePoste.dart';
 import 'package:audicol_fiber/pages/calculo_punto.dart';
 import 'package:audicol_fiber/pages/selector_pantalla.dart';
 import 'package:audicol_fiber/widgets/header.dart';
@@ -8,15 +9,19 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:audicol_fiber/bloc/provider.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:audicol_fiber/clases/tomarFoto.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:uuid/uuid.dart';
+import 'package:geolocator/geolocator.dart';
 
 
 class GestionOrdenServicio extends StatefulWidget {
  String numeroOrdenS;
- GestionOrdenServicio({@required this.numeroOrdenS});
+ String estado;
+ GestionOrdenServicio({@required this.numeroOrdenS, @required this.estado});
   
   @override
   _GestionOrdenServicioState createState() => _GestionOrdenServicioState();
@@ -45,6 +50,7 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
  
  
  DocumentSnapshot datosItem;
+ String estadoOrdenServicio='';
  String mediaUrlPoste='';
  String mediaUrlCajaEmpalme='';
  bool gestionando=false;
@@ -55,11 +61,22 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
  bool checkBoxCanalizada= false;
  final picker = ImagePicker();
  String posteSerialDB= Uuid().v4();
-
+ String latitud='',longitud='';
+ int cont_aux=0;
+ bool cargando=false;
  
 
-  TomarFoto takePhoto=  TomarFoto();
+  static const spinkit = SpinKitRotatingCircle(
+  color: Colors.blue,
+  size: 50.0,
+  );
 
+  TomarFoto takePhoto=  TomarFoto();
+  static const opcionesPoste = [
+    'Detalles',
+    'Modificar',
+    'Eliminar',
+  ];
   static const opciones = [
     'Poste',
     'Fibra',
@@ -155,12 +172,26 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
       .toList();
   String estadoPostesID='Bueno';
 
-DatosRedFibra datosRedFibra= DatosRedFibra();
+  final List<PopupMenuItem<String>> popupOpcionesPoste = opcionesPoste
+      .map((String value) => PopupMenuItem<String>(
+            value: value,
+            child: Text(value, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          ))
+      .toList();
+  String opcionPosteId='';
+  DatosRedFibra datosRedFibra= DatosRedFibra();
+ 
  @override
   void initState() {
     
     super.initState();
+    inicializarVariables();
     
+  }
+  
+  inicializarVariables()async{
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('estadoOs', widget.estado);
   }
   @override
   Widget build(BuildContext context) {
@@ -169,54 +200,43 @@ DatosRedFibra datosRedFibra= DatosRedFibra();
     final firebaseBloc  = Provider.firebaseBloc(context);
     
     inicializarVariablesBloc(firebaseBloc,altoPantalla,anchoPantalla);
-       
-    datosRedFibra.getNumeroPoste();  
-        
-       
+    firebaseBloc.getDetallePosteInstalado(widget.numeroOrdenS);
+    print('cargando:$cargando');
         return Scaffold(
-          appBar: header('Gestion',context),
-          body: ListView(
-            itemExtent: 50,
-            shrinkWrap: true,
-            children: [
-             
-              Container(
-                width: 30,
-                height: 100,
-                color: Colors.brown,
-              )
-            ],
-          ),
+          appBar: header('Gestion',context,'mapa'),
+          body: streamAgendaOrdenes(firebaseBloc),
           floatingActionButton: FloatingActionButton(
             child: Icon(Icons.add),
             onPressed: ()=>mostrarCuadroOopciones(context,firebaseBloc)
           ),
         );
       }
+            
 
-  /*     StreamBuilder<List<DocumentSnapshot>> streamAgendaOrdenes() {
+     StreamBuilder<List<DocumentSnapshot>> streamAgendaOrdenes(FirebaseBloc firebaseBloc) {
     return StreamBuilder<List<DocumentSnapshot>>(
-     stream: dbBloc.ordenServicioStream,
+     stream: firebaseBloc.listaPostesOSControllerStream,
      builder: (context, snapshot){
     
-    if(snapshot.hasData){
-      List<DocumentSnapshot> datosOs=snapshot.data;
-      print(snapshot.data[0].data);
+    if(snapshot.hasData && snapshot.data.isNotEmpty){
+      List<DocumentSnapshot> datosPostes=snapshot.data;
+      //print(datosPostes[0].data);
+      //print(datosPostes.length);
       //return Container();
       return ListView.builder(
         //physics: NeverScrollableScrollPhysics(),
         shrinkWrap: true,
-        itemCount: datosOs.length,
+        itemCount: datosPostes.length,
         itemBuilder: (context, i){
-          return  _crearBotonRedondeado(Colors.blue, datosOs[i],context, i);
+          return _crearBotonRedondeado(Colors.blue, datosPostes[i],context, i);
         }  
       );
     }else{
-      return Center(child:CircularProgressIndicator(),);
+      return Center(child:Text('Aun no hay información en esta orden de servicio'),);
     }
   },
 );
-  } */
+  } 
           
   
       mostrarCuadroOopciones(BuildContext context, FirebaseBloc firebaseBloc) {
@@ -247,21 +267,9 @@ DatosRedFibra datosRedFibra= DatosRedFibra();
                     //cacheExtent: 85.0,
                     children:[
                       
-                      /*  Visibility(
-                         visible: cont_aux==0?true:false,
-                         child: DropdownButton(
-                          hint: Text(opcionesID),
-                          onChanged: (String newValue) {
-                          setState(() {
-                            opcionesID = newValue;
-                          });
-                        },
-                          items: this.dropDownProyectos,
-                        ),
-                       ), */
                        Divider(),
-                       subTitulos('Georefenciación',Icon(Icons.golf_course, color: Colors.white), '', firebaseBloc),
-                       textFormDoble('Latitud', latitudController, 'Longitud', longitudController,false),
+                       subTitulos('Georefenciación',Icon(Icons.golf_course, color: Colors.white), 'geo', firebaseBloc),
+                       textFormDoble(latitud.isEmpty?'Latitud':latitud, latitudController, longitud.isEmpty?'Longitud':longitud, longitudController,false),
                        Divider(color: Colors.black, height: 15.0),
                        subTitulos('Abscisas', Icon(Icons.gesture, color: Colors.white), '', firebaseBloc),
                        textFormDoble('Inicial', abscisaInicialController, 'Final', abscisaFinalController, false),
@@ -302,15 +310,10 @@ DatosRedFibra datosRedFibra= DatosRedFibra();
                         
                        
                        
-                      
-                       
-                       
-                      
                    ]
                   ),  
                 ),
-                          
-                          
+                      
             actions: <Widget>[
                 FlatButton(
                     child: Text('Cancelar'),
@@ -335,6 +338,14 @@ DatosRedFibra datosRedFibra= DatosRedFibra();
           )
         );
       }
+                      
+                       
+                       
+                       
+                       
+                      
+                          
+                          
     
        checkBoxDoble(String texto1, bool checkBox1, final controllerBloc1, String texto2, bool checkBox2, final controllerBloc2) {
         return StatefulBuilder(
@@ -387,12 +398,13 @@ DatosRedFibra datosRedFibra= DatosRedFibra();
                            Text(texto1, style: TextStyle(color: Colors.grey[600])),
                            SizedBox(width: 12),
                            DropdownButton(
-                              hint: controllerBloc1.value!=null?Text(controllerBloc1.value):Text(opcionId1),
+                              hint: Text(controllerBloc1.value),
                               onChanged: (String newValue) {
+
                               controllerBloc1.sink.add(newValue);
                              // filtroSink(texto1, newValue, firebaseBloc);  
                               setState(() {
-                                opcionId1 = newValue;
+                               
                               });
                             },
                             items: opciones1,
@@ -401,12 +413,12 @@ DatosRedFibra datosRedFibra= DatosRedFibra();
                           Text(texto2, style: TextStyle(color: Colors.grey[600])),
                           SizedBox(width: 12),
                           DropdownButton(
-                              hint: controllerBloc2.value!=null?Text(controllerBloc2.value):Text(opcionId2),
+                              hint: Text(controllerBloc2.value),
                               onChanged: (String newValue) {
                               controllerBloc2.sink.add(newValue);  
                              // filtroSink(texto2, newValue, firebaseBloc); 
                               setState(() {
-                                opcionId2 = newValue;
+                               
                               });
                             },
                             items: opciones2,
@@ -419,11 +431,15 @@ DatosRedFibra datosRedFibra= DatosRedFibra();
         );
       }
       
-      ListTile textFormDoble(String texto1,TextEditingController controller1, String texto2, TextEditingController controller2, bool numeroText ) {
+       textFormDoble(String texto1,TextEditingController controller1, String texto2, TextEditingController controller2, bool numeroText ) {
+        return StatefulBuilder(
+        builder: (BuildContext context, void Function(void Function()) setState) {
         return ListTile(
            contentPadding: EdgeInsets.symmetric(horizontal: 0,vertical: 5),
            title: Container(width: 20, height: 45,child: textForm(controller1, texto1,numeroText)),
            trailing: Container(width: 180, height: 45,child: textForm(controller2, texto2,numeroText))
+          );
+         }
         );
       }
            
@@ -435,7 +451,7 @@ DatosRedFibra datosRedFibra= DatosRedFibra();
 
         return Container(
                  width: MediaQuery.of(context).size.width*0.8,
-                 height: 180,
+                 height: MediaQuery.of(context).size.height*0.25,
                  decoration: BoxDecoration(
                   // color: Colors.blue,
                   borderRadius: BorderRadius.circular(10),
@@ -455,7 +471,7 @@ DatosRedFibra datosRedFibra= DatosRedFibra();
 
         return Container(
                  width: MediaQuery.of(context).size.width*0.8,
-                 height: 180,
+                 height: MediaQuery.of(context).size.height*0.25,
                  decoration: BoxDecoration(
                   // color: Colors.blue,
                   borderRadius: BorderRadius.circular(10),
@@ -484,25 +500,49 @@ DatosRedFibra datosRedFibra= DatosRedFibra();
                    visualDensity: VisualDensity(vertical: 0.0, horizontal: 0.0),
                    dense: true,
                    title: Text(
-                       subTitulo,
-                       style: TextStyle(
-                               fontSize: 16.0,
-                               fontWeight: FontWeight.bold,
-                               //color: Colors.grey[600]
-                               color: Colors.white
-                       )
+                           subTitulo,
+                           style: TextStyle(
+                                   fontSize: 16.0,
+                                   fontWeight: FontWeight.bold,
+                                   //color: Colors.grey[600]
+                                   color: Colors.white
+                           )
                   ),
-                  trailing: foto=='proveedorPoste' || foto== 'cajaEmpalme' ?GestureDetector(
+                  
+                    
+                  trailing: foto=='geo'||foto=='proveedorPoste' || foto== 'cajaEmpalme' ?GestureDetector(
                     onTap: (){
+                      if(foto=='geo'){
+                         cargando=true;
+                         getLocalization(firebaseBloc);  
+                         
+                      }
+                      else{
                       handleTakePhoto(firebaseBloc, foto);
+                      }
+                      
                       setState((){});
                     } ,
-                    child: Icon(Icons.photo_camera, color: Colors.white,)
+                    child: foto=='geo'?Icon(Icons.pin_drop, color: Colors.white):Icon(Icons.photo_camera, color: Colors.white,)
                   ):null,
                  
                 ),
         );
       }
+
+      getLocalization(FirebaseBloc firebaseBloc) async {
+        Position position = await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+        print('Latitud: ${position.latitude}---Longitud: ${position.longitude}');
+        latitud=position.latitude.toString();
+        longitud=position.longitude.toString();
+        Navigator.pop(context);
+       
+        mostrarCuadroOopciones(context, firebaseBloc);
+        setState((){});
+      }
+
+     
+
            //showSearch(context: context, delegate: DataSearch_OS());
            
            
@@ -543,211 +583,145 @@ DatosRedFibra datosRedFibra= DatosRedFibra();
       }
     
       void inicializarVariablesBloc(FirebaseBloc firebaseBloc, double altoPantalla, double anchoPantalla) {
-
+         
         firebaseBloc.anchoPantallaController.sink.add(anchoPantalla); 
         firebaseBloc.altoPantallaController.sink.add(altoPantalla); 
-      /*    
          
-        firebaseBloc.checkBoxAereaController.sink.add(checkBoxAerea);
-        firebaseBloc.checkBoxCanalizadaController.sink.add(checkBoxCanalizada);
-        firebaseBloc.alturaPostesIDController.sink.add(alturaPostesID);
-        firebaseBloc.resistenciaPostesIDController.sink.add(resistenciaPostesID);
-        firebaseBloc.tipoPosteIDController.sink.add(tipoPosteID);
-        firebaseBloc.materialPosteIDController.sink.add(materialPosteID);
-        firebaseBloc.lineaTransmisionPosteIdController.sink.add(lineaTransmisionPosteID);
-        firebaseBloc.estadoPostesIDController.sink.add(estadoPostesID); */
+      if(cont_aux==0){  
+      cont_aux=1;
+      firebaseBloc.checkBoxAereaController.sink.add(checkBoxAerea);
+      firebaseBloc.checkBoxCanalizadaController.sink.add(checkBoxCanalizada);
+      firebaseBloc.alturaPostesIDController.sink.add(alturaPostesID);
+      firebaseBloc.resistenciaPostesIDController.sink.add(resistenciaPostesID);
+      firebaseBloc.tipoPosteIDController.sink.add(tipoPosteID);
+      firebaseBloc.materialPosteIDController.sink.add(materialPosteID);
+      firebaseBloc.lineaTransmisionPosteIdController.sink.add(lineaTransmisionPosteID);
+      firebaseBloc.estadoPostesIDController.sink.add(estadoPostesID); 
+      }
+        /*  firebaseBloc.alturaPostesIDController.sink.add('');
+         firebaseBloc.resistenciaPostesIDController.sink.add('');
+         firebaseBloc.tipoPosteIDController.sink.add('');
+         firebaseBloc.materialPosteIDController.sink.add('');
+         firebaseBloc.lineaTransmisionPosteIdController.sink.add('');
+         firebaseBloc.estadoPostesIDController.sink.add('');
+         firebaseBloc.checkBoxAereaController.sink.add(false);
+         firebaseBloc.checkBoxCanalizadaController.sink.add(false); */
         firebaseBloc.itemsSeleccionadosStream.listen((event) {datosItem=event;});
       }  
     
-     Widget _crearBotonRedondeado(Color color,  DocumentSnapshot datoOs, BuildContext context, int i){
+     Widget _crearBotonRedondeado(Color color,  DocumentSnapshot datosPostes, BuildContext context, int i){
      //final widthPantalla = MediaQuery.of(context).size.width;
     
      String imagen; 
-     if(datoOs.data['proyecto'].toString().contains('Conectividad Wifi')){
-       imagen='assets/ordenCasa2.png';
-       print(imagen);
-       
-     }else  if(datoOs.data['proyecto'].toString().contains('Audicol')){
-      imagen='assets/cliente.png';
-      print(imagen);
-     }
-    return tarjetas(color, datoOs, imagen, context);
+     imagen='assets/ordenCasa2.png';
+     
+    return tarjetas(color, datosPostes, imagen, context);
   }
 
-   tarjetas(Color color, DocumentSnapshot datoOs, String imagen, BuildContext context) {
+   tarjetas(Color color, DocumentSnapshot datosPostes, String imagen, BuildContext context) {
     final widthPantalla = MediaQuery.of(context).size.width;
     final heightPantalla = MediaQuery.of(context).size.height;
-    return Column(
-      children: [
-        Container(
-            alignment: Alignment.center, 
-            height: heightPantalla-450,
-            width: widthPantalla,
-            margin: EdgeInsets.only(left:20.0,right: 20.0,top: 10,bottom: 10),
-             decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(10.0),
-              boxShadow: <BoxShadow>[
-                          BoxShadow(
-                          color: Colors.white,
-                          blurRadius: 1.0,
-                          offset: Offset(2.0, 2.0),
-                          spreadRadius: 1.0
-                          ),
-                       ]  
-             ), 
-             child: Column(
-             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              // mainAxisSize: MainAxisSize.max,
-              // crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  SizedBox(height: 8,),
-                  Text(
-                    'Orden de Servicio # ${datoOs.data['NumeroOS']}',
-                     style: TextStyle(
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.bold,
-                             // color: colorText
-                      )
-                  ),
-                  SizedBox(height: 10,),
-                  Container(
-                    height: 20,
-                    width: 300,
-                    //color: Colors.red,
-                    child: Text(
-                      'Proyecto: ${datoOs.data['proyecto']}',
-                       style: TextStyle(
-                              fontSize: 13.0,
-                             // color: colorText
-                      )
-                    ),
-                  ), 
-                   Container(
-                    height: 20,
-                    width: 300,
-                    //color: Colors.red,
-                    child: Text(
-                      'Tipo: ${datoOs.data['tipo']}',
-                       style: TextStyle(
-                              fontSize: 13.0,
-                             // color: colorText
-                      )
-                    ),
-                  ), 
-                  
-                   Container(
-                    height: 20,
-                    width: 300,
-                    //color: Colors.red,
-                    child: Text(
-                      'Estado: ${datoOs.data['Estado']}',
-                       style: TextStyle(
-                              fontSize: 13.0,
-                             // color: colorText
-                      )
-                    ),
-                  ), 
-                   Container(
-                    height: 20,
-                    width: 300,
-                    //color: Colors.red,
-                    child: Text(
-                      'Prioridad: ${datoOs.data['Prioridad']}',
-                       style: TextStyle(
-                              fontSize: 13.0,
-                             // color: colorText
-                      )
-                    ),
-                  ), 
-                 Container(
-                    height: 20,
-                    width: 300,
-                    //color: Colors.red,
-                    child: Text(
-                      'Insumos: ${datoOs.data['insumos']}',
-                       style: TextStyle(
-                       fontSize: 13.0,
-                       //color: colorText
-                      )
-                    ),
-                  ), 
-                  SizedBox(height: 0),
-                 Card(
-                    margin: EdgeInsets.symmetric(horizontal: 7.0),
-                     shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                   child: ClipRRect(
-                     borderRadius: BorderRadius.circular(10),
-                     child: Image.asset(imagen),
-                      
-                   ),
-                 ),
-                 SizedBox(height: 4),
-                 Container(
-                   height: 35,
-                   width:355,
-                   //alignment: Alignment.centerRight,
-                   decoration: BoxDecoration(
-                    //color: Color.fromRGBO(62,66,107,0.7).withOpacity(0.2),
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(bottomLeft:  Radius.circular(10),bottomRight:  Radius.circular(10)),
-                       boxShadow: <BoxShadow>[
-                          BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 5.0,
-                          offset: Offset(2.0, 2.0),
-                          spreadRadius: 1.0
-                          ),
-                       ] 
-                   ), 
-                    
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    mainAxisSize: MainAxisSize.max,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      SizedBox(width: 50,),
-                      GestureDetector(
-                        onTap: (){
-                         // Navigator.push(context, MaterialPageRoute(builder: (context)=> DetallesOrdenServicio()));
-                        },
-                        child: Text(
-                          'Leer mas',
-                          style: TextStyle(
-                                    fontSize: 15.0,
-                                    color: Theme.of(context).accentColor,
-                            )
-                        ),
+    return Container(
+        //alignment: Alignment.center, 
+       // height: heightPantalla-600, 
+        //heightPantalla-450,
+       // width: widthPantalla,
+         margin: EdgeInsets.only(left:20.0,right: 20.0,top: 10,bottom: 10),
+         decoration: BoxDecoration(
+          //color: color,
+          borderRadius: BorderRadius.circular(10.0),
+          boxShadow: <BoxShadow>[
+                      BoxShadow(
+                      color: Colors.white,
+                      blurRadius: 1.0,
+                      offset: Offset(2.0, 2.0),
+                      spreadRadius: 1.0
                       ),
-                     /*  PopupMenuButton<String>(
+                   ]  
+         ), 
+         child: subtituloTarjeta(datosPostes), 
+              
+             
+        );
+  }
+
+   Text tituloTarjeta(String texto) {
+     return Text(
+              'Poste # $texto',
+               style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold,
+                       // color: colorText
+                )
+            );
+   }
+
+   subtituloTarjeta(DocumentSnapshot dato) {
+     return ListTile(
+              contentPadding: EdgeInsets.symmetric(horizontal: 10),
+              leading: Icon(Icons.format_paint, size: 35.0),
+              title: Text(
+                'Id: ${dato['posteID']}',
+                style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey[600]
+                )
+              ),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                   Text(
+                'Latitud: ${dato['georeferenciacion']['latitud']}',
+                style: TextStyle(
+                        fontSize: 16.0,
+                        //fontWeight: FontWeight.bold,
+                        color: Colors.grey[600]
+                )
+              ),
+               Text(
+                'Longitud: ${dato['georeferenciacion']['longitud']}',
+                style: TextStyle(
+                        fontSize: 16.0,
+                        //fontWeight: FontWeight.bold,
+                        color: Colors.grey[600]
+                )
+              ),
+                ],
+              ),
+              trailing:  PopupMenuButton<String>(
                         elevation: 85.0,
-                        icon: Icon(Icons.linear_scale,size: 30.0, color:Theme.of(context).accentColor),
+                        icon: Icon(Icons.more_vert),
                         padding: EdgeInsets.only(right: 0),
                          shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                         onSelected: (String newValue){
                         setState(() {
-                         // estadoId=newValue;
-                          /* if(estadoId=='Iniciar'){
-                             Navigator.push(context, MaterialPageRoute(builder: (context)=> GestionOrdenServicio()));
-                             } */
+                          opcionPosteId=newValue;
+                          if(opcionPosteId=='Detalles'){
+                             Navigator.push(context, MaterialPageRoute(builder: (context)=> DetallesPoste(datos:dato)));
+                             }
                         });
                         },
-                        itemBuilder: (BuildContext context)=> popupMenuEstado
-                      ) */
-                    ],
-                  ),
-                 ),
-               ],
-             ),  
-            ),
-            Divider()
-      ],
-    );
-  }
+                        itemBuilder: (BuildContext context)=> popupOpcionesPoste
+                      )
+            );
+     
+     /* 
+     Container(
+              height: 20,
+              width: 300,
+              //color: Colors.red,
+              child: Text(
+               '$titulo: $dato',
+                style: TextStyle(
+                        fontSize: 13.0,
+                       // color: colorText
+                )
+              ),
+            );
+ */   }
  
 
  sendDatos(FirebaseBloc firebaseBloc) async {
@@ -767,16 +741,54 @@ DatosRedFibra datosRedFibra= DatosRedFibra();
    fileCajaEmpalme= await takePhoto.compressImage(fileCajaEmpalme);
    mediaUrlCajaEmpalme = await takePhoto.uploadImage(fileCajaEmpalme);
  }
-   
-  int a=1;
 
-   ordenesServicio
+  //--------Validacion si el usuario tomo coordenadas automaticamente-----
+  if (latitud.isEmpty){
+    latitud=latitudController.text;
+  }
+   if (longitud.isEmpty){
+    longitud=longitudController.text;
+  }
+  //-------------------------------------------------------
+   SharedPreferences prefs = await SharedPreferences.getInstance();
+   estadoOrdenServicio= prefs.getString('estadoOs');
+  //-------------------------------------------------------
+  
+  Map <String, dynamic>  cuantificarPostes= new Map();
+  String posteNumero='';
+  
+  print('estado:$estadoOrdenServicio');
+  
+  if(estadoOrdenServicio=='No iniciada'){
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('estadoOs', 'En proceso');
+    posteNumero='poste-1';
+    ordenesServicio
+          .document(widget.numeroOrdenS)
+          .updateData({
+            'Estado': 'En proceso',
+            'postes': ['poste-1']
+          });
+  }else{
+    cuantificarPostes= await datosRedFibra.getNumeroPoste(widget.numeroOrdenS);
+    print(cuantificarPostes);
+    posteNumero='poste-' + cuantificarPostes['posteActual'];
+    //ACTUALIZA LA LISTA DE POSTES EN EL DOCUMENTO DE LA ORDEN DE SERVICIO ELEGIDA
+     ordenesServicio
+          .document(widget.numeroOrdenS)
+          .updateData({
+            'postes': cuantificarPostes['listaPostes']
+          });
+  }
+
+  ordenesServicio
     .document(widget.numeroOrdenS)
-    .collection('poste-1')
-    .document(posteSerialDB)
+    .collection('postes')
+    .document(posteNumero)
     .setData({
-        
-        'georeferenciacion'   : {'latitud': latitudController.text, 'longitud': longitudController.text},
+       
+        'posteID':posteNumero,
+        'georeferenciacion'   : {'latitud': latitud, 'longitud': longitud},
         'abscisas'            : {'inicial':abscisaInicialController.text, 'final':abscisaFinalController.text},
         'mediaUrl'            : {'mediaUrlPoste': mediaUrlPoste, 'mediaUrlCajaEmpalme':mediaUrlCajaEmpalme},
         'cajaEmpalme'         : {
@@ -821,10 +833,12 @@ DatosRedFibra datosRedFibra= DatosRedFibra();
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           fontSize: 15,
-          backgroundColor: Theme.of(context).primaryColor
+          backgroundColor: Colors.grey
     );
 
-
+  cargando=false;
+  latitud='';
+  longitud='';
   latitudController.clear();          
   longitudController.clear();         
   abscisaInicialController.clear();   
@@ -855,6 +869,7 @@ DatosRedFibra datosRedFibra= DatosRedFibra();
  firebaseBloc.estadoPostesIDController.sink.add('');
  firebaseBloc.checkBoxAereaController.sink.add(false);
  firebaseBloc.checkBoxCanalizadaController.sink.add(false);
+  
          
 
     setState(() {
@@ -926,30 +941,30 @@ DatosRedFibra datosRedFibra= DatosRedFibra();
    if(reservaController.text==null){
       reservaController.text='';
    }         
-   if(firebaseBloc.alturaPostesIDController.value==null){
-      firebaseBloc.alturaPostesIDController.value='';
-   }         
-   if(firebaseBloc.resistenciaPostesIDController.value==null){
-      firebaseBloc.resistenciaPostesIDController.value='';
-   }         
-   if(firebaseBloc.tipoPosteIDController.value==null){
-      firebaseBloc.tipoPosteIDController.value='';
-   }         
-   if(firebaseBloc.materialPosteIDController.value==null){
-      firebaseBloc.materialPosteIDController.value='';
-   }         
-   if(firebaseBloc.lineaTransmisionPosteIdController.value==null){
-      firebaseBloc.lineaTransmisionPosteIdController.value='';
-   }         
-   if(firebaseBloc.estadoPostesIDController.value==null){
-      firebaseBloc.estadoPostesIDController.value='';
-   }         
+   /*    if(firebaseBloc.alturaPostesIDController.value==null){
+          firebaseBloc.alturaPostesIDController.value='';
+      }         
+      if(firebaseBloc.resistenciaPostesIDController.value==null){
+          firebaseBloc.resistenciaPostesIDController.value='';
+      }         
+      if(firebaseBloc.tipoPosteIDController.value==null){
+          firebaseBloc.tipoPosteIDController.value='';
+      }         
+      if(firebaseBloc.materialPosteIDController.value==null){
+          firebaseBloc.materialPosteIDController.value='';
+      }         
+      if(firebaseBloc.lineaTransmisionPosteIdController.value==null){
+          firebaseBloc.lineaTransmisionPosteIdController.value='';
+      }         
+      if(firebaseBloc.estadoPostesIDController.value==null){
+          firebaseBloc.estadoPostesIDController.value='';
+      }         
    if(firebaseBloc.checkBoxAereaController.value==null){
       firebaseBloc.checkBoxAereaController.value=false;
    }         
    if(firebaseBloc.checkBoxCanalizadaController.value==null){
       firebaseBloc.checkBoxCanalizadaController.value=false;
-   }         
+   }          */
          
 
  }

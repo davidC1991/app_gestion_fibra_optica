@@ -1,6 +1,6 @@
 import 'dart:ui';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-import 'package:audicol_fiber/bloc/peticiones_firebase.dart';
 import 'package:audicol_fiber/bloc/dbBloc.dart';
 import 'package:audicol_fiber/pages/Ordenes_Servicio/GestionOs.dart';
 import 'package:audicol_fiber/pages/Ordenes_Servicio/detallesOS.dart';
@@ -66,18 +66,22 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
     
     if(snapshot.hasData){
       List<DocumentSnapshot> datosOs=snapshot.data;
-      print(snapshot.data[0].data);
+      //print(snapshot.data[0].data);
       //return Container();
       return ListView.builder(
         //physics: NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
+        //shrinkWrap: true,
         itemCount: datosOs.length,
         itemBuilder: (context, i){
           return  _crearBotonRedondeado(Colors.blue, datosOs[i],context, i);
         }  
       );
     }else{
-      return Center(child:CircularProgressIndicator(),);
+      return SpinKitRotatingCircle(
+            color: Colors.blue,
+            size: 50.0,
+      );
+      //Center(child:CircularProgressIndicator(),);
     }
   },
 );
@@ -117,7 +121,7 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
       children: [
         Container(
             alignment: Alignment.center, 
-            height: heightPantalla-450,
+            height: heightPantalla*0.3,
             width: widthPantalla,
             margin: EdgeInsets.only(left:20.0,right: 20.0,top: 10,bottom: 10),
              decoration: BoxDecoration(
@@ -209,21 +213,21 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
                     ),
                   ), 
                   SizedBox(height: 0),
-                 Card(
-                    margin: EdgeInsets.symmetric(horizontal: 7.0),
-                     shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                   child: ClipRRect(
+                /*  ClipRRect(
                      borderRadius: BorderRadius.circular(10),
-                     child: Image.asset(imagen),
-                      
-                   ),
-                 ),
+                     child: Container(
+                       alignment: Alignment.topCenter,
+                       //color: Colors.blue,
+                       height: heightPantalla*0.19,
+                       width:widthPantalla*0.7835,
+                       child: Image.asset(imagen)
+                     ),
+                 ),     */                 
+                 
                  SizedBox(height: 4),
                  Container(
-                   height: 35,
-                   width:355,
+                   height: heightPantalla*0.04,
+                   width:widthPantalla*0.9,
                    //alignment: Alignment.centerRight,
                    decoration: BoxDecoration(
                     //color: Color.fromRGBO(62,66,107,0.7).withOpacity(0.2),
@@ -268,7 +272,7 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
                         setState(() {
                           estadoId=newValue;
                           if(estadoId=='Iniciar'){
-                             Navigator.push(context, MaterialPageRoute(builder: (context)=> GestionOrdenServicio(numeroOrdenS:datoOs.data['NumeroOS'])));
+                             Navigator.push(context, MaterialPageRoute(builder: (context)=> GestionOrdenServicio(numeroOrdenS:datoOs.data['NumeroOS'], estado:datoOs.data['Estado'])));
                              }
                         });
                         },

@@ -237,26 +237,18 @@ class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
     String objetivo = objetivoController.text;
   
     idOS= await datosRedFibra.getUltimoNumueroOrdenes();
-
-    print('idOs: $idOS');
-    int numeroOs= int.parse(idOS)+1;
-    print('numeroOs: $numeroOs');
-
-    if(numeroOs>9){
-      idOS='000' + numeroOs.toString();
-    }else if(numeroOs>99){
-      idOS='00' + numeroOs.toString();
-    }else if(numeroOs>999){
-      idOS='0' + numeroOs.toString();
-    }else{
-      idOS='0000' + numeroOs.toString();
-    }
+   // if(idOS!='00000'){
+   
   
-    
+   // }
 
 
-    if (tiempoEstimado.isNotEmpty || idOS.isNotEmpty || objetivo.isNotEmpty) {
+    if (tiempoEstimado.isNotEmpty  || objetivo.isNotEmpty) {
 
+
+     
+
+ 
       ordenesServicio
           .document(idOS)
           .setData({
@@ -273,13 +265,13 @@ class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
         'timestamp'      : DateTime.now(),
         
       });
-
+ 
       Fluttertoast.showToast(
           msg: 'La Orden de servicio fue guardada con exito!',
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           fontSize: 13,
-          backgroundColor: Theme.of(context).primaryColor
+          backgroundColor: Colors.grey
       );
 
      
@@ -292,7 +284,7 @@ class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           fontSize: 13,
-          backgroundColor: Theme.of(context).primaryColor
+          backgroundColor: Colors.grey
       );
     }
   }

@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:663727216778:android:04b5dea558e74f18d07573",
         "android_client_info": {
-          "package_name": "com.example.audicol_fiber"
+          "package_name": "com.callejasDavid.audicol_fiber"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "663727216778-62h9d1c2qote78t209uj01lrtsrp10ek.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.audicol_fiber",
+            "package_name": "com.callejasDavid.audicol_fiber",
             "certificate_hash": "dca145f375cbe0c176ac867c6f990c132b0fe6b5"
           }
         },

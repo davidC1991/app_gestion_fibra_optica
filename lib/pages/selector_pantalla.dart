@@ -87,7 +87,7 @@ class _SelectorPantallaState extends State<SelectorPantalla> {
     return DefaultTabController(
       length: iconList.length,
       child: Scaffold(
-          appBar: header(tituloPagina, context),
+          appBar: header(tituloPagina, context,''),
           drawer: Menu(),
           body: TabBarView(
             children: <Widget>[

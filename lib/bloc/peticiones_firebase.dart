@@ -6,18 +6,43 @@ import 'package:geo/geo.dart' as geo;
 class DatosRedFibra {
   
   
-  getGestionOs()async{
+  getGestionOsPostes(String numeroOs)async{
+    List<DocumentSnapshot> vacio= new List();
+    print('-------postes detalles--------');
+      QuerySnapshot snapshot= await ordenesServicio.document(numeroOs).
+                            collection('postes').orderBy('timestamp', descending: false).
+                            getDocuments();
+    if(snapshot.documents.isEmpty){
+      vacio=[];
+      return vacio;
+    }
+    print(snapshot.documents[0].documentID);
     
-   /*   QuerySnapshot snapshot = await ordenesServicio.
-                                    document()  */
+     return snapshot.documents; 
   }
  
-  getNumeroPoste()async{
-    print('-------fff--------');
-    QuerySnapshot snapshot= await ordenesServicio.document('00001').get().then((value){
-      print(value.documentID);
-    });
-     print(snapshot);
+  Future <Map <String, dynamic>> getNumeroPoste(String numeroOs)async{
+    
+    List<String> listaPostes= new List();
+    String posteNumero=''; 
+    int numero=0; 
+     QuerySnapshot snapshot= await ordenesServicio.document(numeroOs).get().then((value)  {
+       print(value.data);
+       List long=value.data['postes'];
+       posteNumero=value.data['postes'][long.length-1];
+       
+       posteNumero=posteNumero.substring(6);
+       numero= int.parse(posteNumero)+1;
+       posteNumero= numero.toString();
+
+       print('poste-->$posteNumero');
+     });
+     for (var i = 0; i < numero; i++) {
+       listaPostes.add('poste-${i+1}');
+     }
+     print(listaPostes);
+
+     return {'listaPostes':listaPostes, 'posteActual':posteNumero};
    }
 
    getOrdenesServicio()async{
@@ -32,11 +57,28 @@ class DatosRedFibra {
   Future<String> getUltimoNumueroOrdenes()async{
     String ultimoNumeroOrden='';
     QuerySnapshot snapshot= await ordenesServicio.getDocuments();
-    if(snapshot.documents.length==1){
-      ultimoNumeroOrden=snapshot.documents[0].documentID;
-    }else{
-       ultimoNumeroOrden=snapshot.documents[snapshot.documents.length-1].documentID;
+
+    if(snapshot.documents.length==0){
+      return '00000';
     }
+    ultimoNumeroOrden=snapshot.documents[snapshot.documents.length-1].documentID;
+
+    int numeroOs= int.parse(ultimoNumeroOrden)+1;
+    print('numeroOs: $numeroOs');
+
+    if(numeroOs>9){
+      ultimoNumeroOrden='000' + numeroOs.toString();
+    }else if(numeroOs>99){
+      ultimoNumeroOrden='00' + numeroOs.toString();
+    }else if(numeroOs>999){
+      ultimoNumeroOrden='0' + numeroOs.toString();
+    }else{
+      ultimoNumeroOrden='0000' + numeroOs.toString();
+    }
+    /* if(snapshot.documents.length==1){
+      ultimoNumeroOrden=snapshot.documents[0].documentID;
+    }else{ */
+        //}
     print(ultimoNumeroOrden);
     return ultimoNumeroOrden;
   }  

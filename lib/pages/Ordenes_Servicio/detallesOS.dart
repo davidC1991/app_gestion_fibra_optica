@@ -1,3 +1,4 @@
+import 'package:audicol_fiber/bloc/provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -65,7 +66,7 @@ class _DetallesOrdenServicioState extends State<DetallesOrdenServicio> {
               leading: Text('Prioridad:',style: TextStyle(fontSize: 16.0,color: colorText)),
               title: Text('Alta',style: TextStyle(fontSize: 16.0,color: colorText)),
             ),
-            lineaSeparador(widthPantalla),
+           
             SizedBox(height: 8.0,),
             Text('REQUERIMIENTOS',style: TextStyle(color: colorTextTitulo, fontSize: 17, fontWeight: FontWeight.bold,)),
               ListTile(
@@ -93,19 +94,13 @@ class _DetallesOrdenServicioState extends State<DetallesOrdenServicio> {
               leading: Text('Prioridad:',style: TextStyle(fontSize: 16.0,color: colorText)),
               title: Text('Alta',style: TextStyle(fontSize: 16.0,color: colorText)),
             ),
-            lineaSeparador(widthPantalla)
+            
           ],
         )),
     );
   }
 
-  Container lineaSeparador(double widthPantalla) {
-    return Container(
-            width: widthPantalla,
-            height: 1,
-            color: Colors.black38
-          );
-  }
+  
 }
               
        

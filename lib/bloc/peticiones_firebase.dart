@@ -2,6 +2,7 @@ import 'package:audicol_fiber/pages/selector_pantalla.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:audicol_fiber/pages/calculo_punto.dart';
 import 'package:geo/geo.dart' as geo;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DatosRedFibra {
   
@@ -13,6 +14,14 @@ class DatosRedFibra {
                             collection('postes').orderBy('timestamp', descending: false).
                             getDocuments();
     if(snapshot.documents.isEmpty){
+      
+      ordenesServicio
+          .document(numeroOs)
+          .updateData({
+            'Estado': 'No iniciada',
+          });
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('estadoOs', 'No iniciada');      
       vacio=[];
       return vacio;
     }

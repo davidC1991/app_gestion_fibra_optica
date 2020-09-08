@@ -270,58 +270,57 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                     //itemExtent: 35.0,
                     //cacheExtent: 85.0,
                     children:[
-                      
-                   
+                       //---INGRESANDO 'geo' se activa la opcion de toma de coordenadas por el celular---------------
                        Divider(),
-                       subTitulos('Georefenciación',Icon(Icons.golf_course, color: Colors.white), 'geo', firebaseBloc),
+                       subTitulos('Georefenciación',Icon(Icons.golf_course, color: Colors.white), 'geoo', firebaseBloc),
                        
-                       textFormDoble(latitud.isEmpty?'Latitud':latitud,
+                       textFormDoble(
                                      'latitud',
                                       latitudController,
-                                      longitud.isEmpty?'Longitud':longitud,
                                       'Longitud',
                                       longitudController,
                                       false),
+                                     
 
                        Divider(color: Colors.black, height: 15.0),
                        subTitulos('Abscisas', Icon(Icons.gesture, color: Colors.white), '', firebaseBloc),
                       
-                       textFormDoble(modificar?dato['abscisas']['inicial']:'Inicial',
+                       textFormDoble(
                                      'Inicial', 
                                      abscisaInicialController,
-                                     modificar?dato['abscisas']['final']:'Final',
                                      'Final',
                                      abscisaFinalController,
                                      false),
+                                     
                       
                        Divider(color: Colors.black, height: 15.0),
                        subTitulos('Identificacion de Fotografia',Icon(Icons.photo_library, color: Colors.white), 'cajaEmpalme', firebaseBloc),
                       
-                       textFormDoble(  modificar?dato['cajaEmpalme']['reserva']:'Reserva (Metros)',
-                                       'Reserva (Metros)', 
+                       textFormDoble(  
+                                      'Reserva (Metros)', 
                                        reservaController,
-                                       modificar?dato['cajaEmpalme']['hilosIntervalo']:'Intervalo de Hilos',
                                        'Intervalo de Hilos',
                                        intervaloHilosController,
                                        false),
+                                      
                       
                        textForm(cajaEmpalmeController,
                                 'Id caja de empalme',
-                                modificar?dato['cajaEmpalme']['idCajaEmpalme']:'Id caja de empalme',
                                 true), 
+                               
                       
                        SizedBox(height: 10,),
                        fotografiaEvidenciaCajaEmpalme(context, firebaseBloc, 'cajaEmpalme'),
                        Divider(color: Colors.black, height: 15.0),
                        subTitulos('Fibra Optica',Icon(Icons.linear_scale, color: Colors.white), '', firebaseBloc),
                        
-                       textFormDoble(modificar?dato['fibra']['span']:'Span',
+                       textFormDoble(
                                      'Span',
                                      spanController,
-                                     modificar?dato['fibra']['hilosCantidad']:'Cantidad de Hilos',
                                      'Cantidad de Hilos',
                                      cantidadHilosController,
                                      false),
+                                    
                        
                        checkBoxDoble('Aerea:',checkBoxAerea, firebaseBloc.checkBoxAereaController,  'Canalizada', checkBoxCanalizada, firebaseBloc.checkBoxCanalizadaController),
                        
@@ -329,34 +328,35 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                        subTitulos('Materiales utilizados',Icon(Icons.linear_scale, color: Colors.white), '', firebaseBloc), 
                        SizedBox(height: 20,),
                        
-                       textFormDoble(modificar?dato['materiales']['herrajeRetencion']:'Herraje de retención',
+                       textFormDoble(
                                      'Herraje de retención', 
                                      herrajeRetencionController,
-                                     modificar?dato['materiales']['herrajeSupension']:'Herraje de suspensión',
                                      'Herraje de suspensión',
                                      herrajeSuspensionController,
                                      false),
+                                    
                        
-                       textFormDoble(modificar?dato['materiales']['marquillas']:'Marquillas',
+                       textFormDoble(
                                      'Marquillas', 
                                      marquillasController,
-                                     modificar?dato['materiales']['amortiguador']:'Amortiguador',
                                      'Amortiguador',
                                      amortiguadorController,
                                      false),
+                                    
                        
-                       textFormDoble(modificar?dato['materiales']['brazoExtensor']:'Brazo extensor',
+                       textFormDoble(
                                      'Brazo extensor', 
                                      brazoExtensorController,
-                                     modificar?dato['materiales']['coronaCoil']:'Corona coil',
                                      'Corona coil',
                                      coronaCoilController,
                                      false),
                        
-                       textForm(abrazaderaController,
+                                    
+                       textForm(
+                                abrazaderaController,
                                 'Abrazadera para poste collarin',
-                                modificar?dato['materiales']['abrazaderaCollarin']:'Abrazadera para poste collarin',
                                 false), 
+                                
                        
                        Divider(),
                        subTitulos('Caracteristica poste',Icon(Icons.linear_scale, color: Colors.white), '', firebaseBloc), 
@@ -370,18 +370,18 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                        subTitulos('Proveedor de poste',Icon(Icons.linear_scale, color: Colors.white), 'proveedorPoste', firebaseBloc), 
                        SizedBox(height: 20,),
                        
-                       textFormDoble(modificar?dato['proveedorPoste']['propietario']:'Propietario',
+                       textFormDoble(
                                      'Propietario', 
                                      propietarioController,
-                                     modificar?dato['proveedorPoste']['idPoste']:'Id poste',
                                      'Id poste',
                                      idPosteController,
                                      true),
                        
+                                    
                        textForm(observacionesController,
                                 'Observaciones',
-                                modificar?dato['proveedorPoste']['observaciones']: 'Observaciones',
                                 true),
+                               
 
                        SizedBox(height: 10,),
                        fotografiaEvidenciaPoste(context, firebaseBloc, 'proveedorPoste'),
@@ -512,13 +512,13 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
         );
       }
       
-       textFormDoble(String textoModificado1, String texto1,TextEditingController controller1, String textoModificado2, String texto2, TextEditingController controller2, bool numeroText ) {
+       textFormDoble(String texto1,TextEditingController controller1,  String texto2, TextEditingController controller2, bool numeroText ) {
         return StatefulBuilder(
         builder: (BuildContext context, void Function(void Function()) setState) {
         return ListTile(
            contentPadding: EdgeInsets.symmetric(horizontal: 0,vertical: 5),
-           title: Container(width: 20, height: 45,child: textForm(controller1,textoModificado1, texto1,numeroText)),
-           trailing: Container(width: 180, height: 45,child: textForm(controller2,textoModificado2, texto2,numeroText))
+           title: Container(width: 20, height: 45,child: textForm(controller1,texto1,numeroText)),
+           trailing: Container(width: 180, height: 45,child: textForm(controller2,texto2,numeroText))
           );
          }
         );
@@ -597,7 +597,7 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                     onTap: (){
                       if(foto=='geo'){
                          cargando=true;
-                         getLocalization(firebaseBloc);  
+                        // getLocalization(firebaseBloc);  
                          
                       }
                       else{
@@ -630,7 +630,7 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
            
            
     
-      TextFormField textForm(TextEditingController controller,String textoModificado, String label, bool numeroText) {
+      TextFormField textForm(TextEditingController controller, String label, bool numeroText) {
         return TextFormField(
                     keyboardType: numeroText?TextInputType.text:TextInputType.number,
                     decoration: InputDecoration(
@@ -640,7 +640,7 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                     ),
                     filled: false,
                     hintText: label,
-                    labelText: modificar&&textoModificado!=''?textoModificado:label
+                    labelText: label
                     ),
                     controller: controller,
                     );
@@ -820,15 +820,36 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                                 'postes':listaNueva
                               });  
                               }
-                             
+                           
                            }  
                            if(opcionPosteId=='Modificar'){
                              firebaseBloc.posteSeleccionadoController.sink.add(dato[i]);
                              firebaseBloc.idPosteController.sink.add(dato[i]['posteID']);
+                          
                              
                               modificar=true;
-                              latitud=dato[i]['georeferenciacion']['latitud'];
-                              longitud=dato[i]['georeferenciacion']['longitud'];
+                              latitudController.text=dato[i]['georeferenciacion']['latitud'];
+                              longitudController.text=dato[i]['georeferenciacion']['longitud'];
+                              abscisaInicialController.text=dato[i]['abscisas']['inicial'];   
+                              abscisaFinalController.text=dato[i]['abscisas']['final'];     
+                              cajaEmpalmeController.text=dato[i]['cajaEmpalme']['idCajaEmpalme'];      
+                              spanController.text=dato[i]['fibra']['span'];             
+                              cantidadHilosController.text=dato[i]['fibra']['hilosCantidad'];    
+                              intervaloHilosController.text=dato[i]['cajaEmpalme']['hilosIntervalo'];   
+                              herrajeRetencionController.text=dato[i]['materiales']['herrajeRetencion']; 
+                              herrajeSuspensionController.text=dato[i]['materiales']['herrajeSupension'];
+                              marquillasController.text=dato[i]['materiales']['marquillas'];       
+                              amortiguadorController.text=dato[i]['materiales']['amortiguador'];     
+                              brazoExtensorController.text=dato[i]['materiales']['brazoExtensor'];    
+                              coronaCoilController.text=dato[i]['materiales']['coronaCoil'];       
+                              abrazaderaController.text=dato[i]['materiales']['abrazaderaCollarin'];       
+                              propietarioController.text=dato[i]['proveedorPoste']['propietario'];      
+                              idPosteController.text=dato[i]['proveedorPoste']['idPoste'];          
+                              observacionesController.text=dato[i]['proveedorPoste']['observaciones'];    
+                              reservaController.text=dato[i]['cajaEmpalme']['reserva'];          
+
+                              
+
 
                               fotoPosteString=dato[i]['mediaUrl']['mediaUrlPoste'];
                               fotoCajaEmpalmeString=dato[i]['mediaUrl']['mediaUrlCajaEmpalme'];
@@ -869,9 +890,37 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
  
 
  sendDatos(FirebaseBloc firebaseBloc) async {
-       
-  
- arregloControladores(firebaseBloc); 
+     
+if(longitudController.text.isEmpty||latitudController.text.isEmpty){
+   Fluttertoast.showToast(
+          msg: 'Complete las coordenadas',
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          fontSize: 15,
+          backgroundColor: Colors.grey
+    );  
+    
+}else if(longitudController.text.contains('.')==false||latitudController.text.contains('.')==false){
+     Fluttertoast.showToast(
+          msg: 'Ingrese las coordenadas en decimales',
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          fontSize: 15,
+          backgroundColor: Colors.grey
+    );
+      
+}else if(longitudController.text.length<8||latitudController.text.length<8){
+     Fluttertoast.showToast(
+          msg: 'Ingrese minimo 6  decimales',
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          fontSize: 15,
+          backgroundColor: Colors.grey
+    );
+      
+}
+else{
+  arregloControladores(firebaseBloc); 
 
   setState(() {
      isUploading= true;
@@ -892,12 +941,16 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
 
 
   //--------Validacion si el usuario tomo coordenadas automaticamente-----
-  if (latitud.isEmpty){
+  /*  if (latitud.isNotEmpty&&modificar){
+    latitud=latitudController.text;
+  }else{
     latitud=latitudController.text;
   }
-   if (longitud.isEmpty){
+   if (longitud.isNotEmpty&&modificar){
     longitud=longitudController.text;
-  }
+  }else{
+    longitud=longitudController.text;
+  } */ 
 
   //-------------------------------------------------------
    SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -906,7 +959,13 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
   
   Map <String, dynamic>  cuantificarPostes= new Map();
   String posteNumero='';
-  
+  String fechaModificacion='';
+
+  if(modificar){
+    fechaModificacion='fechaModificada';
+  }else{
+    fechaModificacion='timestamp';
+  }
   print('estado:$estadoOrdenServicio');
   
   if(estadoOrdenServicio=='No iniciada'){
@@ -932,15 +991,15 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
   }else{
     posteNumero= firebaseBloc.idPosteController.value;
   }
-
-  ordenesServicio
+  if(modificar){
+     ordenesServicio
     .document(widget.numeroOrdenS)
     .collection('postes')
     .document(posteNumero)
-    .setData({
+    .updateData({
        
         'posteID':posteNumero,
-        'georeferenciacion'   : {'latitud': latitud, 'longitud': longitud},
+        'georeferenciacion'   : {'latitud': latitudController.text, 'longitud': longitudController.text},
         'abscisas'            : {'inicial':abscisaInicialController.text, 'final':abscisaFinalController.text},
         'mediaUrl'            : {'mediaUrlPoste': mediaUrlPoste, 'mediaUrlCajaEmpalme':mediaUrlCajaEmpalme},
         'cajaEmpalme'         : {
@@ -971,7 +1030,62 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                                  'voltaje': firebaseBloc.lineaTransmisionPosteIdController.value,
                                  'estado': firebaseBloc.estadoPostesIDController.value,
         },
-        'timestamp'           : DateTime.now(),
+        fechaModificacion: DateTime.now(),
+        'proveedorPoste'      : {
+                                'propietario':propietarioController.text,
+                                'idPoste':idPosteController.text,
+                                'observaciones':observacionesController.text
+        } 
+    }
+    ); 
+
+    Fluttertoast.showToast(
+          msg: 'Los datos fueron actualizados con exito!',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.CENTER,
+          fontSize: 15,
+          backgroundColor: Colors.grey
+    );
+  }else{
+     ordenesServicio
+    .document(widget.numeroOrdenS)
+    .collection('postes')
+    .document(posteNumero)
+    .setData({
+       
+        'posteID':posteNumero,
+        'georeferenciacion'   : {'latitud': latitudController.text, 'longitud': longitudController.text},
+        'abscisas'            : {'inicial':abscisaInicialController.text, 'final':abscisaFinalController.text},
+        'mediaUrl'            : {'mediaUrlPoste': mediaUrlPoste, 'mediaUrlCajaEmpalme':mediaUrlCajaEmpalme},
+        'cajaEmpalme'         : {
+                                 'reserva':reservaController.text ,
+                                 'hilosIntervalo':intervaloHilosController.text,
+                                 'idCajaEmpalme':cajaEmpalmeController.text
+        },
+        'fibra'               : {
+                                 'span': spanController.text ,
+                                 'hilosCantidad': cantidadHilosController.text,
+                                 'aerea':firebaseBloc.checkBoxAereaController.value,
+                                 'canalizada':firebaseBloc.checkBoxCanalizadaController.value
+        },
+        'materiales'          : {
+                                 'herrajeRetencion':herrajeRetencionController.text,
+                                 'herrajeSupension':herrajeSuspensionController.text,
+                                 'marquillas':marquillasController.text,
+                                 'amortiguador':amortiguadorController.text,
+                                 'brazoExtensor':brazoExtensorController.text,
+                                 'coronaCoil':coronaCoilController.text,
+                                 'abrazaderaCollarin':abrazaderaController.text
+        },
+        'caracteristicasPoste': {
+                                 'altura': firebaseBloc.alturaPostesIDController.value,
+                                 'rotura': firebaseBloc.resistenciaPostesIDController.value,
+                                 'tipo': firebaseBloc.tipoPosteIDController.value,
+                                 'material': firebaseBloc.materialPosteIDController.value,
+                                 'voltaje': firebaseBloc.lineaTransmisionPosteIdController.value,
+                                 'estado': firebaseBloc.estadoPostesIDController.value,
+        },
+        fechaModificacion: DateTime.now(),
         'proveedorPoste'      : {
                                 'propietario':propietarioController.text,
                                 'idPoste':idPosteController.text,
@@ -987,6 +1101,8 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
           fontSize: 15,
           backgroundColor: Colors.grey
     );
+  }
+ 
   
   borrarVariables(firebaseBloc); 
   
@@ -1003,6 +1119,8 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
     });
 
 
+}
+ 
   
  }
 

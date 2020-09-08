@@ -64,6 +64,9 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
  String latitud='',longitud='';
  int cont_aux=0;
  bool cargando=false;
+ bool modificar=false;
+ String fotoPosteString='';
+ String fotoCajaEmpalmeString='';
  
 
   static const spinkit = SpinKitRotatingCircle(
@@ -201,7 +204,7 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
     
     inicializarVariablesBloc(firebaseBloc,altoPantalla,anchoPantalla);
     firebaseBloc.getDetallePosteInstalado(widget.numeroOrdenS);
-    print('cargando:$cargando');
+    print('listaPostesIdController:${firebaseBloc.listaPostesIdController.value}');
         return Scaffold(
           appBar: header('Gestion',context,'mapa'),
           body: streamAgendaOrdenes(firebaseBloc),
@@ -228,7 +231,7 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
         shrinkWrap: true,
         itemCount: datosPostes.length,
         itemBuilder: (context, i){
-          return _crearBotonRedondeado(Colors.blue, datosPostes[i],context, i);
+          return _crearBotonRedondeado(Colors.blue, datosPostes,context, i, firebaseBloc);
         }  
       );
     }else{
@@ -240,7 +243,8 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
           
   
       mostrarCuadroOopciones(BuildContext context, FirebaseBloc firebaseBloc) {
-       
+        DocumentSnapshot dato= firebaseBloc.posteSeleccionadoController.value;
+      
         return showDialog(
           context: context,
           builder: (context)=>StatefulBuilder(
@@ -267,29 +271,93 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                     //cacheExtent: 85.0,
                     children:[
                       
+                   
                        Divider(),
                        subTitulos('Georefenciación',Icon(Icons.golf_course, color: Colors.white), 'geo', firebaseBloc),
-                       textFormDoble(latitud.isEmpty?'Latitud':latitud, latitudController, longitud.isEmpty?'Longitud':longitud, longitudController,false),
+                       
+                       textFormDoble(latitud.isEmpty?'Latitud':latitud,
+                                     'latitud',
+                                      latitudController,
+                                      longitud.isEmpty?'Longitud':longitud,
+                                      'Longitud',
+                                      longitudController,
+                                      false),
+
                        Divider(color: Colors.black, height: 15.0),
                        subTitulos('Abscisas', Icon(Icons.gesture, color: Colors.white), '', firebaseBloc),
-                       textFormDoble('Inicial', abscisaInicialController, 'Final', abscisaFinalController, false),
+                      
+                       textFormDoble(modificar?dato['abscisas']['inicial']:'Inicial',
+                                     'Inicial', 
+                                     abscisaInicialController,
+                                     modificar?dato['abscisas']['final']:'Final',
+                                     'Final',
+                                     abscisaFinalController,
+                                     false),
+                      
                        Divider(color: Colors.black, height: 15.0),
                        subTitulos('Identificacion de Fotografia',Icon(Icons.photo_library, color: Colors.white), 'cajaEmpalme', firebaseBloc),
-                       textFormDoble( 'Reserva (Metros)',reservaController, 'Intervalo de Hilos', intervaloHilosController, false),
-                       textForm(cajaEmpalmeController, 'Id caja de empalme',  true), 
+                      
+                       textFormDoble(  modificar?dato['cajaEmpalme']['reserva']:'Reserva (Metros)',
+                                       'Reserva (Metros)', 
+                                       reservaController,
+                                       modificar?dato['cajaEmpalme']['hilosIntervalo']:'Intervalo de Hilos',
+                                       'Intervalo de Hilos',
+                                       intervaloHilosController,
+                                       false),
+                      
+                       textForm(cajaEmpalmeController,
+                                'Id caja de empalme',
+                                modificar?dato['cajaEmpalme']['idCajaEmpalme']:'Id caja de empalme',
+                                true), 
+                      
                        SizedBox(height: 10,),
                        fotografiaEvidenciaCajaEmpalme(context, firebaseBloc, 'cajaEmpalme'),
                        Divider(color: Colors.black, height: 15.0),
                        subTitulos('Fibra Optica',Icon(Icons.linear_scale, color: Colors.white), '', firebaseBloc),
-                       textFormDoble('Span', spanController, 'Cantidad de Hilos', cantidadHilosController, false),
+                       
+                       textFormDoble(modificar?dato['fibra']['span']:'Span',
+                                     'Span',
+                                     spanController,
+                                     modificar?dato['fibra']['hilosCantidad']:'Cantidad de Hilos',
+                                     'Cantidad de Hilos',
+                                     cantidadHilosController,
+                                     false),
+                       
                        checkBoxDoble('Aerea:',checkBoxAerea, firebaseBloc.checkBoxAereaController,  'Canalizada', checkBoxCanalizada, firebaseBloc.checkBoxCanalizadaController),
+                       
                        Divider(),
                        subTitulos('Materiales utilizados',Icon(Icons.linear_scale, color: Colors.white), '', firebaseBloc), 
                        SizedBox(height: 20,),
-                       textFormDoble('Herraje de retención', herrajeRetencionController, 'Herraje de suspensión', herrajeSuspensionController,false),
-                       textFormDoble('Marquillas', marquillasController, 'Amortiguador', amortiguadorController, false),
-                       textFormDoble('Brazo extensor', brazoExtensorController, 'Corona coil', coronaCoilController, false),
-                       textForm(abrazaderaController, 'Abrazadera para poste collarin',false), 
+                       
+                       textFormDoble(modificar?dato['materiales']['herrajeRetencion']:'Herraje de retención',
+                                     'Herraje de retención', 
+                                     herrajeRetencionController,
+                                     modificar?dato['materiales']['herrajeSupension']:'Herraje de suspensión',
+                                     'Herraje de suspensión',
+                                     herrajeSuspensionController,
+                                     false),
+                       
+                       textFormDoble(modificar?dato['materiales']['marquillas']:'Marquillas',
+                                     'Marquillas', 
+                                     marquillasController,
+                                     modificar?dato['materiales']['amortiguador']:'Amortiguador',
+                                     'Amortiguador',
+                                     amortiguadorController,
+                                     false),
+                       
+                       textFormDoble(modificar?dato['materiales']['brazoExtensor']:'Brazo extensor',
+                                     'Brazo extensor', 
+                                     brazoExtensorController,
+                                     modificar?dato['materiales']['coronaCoil']:'Corona coil',
+                                     'Corona coil',
+                                     coronaCoilController,
+                                     false),
+                       
+                       textForm(abrazaderaController,
+                                'Abrazadera para poste collarin',
+                                modificar?dato['materiales']['abrazaderaCollarin']:'Abrazadera para poste collarin',
+                                false), 
+                       
                        Divider(),
                        subTitulos('Caracteristica poste',Icon(Icons.linear_scale, color: Colors.white), '', firebaseBloc), 
                        SizedBox(height: 20,),
@@ -301,8 +369,20 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                        Divider(),
                        subTitulos('Proveedor de poste',Icon(Icons.linear_scale, color: Colors.white), 'proveedorPoste', firebaseBloc), 
                        SizedBox(height: 20,),
-                       textFormDoble('Propietario', propietarioController, 'Id poste', idPosteController,true),
-                       textForm(observacionesController, 'Observaciones', true),
+                       
+                       textFormDoble(modificar?dato['proveedorPoste']['propietario']:'Propietario',
+                                     'Propietario', 
+                                     propietarioController,
+                                     modificar?dato['proveedorPoste']['idPoste']:'Id poste',
+                                     'Id poste',
+                                     idPosteController,
+                                     true),
+                       
+                       textForm(observacionesController,
+                                'Observaciones',
+                                modificar?dato['proveedorPoste']['observaciones']: 'Observaciones',
+                                true),
+
                        SizedBox(height: 10,),
                        fotografiaEvidenciaPoste(context, firebaseBloc, 'proveedorPoste'),
                        isUploading ? linearProgress(context) : Text(''),
@@ -318,6 +398,7 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                 FlatButton(
                     child: Text('Cancelar'),
                     onPressed: (){
+                      borrarVariables(firebaseBloc);
                       Navigator.pop(context);
                     },
                   ),
@@ -431,13 +512,13 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
         );
       }
       
-       textFormDoble(String texto1,TextEditingController controller1, String texto2, TextEditingController controller2, bool numeroText ) {
+       textFormDoble(String textoModificado1, String texto1,TextEditingController controller1, String textoModificado2, String texto2, TextEditingController controller2, bool numeroText ) {
         return StatefulBuilder(
         builder: (BuildContext context, void Function(void Function()) setState) {
         return ListTile(
            contentPadding: EdgeInsets.symmetric(horizontal: 0,vertical: 5),
-           title: Container(width: 20, height: 45,child: textForm(controller1, texto1,numeroText)),
-           trailing: Container(width: 180, height: 45,child: textForm(controller2, texto2,numeroText))
+           title: Container(width: 20, height: 45,child: textForm(controller1,textoModificado1, texto1,numeroText)),
+           trailing: Container(width: 180, height: 45,child: textForm(controller2,textoModificado2, texto2,numeroText))
           );
          }
         );
@@ -448,7 +529,7 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
         
         File fotoPoste= firebaseBloc.fotoPosteController.value;
         
-
+       
         return Container(
                  width: MediaQuery.of(context).size.width*0.8,
                  height: MediaQuery.of(context).size.height*0.25,
@@ -456,9 +537,10 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                   // color: Colors.blue,
                   borderRadius: BorderRadius.circular(10),
                     image: DecorationImage(
-                     image: filePoste==null?AssetImage('assets/no-image.jpg'):
-                     fotoPoste!=null?FileImage(fotoPoste):
-                     AssetImage('assets/no-image.jpg'),
+                     image: modificar&&fotoPosteString!=''&&fotoPoste==null?NetworkImage(fotoPosteString):
+                            modificar==false&&filePoste==null?AssetImage('assets/no-image.jpg'):
+                            fotoPoste!=null?FileImage(fotoPoste):
+                            AssetImage('assets/no-image.jpg'),
                      fit: filePoste==null?BoxFit.cover:BoxFit.fill
                 )
               ),
@@ -476,9 +558,10 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                   // color: Colors.blue,
                   borderRadius: BorderRadius.circular(10),
                     image: DecorationImage(
-                     image: fileCajaEmpalme==null?AssetImage('assets/no-image.jpg'):
-                     fotocajaEmpalme!=null?FileImage(fotocajaEmpalme):
-                     AssetImage('assets/no-image.jpg'),
+                     image:  modificar&&fotoCajaEmpalmeString!=''&&fotocajaEmpalme==null?NetworkImage(fotoCajaEmpalmeString):
+                             modificar==false&&fileCajaEmpalme==null?AssetImage('assets/no-image.jpg'):
+                             fotocajaEmpalme!=null?FileImage(fotocajaEmpalme):
+                             AssetImage('assets/no-image.jpg'),
                      fit: fileCajaEmpalme==null?BoxFit.cover:BoxFit.fill
                 )
               ),
@@ -547,7 +630,7 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
            
            
     
-      TextFormField textForm(TextEditingController controller, String label, bool numeroText) {
+      TextFormField textForm(TextEditingController controller,String textoModificado, String label, bool numeroText) {
         return TextFormField(
                     keyboardType: numeroText?TextInputType.text:TextInputType.number,
                     decoration: InputDecoration(
@@ -556,8 +639,8 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                       borderRadius: BorderRadius.all(Radius.circular(10))
                     ),
                     filled: false,
-                    //hintText: label,
-                    labelText: label
+                    hintText: label,
+                    labelText: modificar&&textoModificado!=''?textoModificado:label
                     ),
                     controller: controller,
                     );
@@ -575,7 +658,7 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
         }else  if(foto.contains('proveedorPoste')){
           filePoste= await takePhoto.getFoto(context);
           firebaseBloc.fotoPosteController.sink.add(filePoste);
-        
+           
           
         }
         mostrarCuadroOopciones(context, firebaseBloc);
@@ -586,6 +669,7 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
          
         firebaseBloc.anchoPantallaController.sink.add(anchoPantalla); 
         firebaseBloc.altoPantallaController.sink.add(altoPantalla); 
+        firebaseBloc.listaPostesIdController.sink.add(null);
          
       if(cont_aux==0){  
       cont_aux=1;
@@ -609,16 +693,16 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
         firebaseBloc.itemsSeleccionadosStream.listen((event) {datosItem=event;});
       }  
     
-     Widget _crearBotonRedondeado(Color color,  DocumentSnapshot datosPostes, BuildContext context, int i){
+     Widget _crearBotonRedondeado(Color color,  List<DocumentSnapshot> datosPostes, BuildContext context, int i, FirebaseBloc firebaseBloc){
      //final widthPantalla = MediaQuery.of(context).size.width;
     
      String imagen; 
      imagen='assets/ordenCasa2.png';
      
-    return tarjetas(color, datosPostes, imagen, context);
+    return tarjetas(color, datosPostes, imagen, context, firebaseBloc, i);
   }
 
-   tarjetas(Color color, DocumentSnapshot datosPostes, String imagen, BuildContext context) {
+   tarjetas(Color color, List<DocumentSnapshot> datosPostes, String imagen, BuildContext context, firebaseBloc, int i) {
     final widthPantalla = MediaQuery.of(context).size.width;
     final heightPantalla = MediaQuery.of(context).size.height;
     return Container(
@@ -639,7 +723,7 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                       ),
                    ]  
          ), 
-         child: subtituloTarjeta(datosPostes), 
+         child: subtituloTarjeta(datosPostes,firebaseBloc,i), 
               
              
         );
@@ -655,13 +739,21 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                 )
             );
    }
-
-   subtituloTarjeta(DocumentSnapshot dato) {
+   
+   obtenerNumeroPostes(FirebaseBloc firebaseBloc)async{
+         
+         await firebaseBloc.getListaPostes(widget.numeroOrdenS, true);
+       
+       
+      
+     } 
+   subtituloTarjeta(List<DocumentSnapshot> dato, FirebaseBloc firebaseBloc, int i) {
+     
      return ListTile(
               contentPadding: EdgeInsets.symmetric(horizontal: 10),
               leading: Icon(Icons.format_paint, size: 35.0),
               title: Text(
-                'Id: ${dato['posteID']}',
+                'Id: ${dato[i]['posteID']}',
                 style: TextStyle(
                         fontSize: 16.0,
                         fontWeight: FontWeight.bold,
@@ -672,7 +764,7 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                    Text(
-                'Latitud: ${dato['georeferenciacion']['latitud']}',
+                'Latitud: ${dato[i]['georeferenciacion']['latitud']}',
                 style: TextStyle(
                         fontSize: 16.0,
                         //fontWeight: FontWeight.bold,
@@ -680,7 +772,7 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                 )
               ),
                Text(
-                'Longitud: ${dato['georeferenciacion']['longitud']}',
+                'Longitud: ${dato[i]['georeferenciacion']['longitud']}',
                 style: TextStyle(
                         fontSize: 16.0,
                         //fontWeight: FontWeight.bold,
@@ -696,12 +788,64 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                          shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
-                        onSelected: (String newValue){
-                        setState(() {
-                          opcionPosteId=newValue;
+                        onSelected: (String newValue)async{
+                         opcionPosteId=newValue;
                           if(opcionPosteId=='Detalles'){
-                             Navigator.push(context, MaterialPageRoute(builder: (context)=> DetallesPoste(datos:dato)));
+                             Navigator.push(context, MaterialPageRoute(builder: (context)=> DetallesPoste(datos:dato[i])));
                              }
+                           if(opcionPosteId=='Eliminar'){
+                              List<String> listaNueva= new List();
+                              ordenesServicio
+                              .document(widget.numeroOrdenS)
+                              .collection('postes')
+                              .document(dato[i]['posteID'])
+                              .delete();
+                            
+                              await obtenerNumeroPostes(firebaseBloc);
+                              
+                              final listaPostes1=firebaseBloc.listaPostesIdController.value;
+                              print('listaPostes1------------------------>$listaPostes1');
+                              if(listaPostes1!=null){
+                              for (var n = 0; n < listaPostes1.length; n++) {
+                                if(listaPostes1[n]!=dato[i]['posteID']){
+                                   listaNueva.add(listaPostes1[n]);
+                                }
+                              }
+                               print('postes---->$listaNueva');
+                              firebaseBloc.listaPostesIdController.sink.add(null);
+ 
+                                ordenesServicio
+                              .document(widget.numeroOrdenS)
+                              .updateData({
+                                'postes':listaNueva
+                              });  
+                              }
+                             
+                           }  
+                           if(opcionPosteId=='Modificar'){
+                             firebaseBloc.posteSeleccionadoController.sink.add(dato[i]);
+                             firebaseBloc.idPosteController.sink.add(dato[i]['posteID']);
+                             
+                              modificar=true;
+                              latitud=dato[i]['georeferenciacion']['latitud'];
+                              longitud=dato[i]['georeferenciacion']['longitud'];
+
+                              fotoPosteString=dato[i]['mediaUrl']['mediaUrlPoste'];
+                              fotoCajaEmpalmeString=dato[i]['mediaUrl']['mediaUrlCajaEmpalme'];
+                              firebaseBloc.alturaPostesIDController.sink.add(dato[i]['caracteristicasPoste']['altura']);
+                              firebaseBloc.resistenciaPostesIDController.sink.add(dato[i]['caracteristicasPoste']['rotura']);
+                              firebaseBloc.tipoPosteIDController.sink.add(dato[i]['caracteristicasPoste']['tipo']);
+                              firebaseBloc.materialPosteIDController.sink.add(dato[i]['caracteristicasPoste']['material']);
+                              firebaseBloc.lineaTransmisionPosteIdController.sink.add(dato[i]['caracteristicasPoste']['voltaje']);
+                              firebaseBloc.estadoPostesIDController.sink.add(dato[i]['caracteristicasPoste']['estado']);
+                              firebaseBloc.checkBoxAereaController.sink.add(dato[i]['fibra']['aerea']);
+                              firebaseBloc.checkBoxCanalizadaController.sink.add(dato[i]['fibra']['canalizada']);        
+                                      
+                              mostrarCuadroOopciones(context, firebaseBloc);
+                             
+                             }     
+                        setState(() {
+                         
                         });
                         },
                         itemBuilder: (BuildContext context)=> popupOpcionesPoste
@@ -734,13 +878,18 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
     });
 
  if (filePoste!=null){
-   filePoste= await takePhoto.compressImage(filePoste);
+  filePoste= await takePhoto.compressImage(filePoste);
    mediaUrlPoste = await takePhoto.uploadImage(filePoste);
+ }else if(modificar&&fotoPosteString!=''){
+   mediaUrlPoste=fotoPosteString;
  }
  if (fileCajaEmpalme!=null){
    fileCajaEmpalme= await takePhoto.compressImage(fileCajaEmpalme);
    mediaUrlCajaEmpalme = await takePhoto.uploadImage(fileCajaEmpalme);
+ }else if(modificar&&fotoCajaEmpalmeString!=''){
+   mediaUrlCajaEmpalme=fotoCajaEmpalmeString;
  }
+
 
   //--------Validacion si el usuario tomo coordenadas automaticamente-----
   if (latitud.isEmpty){
@@ -749,6 +898,7 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
    if (longitud.isEmpty){
     longitud=longitudController.text;
   }
+
   //-------------------------------------------------------
    SharedPreferences prefs = await SharedPreferences.getInstance();
    estadoOrdenServicio= prefs.getString('estadoOs');
@@ -769,8 +919,8 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
             'Estado': 'En proceso',
             'postes': ['poste-1']
           });
-  }else{
-    cuantificarPostes= await datosRedFibra.getNumeroPoste(widget.numeroOrdenS);
+  }else if(modificar==false){
+    cuantificarPostes= await datosRedFibra.getNumeroPoste(widget.numeroOrdenS, false);
     print(cuantificarPostes);
     posteNumero='poste-' + cuantificarPostes['posteActual'];
     //ACTUALIZA LA LISTA DE POSTES EN EL DOCUMENTO DE LA ORDEN DE SERVICIO ELEGIDA
@@ -779,6 +929,8 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
           .updateData({
             'postes': cuantificarPostes['listaPostes']
           });
+  }else{
+    posteNumero= firebaseBloc.idPosteController.value;
   }
 
   ordenesServicio
@@ -835,10 +987,32 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
           fontSize: 15,
           backgroundColor: Colors.grey
     );
+  
+  borrarVariables(firebaseBloc); 
+  
+         
 
+    setState(() {
+      mediaUrlPoste='';
+      mediaUrlCajaEmpalme='';
+      filePoste=null;
+      fileCajaEmpalme=null;
+      isUploading=false;
+      posteSerialDB= Uuid().v4();
+      Navigator.pop(context);
+    });
+
+
+  
+ }
+
+ borrarVariables(FirebaseBloc firebaseBloc){
+  modificar=false;
   cargando=false;
   latitud='';
   longitud='';
+  fotoPosteString='';
+  fotoCajaEmpalmeString='';
   latitudController.clear();          
   longitudController.clear();         
   abscisaInicialController.clear();   
@@ -869,20 +1043,6 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
  firebaseBloc.estadoPostesIDController.sink.add('');
  firebaseBloc.checkBoxAereaController.sink.add(false);
  firebaseBloc.checkBoxCanalizadaController.sink.add(false);
-  
-         
-
-    setState(() {
-      mediaUrlPoste='';
-      mediaUrlCajaEmpalme='';
-      filePoste=null;
-      fileCajaEmpalme=null;
-      isUploading=false;
-      posteSerialDB= Uuid().v4();
-      Navigator.pop(context);
-    });
-
-
   
  }
  arregloControladores(FirebaseBloc firebaseBloc){

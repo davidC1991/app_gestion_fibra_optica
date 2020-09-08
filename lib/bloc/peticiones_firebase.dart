@@ -21,7 +21,7 @@ class DatosRedFibra {
      return snapshot.documents; 
   }
  
-  Future <Map <String, dynamic>> getNumeroPoste(String numeroOs)async{
+  Future <Map <String, dynamic>> getNumeroPoste(String numeroOs, bool eliminar)async{
     
     List<String> listaPostes= new List();
     String posteNumero=''; 
@@ -32,14 +32,44 @@ class DatosRedFibra {
        posteNumero=value.data['postes'][long.length-1];
        
        posteNumero=posteNumero.substring(6);
+       if(eliminar){
+        numero= int.parse(posteNumero);   
+       for (var i = 0; i < long.length; i++) {
+        listaPostes.add(long[i]);
+       }
+       }else{
+          numero= int.parse(posteNumero)+1;
+          posteNumero= numero.toString();
+          print('poste-->$posteNumero'); 
+        for (var i = 0; i < numero; i++) {
+          listaPostes.add('poste-${i+1}');
+        }
+       }
+
+      
+
+       /* print(value.data);
+       List long=value.data['postes'];
+
+       for (var i = 0; i < long.length; i++) {
+         listaPostes.add('poste-${i+1}');
+       }
+      
+       if(eliminar){
+        
+       }else{
+       posteNumero=listaPostes[listaPostes.length-1];
+       posteNumero=posteNumero.substring(6);
        numero= int.parse(posteNumero)+1;
        posteNumero= numero.toString();
+       listaPostes.add('poste-'+ posteNumero); 
+       }
+ */       
 
-       print('poste-->$posteNumero');
+       
+       
      });
-     for (var i = 0; i < numero; i++) {
-       listaPostes.add('poste-${i+1}');
-     }
+    
      print(listaPostes);
 
      return {'listaPostes':listaPostes, 'posteActual':posteNumero};

@@ -14,6 +14,7 @@ class FirebaseBloc{
   
   final _ordenesServicioController = new BehaviorSubject<List<DocumentSnapshot>>();
   final itemsSeleccionadosController = new BehaviorSubject<DocumentSnapshot>();
+  final posteSeleccionadoController = new BehaviorSubject<DocumentSnapshot>();
   final listaPostesOSController = new BehaviorSubject<List<DocumentSnapshot>>();
   
     
@@ -34,12 +35,15 @@ class FirebaseBloc{
      final estadoOrdenServicioController = new BehaviorSubject<String>();
      final latitudController = new BehaviorSubject<String>();
      final itemController = new BehaviorSubject<String>();
+     final idPosteController = new BehaviorSubject<String>();
      final rutaFibraController = new BehaviorSubject<List<LatLng>>();
+     final listaPostesIdController = new BehaviorSubject<List<String>>();
     
     
     Stream<List<DocumentSnapshot>> get ordenServicioStream => _ordenesServicioController;
     Stream<List<DocumentSnapshot>> get listaPostesOSControllerStream => listaPostesOSController;
     Stream<DocumentSnapshot> get itemsSeleccionadosStream => itemsSeleccionadosController;
+    Stream<DocumentSnapshot> get posteSeleccionadoStream => posteSeleccionadoController;
     Stream<String> get itemStream => itemController;
     Stream<String> get latitudStream => latitudController;
     Stream<String> get estadoOrdenServicioControllerStream => estadoOrdenServicioController;
@@ -54,9 +58,11 @@ class FirebaseBloc{
     Stream<String> get tipoPosteIDStream => tipoPosteIDController;
     Stream<String> get materialPosteIDStream => materialPosteIDController;
     Stream<String> get estadoPostesStream => estadoPostesIDController;
+    Stream<String> get idPosteStream => idPosteController;
     Stream<File> get fotoCajaEmpalmeStream => fotoCajaEmpalmeController;
     Stream<File> get fotoPosteEmpalmeStream => fotoPosteController;
     Stream<List<LatLng>> get rutaFibraStream => rutaFibraController;
+    Stream<List<String>> get listaPostesIdStream => listaPostesIdController;
   
      
   
@@ -67,7 +73,13 @@ class FirebaseBloc{
   
       
     }
+     getListaPostes(String iDos, bool eliminar)async {
+    
+       final listaPostesId= await datosRedFibra.getNumeroPoste(iDos, eliminar);
+       listaPostesIdController.sink.add(listaPostesId['listaPostes']);
   
+      
+    }
      getDetallePosteInstalado(String numeroOs)async {
     
        final oSs = await datosRedFibra.getGestionOsPostes(numeroOs);
@@ -104,6 +116,9 @@ class FirebaseBloc{
       estadoOrdenServicioController?.close();
       latitudController?.close();
       rutaFibraController?.close();
+      posteSeleccionadoController?.close();
+      idPosteController?.close();
+      listaPostesIdController?.close();
     }
   
   

@@ -38,10 +38,13 @@ class FirebaseBloc{
      final idPosteController = new BehaviorSubject<String>();
      final rutaFibraController = new BehaviorSubject<List<LatLng>>();
      final listaPostesIdController = new BehaviorSubject<List<String>>();
+     final listaHilosAgregadosController = new BehaviorSubject<List<String>>();
+     final agregadarHiloController = new BehaviorSubject<bool>();
     
     
     Stream<List<DocumentSnapshot>> get ordenServicioStream => _ordenesServicioController;
     Stream<List<DocumentSnapshot>> get listaPostesOSControllerStream => listaPostesOSController;
+    Stream<List<String>> get listaHilosAgregadosStream => listaHilosAgregadosController;
     Stream<DocumentSnapshot> get itemsSeleccionadosStream => itemsSeleccionadosController;
     Stream<DocumentSnapshot> get posteSeleccionadoStream => posteSeleccionadoController;
     Stream<String> get itemStream => itemController;
@@ -63,6 +66,7 @@ class FirebaseBloc{
     Stream<File> get fotoPosteEmpalmeStream => fotoPosteController;
     Stream<List<LatLng>> get rutaFibraStream => rutaFibraController;
     Stream<List<String>> get listaPostesIdStream => listaPostesIdController;
+    Stream<bool> get agregadarHiloIdStream => agregadarHiloController;
   
      
   
@@ -119,6 +123,8 @@ class FirebaseBloc{
       posteSeleccionadoController?.close();
       idPosteController?.close();
       listaPostesIdController?.close();
+      listaHilosAgregadosController?.close();
+      agregadarHiloController?.close();
     }
   
   

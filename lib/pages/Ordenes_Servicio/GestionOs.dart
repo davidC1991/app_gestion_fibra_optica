@@ -67,8 +67,10 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
  bool modificar=false;
  String fotoPosteString='';
  String fotoCajaEmpalmeString='';
- 
-
+ List<Widget> listHilosUtilizados= new List();
+ List<TextEditingController> listTextEditingController= new List();
+ int contHilosUtilizados=0;
+ Map <String,String> listaFinalEmpalme= new Map();
   static const spinkit = SpinKitRotatingCircle(
   color: Colors.blue,
   size: 50.0,
@@ -244,7 +246,7 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
   
       mostrarCuadroOopciones(BuildContext context, FirebaseBloc firebaseBloc) {
         DocumentSnapshot dato= firebaseBloc.posteSeleccionadoController.value;
-      
+        bool agregarHilo=firebaseBloc.agregadarHiloController.value;
         return showDialog(
           context: context,
           builder: (context)=>StatefulBuilder(
@@ -272,7 +274,7 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                     children:[
                        //---INGRESANDO 'geo' se activa la opcion de toma de coordenadas por el celular---------------
                        Divider(),
-                       subTitulos('Georefenciación',Icon(Icons.golf_course, color: Colors.white), 'geoo', firebaseBloc),
+                       subTitulos('Georefenciación',Icon(Icons.golf_course, color: Colors.white), 'geoo', firebaseBloc, false),
                        
                        textFormDoble(
                                      'latitud',
@@ -283,7 +285,7 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                                      
 
                        Divider(color: Colors.black, height: 15.0),
-                       subTitulos('Abscisas', Icon(Icons.gesture, color: Colors.white), '', firebaseBloc),
+                       subTitulos('Abscisas', Icon(Icons.gesture, color: Colors.white), '', firebaseBloc, false),
                       
                        textFormDoble(
                                      'Inicial', 
@@ -294,8 +296,8 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                                      
                       
                        Divider(color: Colors.black, height: 15.0),
-                       subTitulos('Identificacion de Fotografia',Icon(Icons.photo_library, color: Colors.white), 'cajaEmpalme', firebaseBloc),
-                      
+                       subTitulos('Caja de Empalme',Icon(Icons.add, color: Colors.white), 'cajaEmpalme', firebaseBloc, true),
+
                        textFormDoble(  
                                       'Reserva (Metros)', 
                                        reservaController,
@@ -303,16 +305,27 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                                        intervaloHilosController,
                                        false),
                                       
-                      
+                       agregarHilo!=null && agregarHilo==true?Container(
+                         /* height: 60,
+                         width: 300, */
+                         child: ListView(
+                          physics: NeverScrollableScrollPhysics(),
+                          shrinkWrap: true, 
+                          children: listHilosUtilizados
+                         ),
+                       ):Container(), 
                        textForm(cajaEmpalmeController,
+                       
                                 'Id caja de empalme',
                                 true), 
+                          
+                         
                                
                       
                        SizedBox(height: 10,),
                        fotografiaEvidenciaCajaEmpalme(context, firebaseBloc, 'cajaEmpalme'),
                        Divider(color: Colors.black, height: 15.0),
-                       subTitulos('Fibra Optica',Icon(Icons.linear_scale, color: Colors.white), '', firebaseBloc),
+                       subTitulos('Fibra Optica',Icon(Icons.linear_scale, color: Colors.white), '', firebaseBloc, false),
                        
                        textFormDoble(
                                      'Span',
@@ -325,7 +338,7 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                        checkBoxDoble('Aerea:',checkBoxAerea, firebaseBloc.checkBoxAereaController,  'Canalizada', checkBoxCanalizada, firebaseBloc.checkBoxCanalizadaController),
                        
                        Divider(),
-                       subTitulos('Materiales utilizados',Icon(Icons.linear_scale, color: Colors.white), '', firebaseBloc), 
+                       subTitulos('Materiales utilizados',Icon(Icons.linear_scale, color: Colors.white), '', firebaseBloc, false), 
                        SizedBox(height: 20,),
                        
                        textFormDoble(
@@ -359,7 +372,7 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                                 
                        
                        Divider(),
-                       subTitulos('Caracteristica poste',Icon(Icons.linear_scale, color: Colors.white), '', firebaseBloc), 
+                       subTitulos('Caracteristica poste',Icon(Icons.linear_scale, color: Colors.white), '', firebaseBloc, false), 
                        SizedBox(height: 20,),
                        dropDownBottomDoble('Altura:',  alturaPostesID, firebaseBloc.alturaPostesIDController, dropDownAlturaPostes, '         Rotura:', firebaseBloc.resistenciaPostesIDController, resistenciaPostesID, dropDownResistenciaPostes,firebaseBloc),
                        Divider(),
@@ -367,7 +380,7 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                        Divider(),
                        dropDownBottomDoble('Voltaje:', lineaTransmisionPosteID, firebaseBloc.lineaTransmisionPosteIdController, dropDownLineaTransmisionPostes, 'Estado:', firebaseBloc.estadoPostesIDController, estadoPostesID, dropDownEstadoPostes,firebaseBloc),
                        Divider(),
-                       subTitulos('Proveedor de poste',Icon(Icons.linear_scale, color: Colors.white), 'proveedorPoste', firebaseBloc), 
+                       subTitulos('Proveedor de poste',Icon(Icons.linear_scale, color: Colors.white), 'proveedorPoste', firebaseBloc, false), 
                        SizedBox(height: 20,),
                        
                        textFormDoble(
@@ -569,7 +582,8 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
       }
         
     
-       subTitulos(String subTitulo, Icon icono, String foto, FirebaseBloc firebaseBloc) {
+       subTitulos(String subTitulo, Icon icono, String foto, FirebaseBloc firebaseBloc, bool agregarHilo) {
+        
         return Card(
           margin: EdgeInsets.all(0),
           shape: RoundedRectangleBorder(
@@ -579,7 +593,23 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
           elevation: 8.0,
           child: ListTile(
                    contentPadding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 0),
-                   leading: icono,
+                   leading: agregarHilo?GestureDetector(
+                                            onTap: (){
+                                              contHilosUtilizados=contHilosUtilizados+2;
+                                              firebaseBloc.agregadarHiloController.sink.add(true);
+                                              
+                                              listTextEditingController.add(TextEditingController());
+                                              listTextEditingController.add(TextEditingController());
+                                             
+                                              listHilosUtilizados.add( textFormDoble( 'De numero hilo', listTextEditingController[contHilosUtilizados-2],
+                                                                                      'A numero hilo',listTextEditingController[contHilosUtilizados-1],
+                                                                                       false));
+                                              Navigator.pop(context);                                         
+                                              mostrarCuadroOopciones(context, firebaseBloc);                                       
+                                            },
+                                            child: icono,
+                                            ):icono,
+                                            
                    visualDensity: VisualDensity(vertical: 0.0, horizontal: 0.0),
                    dense: true,
                    title: Text(
@@ -890,38 +920,29 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
  
 
  sendDatos(FirebaseBloc firebaseBloc) async {
-     
+
+
+
+       
 if(longitudController.text.isEmpty||latitudController.text.isEmpty){
-   Fluttertoast.showToast(
-          msg: 'Complete las coordenadas',
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.CENTER,
-          fontSize: 15,
-          backgroundColor: Colors.grey
-    );  
-    
+   mensajePantalla('Complete las coordenadas');
 }else if(longitudController.text.contains('.')==false||latitudController.text.contains('.')==false){
-     Fluttertoast.showToast(
-          msg: 'Ingrese las coordenadas en decimales',
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.CENTER,
-          fontSize: 15,
-          backgroundColor: Colors.grey
-    );
-      
+   mensajePantalla('Ingrese las coordenadas en decimales');
 }else if(longitudController.text.length<8||latitudController.text.length<8){
-     Fluttertoast.showToast(
-          msg: 'Ingrese minimo 6  decimales',
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.CENTER,
-          fontSize: 15,
-          backgroundColor: Colors.grey
-    );
-      
+    mensajePantalla('Ingrese minimo 6  decimales'); 
 }
 else{
-  arregloControladores(firebaseBloc); 
+  
+  
+  
+ 
+  for (var i = 0; i < listTextEditingController.length; i=i+2) {
+    listaFinalEmpalme[listTextEditingController[i].text]=listTextEditingController[i+1].text;
+  }
 
+ 
+
+  arregloControladores(firebaseBloc); 
   setState(() {
      isUploading= true;
     });
@@ -1013,6 +1034,7 @@ else{
                                  'aerea':firebaseBloc.checkBoxAereaController.value,
                                  'canalizada':firebaseBloc.checkBoxCanalizadaController.value
         },
+        'cartaEmpalme'        :listaFinalEmpalme,
         'materiales'          : {
                                  'herrajeRetencion':herrajeRetencionController.text,
                                  'herrajeSupension':herrajeSuspensionController.text,
@@ -1068,6 +1090,7 @@ else{
                                  'aerea':firebaseBloc.checkBoxAereaController.value,
                                  'canalizada':firebaseBloc.checkBoxCanalizadaController.value
         },
+        'cartaEmpalme'        :listaFinalEmpalme,
         'materiales'          : {
                                  'herrajeRetencion':herrajeRetencionController.text,
                                  'herrajeSupension':herrajeSuspensionController.text,
@@ -1122,6 +1145,16 @@ else{
 }
  
   
+ }
+
+ void mensajePantalla(String mensaje) {
+   Fluttertoast.showToast(
+          msg: mensaje,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          fontSize: 15,
+          backgroundColor: Colors.grey
+    );  
  }
 
  borrarVariables(FirebaseBloc firebaseBloc){

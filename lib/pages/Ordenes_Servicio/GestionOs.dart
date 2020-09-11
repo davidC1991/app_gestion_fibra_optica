@@ -62,24 +62,22 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
  final picker = ImagePicker();
  String posteSerialDB= Uuid().v4();
  String latitud='',longitud='';
+ // ignore: non_constant_identifier_names
  int cont_aux=0;
  bool cargando=false;
  bool modificar=false;
  String fotoPosteString='';
  String fotoCajaEmpalmeString='';
- List<Widget> listHilosUtilizados= new List();
+ List<Widget> lisWidgettHilosUtilizados= new List();
  List<TextEditingController> listTextEditingController= new List();
  int contHilosUtilizados=0;
- Map <String,String> listaFinalEmpalme= new Map();
-  static const spinkit = SpinKitRotatingCircle(
-  color: Colors.blue,
-  size: 50.0,
-  );
+ Map <String,dynamic> listaFinalEmpalme= new Map();
+ int contI=0;
+  
 
   TomarFoto takePhoto=  TomarFoto();
   static const opcionesPoste = [
     'Detalles',
-    'Modificar',
     'Eliminar',
   ];
   static const opciones = [
@@ -263,11 +261,11 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
-                title: Center(child: Text('Cartera de información fisica')),
+                title: Center(child: Text('Cartera de información fisica ${firebaseBloc.idPosteController.value}')),
                 content: Container(
                   //color: Colors.brown,
-                  width: firebaseBloc.anchoPantallaController.value*0.9,
-                  height: firebaseBloc.altoPantallaController.value*0.8,
+                  width: firebaseBloc.anchoPantallaController.value*0.95,
+                  height: firebaseBloc.altoPantallaController.value*0.95,
                   child: ListView(
                     //itemExtent: 35.0,
                     //cacheExtent: 85.0,
@@ -304,20 +302,27 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                                        'Intervalo de Hilos',
                                        intervaloHilosController,
                                        false),
+                        textForm(cajaEmpalmeController,
+                                'Id caja de empalme',
+                                true),
+                       
                                       
                        agregarHilo!=null && agregarHilo==true?Container(
                          /* height: 60,
                          width: 300, */
-                         child: ListView(
-                          physics: NeverScrollableScrollPhysics(),
-                          shrinkWrap: true, 
-                          children: listHilosUtilizados
+                         child: Column(
+                           children: [
+                             Divider(color: Colors.black, height: 15.0),
+                             contHilosUtilizados>0?subTitulos('Relación de Empalme Hilos',Icon(Icons.add_box, color: Colors.white), '', firebaseBloc, true):Container(),
+                             contHilosUtilizados>0?ListView(
+                              physics: NeverScrollableScrollPhysics(),
+                              shrinkWrap: true, 
+                              children: lisWidgettHilosUtilizados
+                             ):Container(),
+                           ],
                          ),
                        ):Container(), 
-                       textForm(cajaEmpalmeController,
                        
-                                'Id caja de empalme',
-                                true), 
                           
                          
                                
@@ -416,7 +421,7 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                     },
                   ),
                 FlatButton(
-                    child: Text('Guardar'),
+                    child: modificar?Text('Actualizar'):Text('Guardar'),
                     onPressed: (){
                     sendDatos(firebaseBloc);
                     
@@ -595,15 +600,18 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                    contentPadding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 0),
                    leading: agregarHilo?GestureDetector(
                                             onTap: (){
+                                             
+                                             
                                               contHilosUtilizados=contHilosUtilizados+2;
                                               firebaseBloc.agregadarHiloController.sink.add(true);
+                                           
                                               
                                               listTextEditingController.add(TextEditingController());
                                               listTextEditingController.add(TextEditingController());
                                              
-                                              listHilosUtilizados.add( textFormDoble( 'De numero hilo', listTextEditingController[contHilosUtilizados-2],
-                                                                                      'A numero hilo',listTextEditingController[contHilosUtilizados-1],
-                                                                                       false));
+                                              lisWidgettHilosUtilizados.add( textFormDoble( 'Del hilo numero', listTextEditingController[contHilosUtilizados-2],
+                                                                                            'Al hilo numero',listTextEditingController[contHilosUtilizados-1],
+                                                                                            false));
                                               Navigator.pop(context);                                         
                                               mostrarCuadroOopciones(context, firebaseBloc);                                       
                                             },
@@ -662,6 +670,7 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
     
       TextFormField textForm(TextEditingController controller, String label, bool numeroText) {
         return TextFormField(
+                    maxLines: label=='Observaciones'?4:1,
                     keyboardType: numeroText?TextInputType.text:TextInputType.number,
                     decoration: InputDecoration(
                     contentPadding: EdgeInsets.all(8), 
@@ -820,9 +829,9 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                         ),
                         onSelected: (String newValue)async{
                          opcionPosteId=newValue;
-                          if(opcionPosteId=='Detalles'){
+                          /* if(opcionPosteId=='Detalles'){
                              Navigator.push(context, MaterialPageRoute(builder: (context)=> DetallesPoste(datos:dato[i])));
-                             }
+                             } */
                            if(opcionPosteId=='Eliminar'){
                               List<String> listaNueva= new List();
                               ordenesServicio
@@ -852,7 +861,7 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                               }
                            
                            }  
-                           if(opcionPosteId=='Modificar'){
+                           if(opcionPosteId=='Detalles'){
                              firebaseBloc.posteSeleccionadoController.sink.add(dato[i]);
                              firebaseBloc.idPosteController.sink.add(dato[i]['posteID']);
                           
@@ -878,8 +887,42 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                               observacionesController.text=dato[i]['proveedorPoste']['observaciones'];    
                               reservaController.text=dato[i]['cajaEmpalme']['reserva'];          
 
+                              //---ALGORITMO PARA ACTUALIZAR LOS CONTROLADORES DE LOS CAMPOS DE TEXTO DE LA CARTERA DE EMPALME--------
                               
-
+                              listaFinalEmpalme=dato[i]['cartaEmpalme'];
+                            if(listaFinalEmpalme!=null||listaFinalEmpalme.isNotEmpty){
+                              lisWidgettHilosUtilizados.clear();
+                              listTextEditingController.clear();
+                              for (var i = 0; i < listaFinalEmpalme.length*2; i++) {
+                                listTextEditingController.add(TextEditingController());
+                                }
+                                
+                              listaFinalEmpalme.keys.forEach((element) {
+                                  
+                                  listTextEditingController[contI].text=element;
+                                  contI=contI+2;
+                               });
+                              contI=1;
+                               listaFinalEmpalme.values.forEach((element) {
+                                  
+                                  listTextEditingController[contI].text=element;
+                                  
+                                   contI=contI+2;
+                               });
+                               contI=0;
+                               firebaseBloc.agregadarHiloController.sink.add(true);
+                               for (var i = 0; i < listaFinalEmpalme.length; i++) {
+                                lisWidgettHilosUtilizados.add( textFormDoble( 'Del hilo numero', listTextEditingController[contI],
+                                 
+                               
+                                                                              'Al hilo numero', listTextEditingController[contI+1],
+                                                                                       false));
+                                contI=contI+2;   
+                               } 
+                               contI=0;  
+                               contHilosUtilizados=listaFinalEmpalme.length*2;
+                              } 
+                                   
 
                               fotoPosteString=dato[i]['mediaUrl']['mediaUrlPoste'];
                               fotoCajaEmpalmeString=dato[i]['mediaUrl']['mediaUrlCajaEmpalme'];
@@ -923,25 +966,22 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
 
 
 
-       
 if(longitudController.text.isEmpty||latitudController.text.isEmpty){
-   mensajePantalla('Complete las coordenadas');
+   mensajePantalla('Complete las coordenadas!');
 }else if(longitudController.text.contains('.')==false||latitudController.text.contains('.')==false){
-   mensajePantalla('Ingrese las coordenadas en decimales');
+   mensajePantalla('Ingrese las coordenadas en decimales!');
 }else if(longitudController.text.length<8||latitudController.text.length<8){
-    mensajePantalla('Ingrese minimo 6  decimales'); 
-}
-else{
+    mensajePantalla('Ingrese minimo 6  decimales!'); 
+}else if(cantidadHilosController.text.isEmpty){
+   mensajePantalla('Ingrese la cantidad de hilos de la fibra que pasa por el poste!');
+}else{
   
-  
-  
- 
+   listaFinalEmpalme.clear();
   for (var i = 0; i < listTextEditingController.length; i=i+2) {
+    if(listTextEditingController[i].text!=''){
     listaFinalEmpalme[listTextEditingController[i].text]=listTextEditingController[i+1].text;
+    }
   }
-
- 
-
   arregloControladores(firebaseBloc); 
   setState(() {
      isUploading= true;
@@ -1060,14 +1100,8 @@ else{
         } 
     }
     ); 
-
-    Fluttertoast.showToast(
-          msg: 'Los datos fueron actualizados con exito!',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          fontSize: 15,
-          backgroundColor: Colors.grey
-    );
+    mensajePantalla('Los datos fueron actualizados con exito!');
+   
   }else{
      ordenesServicio
     .document(widget.numeroOrdenS)
@@ -1116,14 +1150,9 @@ else{
         } 
     }
     ); 
-
-    Fluttertoast.showToast(
-          msg: 'Los datos fueron guardados con exito!',
-          toastLength: Toast.LENGTH_SHORT,
-          gravity: ToastGravity.CENTER,
-          fontSize: 15,
-          backgroundColor: Colors.grey
-    );
+   
+    mensajePantalla('Los datos fueron guardados con exito!!');
+     
   }
  
   
@@ -1132,6 +1161,7 @@ else{
          
 
     setState(() {
+      
       mediaUrlPoste='';
       mediaUrlCajaEmpalme='';
       filePoste=null;
@@ -1158,6 +1188,10 @@ else{
  }
 
  borrarVariables(FirebaseBloc firebaseBloc){
+  listaFinalEmpalme.clear();
+  contHilosUtilizados=0;
+  lisWidgettHilosUtilizados.clear();
+  listTextEditingController.clear();
   modificar=false;
   cargando=false;
   latitud='';
@@ -1183,7 +1217,8 @@ else{
   idPosteController.clear();          
   observacionesController.clear();    
   reservaController.clear();          
- 
+
+ firebaseBloc.agregadarHiloController.sink.add(false);
  firebaseBloc.fotoPosteController.sink.add(null);
  firebaseBloc.fotoCajaEmpalmeController.sink.add(null);
  firebaseBloc.alturaPostesIDController.sink.add('');

@@ -14,11 +14,36 @@ class DetallesPoste extends StatefulWidget {
 class _DetallesPosteState extends State<DetallesPoste> {
   Color colorTextTitulo= Colors.grey[700];
   Color colorText= Colors.grey[500];
+  List valuesHilosEmpalme= new List();
+  List keysHilosEmpalme= new List();
+  
+  Map<String,dynamic> mapHilos= new Map();
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    int contAux=0;  
+    // if(widget.datos['cartaEmpalme'].length>0){
+        mapHilos=widget.datos['cartaEmpalme'];
+      
+        mapHilos.keys.forEach((element) {
+          keysHilosEmpalme[contAux]=element;
+          contAux++;
+       });
+      /* contI=0;
+       mapHilos.values.forEach((element) {
+          valuesHilosEmpalme[contI]=element;
+          contI++;
+       });  */
+    //} 
+  }
+  @override
   Widget build(BuildContext context) {
+    
     final widthPantalla = MediaQuery.of(context).size.width;
-
+   
+    print(mapHilos);
     return Scaffold(
       
       appBar:header('Informacion del ${widget.datos['posteID']}',context,''),
@@ -43,7 +68,19 @@ class _DetallesPosteState extends State<DetallesPoste> {
              
               subTitulo('Id',widget.datos['cajaEmpalme']['idCajaEmpalme']),
               
-              subTitulo('Reserva',widget.datos['cajaEmpalme']['reserva']), 
+              subTitulo('Reserva',widget.datos['cajaEmpalme']['reserva']),
+              widget.datos['cartaEmpalme'].length>0?  Column(
+                                                        children: [
+                                                          titulo('Cartera de empalme',Icon(Icons.photo_library, color: Colors.grey[600]))  ,
+                                                          ListView.builder(
+                                                             shrinkWrap: true,
+                                                             itemCount: widget.datos['cartaEmpalme'].length,
+                                                             itemBuilder: (context, i){
+
+                                                               return Container();//subTitulo(widget.datos['cartaEmpalme'][i].keys,widget.datos['cartaEmpalme'][i].value);
+                                                             }    
+                                                          )            
+                                                        ],):Container(),
               SizedBox(height: 10,),
               Center(child:fotografiaEvidencia(context,widget.datos['mediaUrl']['mediaUrlCajaEmpalme'])),
               titulo('Abscisas',Icon(Icons.gesture, color: Colors.grey[600])),

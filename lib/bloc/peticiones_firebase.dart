@@ -92,6 +92,17 @@ class DatosRedFibra {
       oSs=snapshot.documents;
       return oSs;
    }
+
+    getDatosUsuario(String id)async{
+
+      DocumentSnapshot datos;
+       await usuarios.document(id).get().then((value) {
+                       datos=value; 
+                       //print(datos.data);
+                     }); 
+    return datos.data;
+     
+   }
            
   Future<String> getUltimoNumueroOrdenes()async{
     String ultimoNumeroOrden='';

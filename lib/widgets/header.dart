@@ -107,9 +107,11 @@ Map<String, dynamic> calcularMateriales(FirebaseBloc firebaseBloc){
           herrajeRetencion=0.0,
           herrajeSuspension=0.0,
           marquillas=0.0;
-    int  postes=0;     
+    int  postes=0;
+    Map <String, dynamic> hilosCantidadUtilizados= new Map();     
 
   postes=datos.length;
+  
   for (var i = 0; i < datos.length; i++) {
       if(datos[i].data['georeferenciacion']['latitud']!=''||datos[i].data['georeferenciacion']['longitud']!=''){
            lat=double.parse(datos[i].data['georeferenciacion']['latitud']);

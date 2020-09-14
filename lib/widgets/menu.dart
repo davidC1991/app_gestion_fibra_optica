@@ -2,33 +2,13 @@
 
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class Menu extends StatelessWidget {
+  Map<String,dynamic> datos;
+  Menu({this.datos});
 
-
-   final drawerHeader= UserAccountsDrawerHeader(
-     
-      accountName: Text('Jesus David Callejas C.', style: TextStyle(color:Colors.white, fontWeight: FontWeight.bold, fontSize: 15.0  ),),
-      accountEmail: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text('Ingeniero Electrónico'),
-          Text('CallejasDavid@audicol.com'),
-        ],
-      ),
-      currentAccountPicture:Container(
-        margin: EdgeInsets.all(10),
-        alignment: Alignment.centerLeft,
-        //padding: EdgeInsets.only(bottom: 40.0),
-        decoration: BoxDecoration(
-          color: Colors.blue,
-          borderRadius: BorderRadius.circular(10.0),
-          image: DecorationImage(
-             image: AssetImage('assets/audicol.PNG'),
-             fit: BoxFit.cover 
-          )
-        ),      
-      )
-    );
+   
+  
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -36,7 +16,8 @@ class Menu extends StatelessWidget {
       child: ListView(
         padding: EdgeInsets.zero,
         children: [
-         drawerHeader,
+         drawerHeader(),
+         //-------------------------------------------
          ListTile(
            leading: Icon(Icons.pages,color:Colors.blue),
            title: Text('Inventario'),
@@ -48,7 +29,10 @@ class Menu extends StatelessWidget {
          ListTile(
            leading: Icon(Icons.people,color:Colors.blue),
            title: Text('Usuarios'),
-           onTap: (){},
+           onTap: (){
+             Navigator.pop(context);
+             Navigator.pushNamed(context, 'CrearUsuario');
+           },
          ),
          ListTile(
            leading: Icon(Icons.settings,color:Colors.blue),
@@ -67,6 +51,34 @@ class Menu extends StatelessWidget {
       ),
     );
   }
+   drawerHeader( ){
+ 
+     return UserAccountsDrawerHeader(
+     
+      accountName: Text(datos['nombres']+' '+datos['apellidos'], style: TextStyle(color:Colors.white, fontWeight: FontWeight.bold, fontSize: 15.0  ),),
+      accountEmail: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(datos['cargo']),
+          Text(datos['correo']),
+        ],
+      ),
+      currentAccountPicture:Container(
+        margin: EdgeInsets.all(10),
+        alignment: Alignment.centerLeft,
+        //padding: EdgeInsets.only(bottom: 40.0),
+        decoration: BoxDecoration(
+          color: Colors.blue,
+          borderRadius: BorderRadius.circular(10.0),
+          image: DecorationImage(
+             image: AssetImage('assets/audicol.PNG'),
+             fit: BoxFit.cover 
+          )
+        ),      
+      )
+    );
+   }
+
 }
        
         

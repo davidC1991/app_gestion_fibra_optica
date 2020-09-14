@@ -2,6 +2,7 @@ import 'package:audicol_fiber/bloc/provider.dart';
 import 'package:audicol_fiber/pages/Ordenes_Servicio/formularioOS_adicionFibra.dart';
 import 'package:audicol_fiber/pages/Ordenes_Servicio/tiposDeOS.dart';
 import 'package:audicol_fiber/pages/calculo_punto.dart';
+import 'package:audicol_fiber/pages/inicio_sesion/crearUsuario.dart';
 import 'package:audicol_fiber/pages/inicio_sesion/login.dart';
 import 'package:audicol_fiber/pages/inicio_sesion/registro.dart';
 import 'package:audicol_fiber/pages/inventario/crear_producto.dart';
@@ -80,10 +81,11 @@ MaterialColor colorPickDisable = MaterialColor(0xFFFFE6E6E6, color);
           cursorColor: colorPickDisable,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        initialRoute: 'SelectorPantalla',
+        initialRoute: 'LoginPage',
         routes: {
           //'mapa': (BuildContext context) => MapaRutas(),
           //'calculoCoordenada': (BuildContext context) => CalculoCoordenada(),
+          
           'registroRutas': (BuildContext context) => ResgistrarRuta(),
           'registroVertices': (BuildContext context) => RegistrarVertice(),
           'registroReservas': (BuildContext context) => RegistrarReserva(),
@@ -95,9 +97,11 @@ MaterialColor colorPickDisable = MaterialColor(0xFFFFE6E6E6, color);
           'DetallesOSadicionFibra': (BuildContext context) => DetallesOSadicionFibra(),
           'PantallaOrdenesServicio': (BuildContext context) => PantallaOrdenesServicio(),
           'LoginPage': (BuildContext context) => LoginPage(),
-          'RegistroPage': (BuildContext context) => RegistroPage(),
           'CalculoCoordenada': (BuildContext context) => CalculoCoordenada(),
-          'CrearProducto': (BuildContext context) => CrearProducto()
+          'CrearProducto': (BuildContext context) => CrearProducto(),
+          'CrearUsuario': (BuildContext context) => CrearUsuario()
+          
+         
           
           
 

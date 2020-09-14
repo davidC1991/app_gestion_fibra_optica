@@ -40,6 +40,8 @@ class FirebaseBloc{
      final listaPostesIdController = new BehaviorSubject<List<String>>();
      final listaHilosAgregadosController = new BehaviorSubject<List<String>>();
      final agregadarHiloController = new BehaviorSubject<bool>();
+     final idUsuarioController = new BehaviorSubject<String>();
+     final datosUsuarioController = new BehaviorSubject<Map<String,dynamic>>();
     
     
     Stream<List<DocumentSnapshot>> get ordenServicioStream => _ordenesServicioController;
@@ -67,6 +69,8 @@ class FirebaseBloc{
     Stream<List<LatLng>> get rutaFibraStream => rutaFibraController;
     Stream<List<String>> get listaPostesIdStream => listaPostesIdController;
     Stream<bool> get agregadarHiloIdStream => agregadarHiloController;
+    Stream<String> get idUsuarioControllerStream => idUsuarioController;
+    Stream<Map<String,dynamic>> get datosUsuarioControllerStream => datosUsuarioController;
   
      
   
@@ -77,6 +81,12 @@ class FirebaseBloc{
   
       
     }
+
+    getDatosUsuario(String id)async{
+      final usuario=await datosRedFibra.getDatosUsuario(id);
+      datosUsuarioController.sink.add(usuario);
+    }
+    
      getListaPostes(String iDos, bool eliminar)async {
     
        final listaPostesId= await datosRedFibra.getNumeroPoste(iDos, eliminar);
@@ -125,6 +135,8 @@ class FirebaseBloc{
       listaPostesIdController?.close();
       listaHilosAgregadosController?.close();
       agregadarHiloController?.close();
+      idUsuarioController?.close();
+      datosUsuarioController?.close();
     }
   
   

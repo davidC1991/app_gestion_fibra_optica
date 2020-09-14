@@ -1,3 +1,4 @@
+import 'package:audicol_fiber/bloc/provider.dart';
 import 'package:audicol_fiber/widgets/header.dart';
 import 'package:audicol_fiber/widgets/menu.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -10,6 +11,7 @@ import 'package:jumping_bottom_nav_bar_flutter/jumping_bottom_nav_bar_flutter.da
 import 'package:jumping_bottom_nav_bar_flutter/source/tab_icon.dart';
 
 final inventario = Firestore.instance.collection('inventario');
+final usuarios = Firestore.instance.collection('usuarios');
 
 // ignore: must_be_immutable
 class SelectorPantalla extends StatefulWidget {
@@ -25,7 +27,7 @@ class _SelectorPantallaState extends State<SelectorPantalla> {
   String tituloPagina='';
   int pageIndex = 0;
   DatosRedFibra datosRedFibra = DatosRedFibra();
-  
+  Map<String,dynamic> datos;
    int selectedIndex = 1;
 
   final iconList = [
@@ -73,7 +75,7 @@ class _SelectorPantallaState extends State<SelectorPantalla> {
 
   @override
   Widget build(BuildContext context) {
-    
+    final firebaseBloc  = Provider.firebaseBloc(context);
     if(selectedIndex==1){
       tituloPagina='Agenda';
     }
@@ -83,12 +85,15 @@ class _SelectorPantallaState extends State<SelectorPantalla> {
     if(selectedIndex==3){
       tituloPagina='Crear Orden';
     }
-
+    //print(firebaseBloc.idUsuarioController.value);
+    firebaseBloc.getDatosUsuario(firebaseBloc.idUsuarioController.value);
+    datos=firebaseBloc.datosUsuarioController.value;
+    
     return DefaultTabController(
       length: iconList.length,
       child: Scaffold(
           appBar: header(tituloPagina, context,''),
-          drawer: Menu(),
+          drawer: Menu(datos: datos),
           body: TabBarView(
             children: <Widget>[
               PantallaOrdenesServicio(),

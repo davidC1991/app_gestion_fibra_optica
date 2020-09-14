@@ -27,6 +27,7 @@ class LoginPage extends StatelessWidget {
 
     Widget _loginForm(BuildContext context) {
       final bloc = Provider.of(context);  
+      final firebaseBloc  = Provider.firebaseBloc(context);
       final size = MediaQuery.of(context).size;
 
       return SingleChildScrollView(
@@ -62,16 +63,16 @@ class LoginPage extends StatelessWidget {
                     SizedBox(height: 30.0),
                   _crearPassword(bloc),
                     SizedBox(height: 60.0),
-                  _crearBoton(bloc),
+                  _crearBoton(bloc,firebaseBloc),
                 ],
               ),
             ),
           
-/* 
+
             FlatButton(
               child: Text('Crear una nueva cuenta'),
               onPressed: ()=> Navigator.pushReplacementNamed(context, 'RegistroPage'),
-              ), */
+              ), 
             Text('Santa Marta D.T.C.H', style: Theme.of(context).textTheme.headline1),  
             SizedBox(height: 100.0,) 
 
@@ -95,8 +96,8 @@ class LoginPage extends StatelessWidget {
                          icon: Icon(Icons.alternate_email, color:Colors.deepPurple),
                          hintText: 'ejemplo@correo.com',
                          labelText: 'Correo electrónico',
-                         counterText: snapshot.data,
-                         errorText: snapshot.error,
+                         //counterText: snapshot.data,
+                        //errorText: snapshot.error,
                          ),
                    onChanged: (value) => bloc.changeEmail(value),
                 ) ,
@@ -119,8 +120,8 @@ Widget _crearPassword(LoginBloc bloc){
          decoration: InputDecoration(
            icon: Icon(Icons.lock_outline, color:Colors.deepPurple),
            labelText: 'Contraseña',
-           counterText: snapshot.data,
-           errorText: snapshot.error,
+          // counterText: snapshot.data,
+          // errorText: snapshot.error,
          ),
          onChanged: bloc.changePassword,
        ) ,
@@ -190,7 +191,7 @@ Widget _crearPassword(LoginBloc bloc){
     }
                     
 
-  Widget _crearBoton(LoginBloc bloc){
+  Widget _crearBoton(LoginBloc bloc, FirebaseBloc firebaseBloc){
 
      return StreamBuilder(
              stream: bloc.formValidStream ,
@@ -206,7 +207,7 @@ Widget _crearPassword(LoginBloc bloc){
                     elevation: 0.0,   
                     color: Colors.deepPurple,
                     textColor: Colors.white,
-                    onPressed: snapshot.hasData ? () => _login(bloc, context) : null,
+                    onPressed: snapshot.hasData ? () => _login(bloc, context, firebaseBloc) : null,
           );
        },
      );
@@ -214,7 +215,7 @@ Widget _crearPassword(LoginBloc bloc){
   }  
 
 
-    _login(LoginBloc bloc, BuildContext context) async {
+    _login(LoginBloc bloc, BuildContext context, FirebaseBloc firebaseBloc) async {
 
     Map info = await usuarioProvider.login(bloc.email, bloc.password);  
      print(info['email']);
@@ -222,6 +223,9 @@ Widget _crearPassword(LoginBloc bloc){
      print(info['nombreCompleto']);
      if (info['ok']){
        //Navigator.pushReplacementNamed(context, 'home');
+       bloc.emailController.sink.add(null);
+       bloc.passwordController.sink.add(null);
+       firebaseBloc.idUsuarioController.sink.add(info['id']);
         Navigator.pushReplacement(
           context,
          // MaterialPageRoute(builder: (context) => HomePage(email: info['email'], id: info['id'], nombre:info['nombreCompleto']))

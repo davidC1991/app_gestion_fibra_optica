@@ -241,7 +241,10 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
 );
   } 
           
-  
+  Widget hiloLibres(){
+    int catidadHilos=int.parse(cantidadHilosController.text.toString());
+    return Text('  ${catidadHilos-listaFinalEmpalme.length} hilos libres de $catidadHilos en total',style: Theme.of(context).textTheme.headline1);
+  }
       mostrarCuadroOopciones(BuildContext context, FirebaseBloc firebaseBloc) {
         DocumentSnapshot dato= firebaseBloc.posteSeleccionadoController.value;
         bool agregarHilo=firebaseBloc.agregadarHiloController.value;
@@ -319,6 +322,7 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                               shrinkWrap: true, 
                               children: lisWidgettHilosUtilizados
                              ):Container(),
+                             contHilosUtilizados>0?hiloLibres():Container(),
                            ],
                          ),
                        ):Container(), 
@@ -326,7 +330,7 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                           
                          
                                
-                      
+                       
                        SizedBox(height: 10,),
                        fotografiaEvidenciaCajaEmpalme(context, firebaseBloc, 'cajaEmpalme'),
                        Divider(color: Colors.black, height: 15.0),
@@ -974,6 +978,8 @@ if(longitudController.text.isEmpty||latitudController.text.isEmpty){
     mensajePantalla('Ingrese minimo 6  decimales!'); 
 }else if(cantidadHilosController.text.isEmpty){
    mensajePantalla('Ingrese la cantidad de hilos de la fibra que pasa por el poste!');
+}if(cantidadHilosController.text.contains('.')){
+   mensajePantalla('Ingrese la cantidad de hilos sin puntos');
 }else{
   
    listaFinalEmpalme.clear();

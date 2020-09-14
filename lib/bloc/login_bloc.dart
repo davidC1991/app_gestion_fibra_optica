@@ -6,30 +6,30 @@ import 'package:audicol_fiber/bloc/validators.dart';
 
 class LoginBloc with Validators {
 
-  final _emailController =    BehaviorSubject<String>();
-  final _passwordController = BehaviorSubject<String>();
+  final emailController =    BehaviorSubject<String>();
+  final passwordController = BehaviorSubject<String>();
 
   
 //recuperar los datos del stream   
-  Stream<String>get emailStream => _emailController.stream.transform(validarEmail);
-  Stream<String>get passwordStream => _passwordController.stream.transform(validarPassword);
+  Stream<String>get emailStream => emailController.stream.transform(validarEmail);
+  Stream<String>get passwordStream => passwordController.stream.transform(validarPassword);
 
   Stream<bool> get formValidStream =>
      CombineLatestStream.combine2(emailStream, passwordStream, (e, p) => true);
 
 
 // insertar valores al stream
-  Function(String) get changeEmail => _emailController.sink.add;
-  Function(String) get changePassword => _passwordController.sink.add;
+  Function(String) get changeEmail => emailController.sink.add;
+  Function(String) get changePassword => passwordController.sink.add;
 
 //obtener el ultimo valor ingresado a los stream
 
-  String get email => _emailController.value;
-  String get password => _passwordController.value;
+  String get email => emailController.value;
+  String get password => passwordController.value;
   
 dispose(){
-  _emailController?.close();
-  _passwordController?.close();
+  emailController?.close();
+  passwordController?.close();
 }
 
 }

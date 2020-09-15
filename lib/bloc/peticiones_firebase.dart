@@ -84,12 +84,31 @@ class DatosRedFibra {
      return {'listaPostes':listaPostes, 'posteActual':posteNumero};
    }
 
-   getOrdenesServicio()async{
-
+   getOrdenesServicio(Map<String,dynamic>mapUsuario)async{
+     String usuarioId='';
+     SharedPreferences prefs = await SharedPreferences.getInstance();
+     usuarioId= prefs.getString('UsuarioId');  
      List<DocumentSnapshot> oSs= new List();
       QuerySnapshot snapshot = await ordenesServicio.getDocuments(); 
-    // print(snapshot.documents[0].data);
+      print(snapshot.documents[0].data);
       oSs=snapshot.documents;
+
+
+     // listaItem.where((c) => c.toLowerCase().startsWith(query)).toList();
+     //oSs[0].data.keys.map((e) => e.contains('other'))
+      String cargoUsuario=mapUsuario['cargo'];
+      String cargo='', cuadrillaBD='';
+      String cuadrillaUsuario=mapUsuario['cargo'];
+      for (var i = 0; i < oSs.length; i++) {
+        cargo=oSs[i].data['datosOrden']['cargo'];
+        if(cargo=='Jefe de cuadrilla'){
+        
+            cuadrillaBD=oSs[i].data['datosOrden']['numeroCuadrilla'];
+            if(cargo==cargoUsuario&&cuadrillaBD==cuadrillaUsuario){
+              
+            }
+        }
+      }
       return oSs;
    }
 
@@ -98,6 +117,7 @@ class DatosRedFibra {
       DocumentSnapshot datos;
        await usuarios.document(id).get().then((value) {
                        datos=value; 
+                       //print('entró');
                        //print(datos.data);
                      }); 
     return datos.data;

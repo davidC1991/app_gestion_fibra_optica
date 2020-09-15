@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:audicol_fiber/bloc/peticiones_firebase.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 export 'package:audicol_fiber/bloc/peticiones_firebase.dart';
 
 
@@ -75,16 +76,27 @@ class FirebaseBloc{
      
   
     getOservicios()async {
-    
-       final oSs= await datosRedFibra.getOrdenesServicio();
+        Map<String, dynamic> mapUsuario= new Map();
+        datosUsuarioControllerStream.listen((event) { 
+          print('esots son los datos del usuario');
+          print(event);
+          mapUsuario=event;
+        });
+
+       final oSs= await datosRedFibra.getOrdenesServicio(mapUsuario);
        _ordenesServicioController.sink.add(oSs);
   
       
     }
 
-    getDatosUsuario(String id)async{
-      final usuario=await datosRedFibra.getDatosUsuario(id);
+    getDatosUsuario()async{
+      String usuarioId='';
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      usuarioId= prefs.getString('UsuarioId'); 
+      final usuario= await datosRedFibra.getDatosUsuario(usuarioId);
       datosUsuarioController.sink.add(usuario);
+
+      return usuario;
     }
     
      getListaPostes(String iDos, bool eliminar)async {

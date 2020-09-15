@@ -1,7 +1,8 @@
 import 'dart:ui';
+import 'package:audicol_fiber/bloc/provider.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
-import 'package:audicol_fiber/bloc/dbBloc.dart';
+//import 'package:audicol_fiber/bloc/dbBloc.dart';
 import 'package:audicol_fiber/pages/Ordenes_Servicio/GestionOs.dart';
 import 'package:audicol_fiber/pages/Ordenes_Servicio/detallesOS.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,7 +17,7 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
 
 
   
-  FirebaseBloc dbBloc = FirebaseBloc();
+  //FirebaseBloc dbBloc = FirebaseBloc();
   
   Color colorText= Colors.grey[500];
   int cont_tarjetas=0;
@@ -47,21 +48,22 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
   @override
   void initState() {
     super.initState();
-    dbBloc.getOservicios();
+   // dbBloc.getOservicios();
     
   }
 
   @override
   Widget build(BuildContext context) {
-    
+     final firebaseBloc  = Provider.firebaseBloc(context);
+     firebaseBloc.getOservicios();
     return Scaffold(
-     body:  streamAgendaOrdenes()
+     body:  streamAgendaOrdenes(firebaseBloc)
   );
   }
 
-  StreamBuilder<List<DocumentSnapshot>> streamAgendaOrdenes() {
+  StreamBuilder<List<DocumentSnapshot>> streamAgendaOrdenes(FirebaseBloc firebaseBloc) {
     return StreamBuilder<List<DocumentSnapshot>>(
-     stream: dbBloc.ordenServicioStream,
+     stream: firebaseBloc.ordenServicioStream,
      builder: (context, snapshot){
     
     if(snapshot.hasData){

@@ -52,7 +52,7 @@ class Menu extends StatelessWidget {
     );
   }
    drawerHeader( ){
- 
+     print(datos);
      return UserAccountsDrawerHeader(
      
       accountName: Text(datos['nombres']+' '+datos['apellidos'], style: TextStyle(color:Colors.white, fontWeight: FontWeight.bold, fontSize: 15.0  ),),

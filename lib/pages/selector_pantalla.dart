@@ -9,6 +9,7 @@ import 'package:audicol_fiber/pages/Ordenes_Servicio/agendaOs.dart';
 import 'package:audicol_fiber/pages/configuracion_rutas.dart';
 import 'package:jumping_bottom_nav_bar_flutter/jumping_bottom_nav_bar_flutter.dart';
 import 'package:jumping_bottom_nav_bar_flutter/source/tab_icon.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final inventario = Firestore.instance.collection('inventario');
 final usuarios = Firestore.instance.collection('usuarios');
@@ -24,9 +25,10 @@ class SelectorPantalla extends StatefulWidget {
 
 class _SelectorPantallaState extends State<SelectorPantalla> {
   
-  String tituloPagina='';
+  String tituloPagina='',usuarioId='';
   int pageIndex = 0;
-  DatosRedFibra datosRedFibra = DatosRedFibra();
+ 
+  FirebaseBloc dbBloc = FirebaseBloc();
   Map<String,dynamic> datos;
    int selectedIndex = 1;
 
@@ -61,7 +63,7 @@ class _SelectorPantallaState extends State<SelectorPantalla> {
     super.initState();
     print('cliente:${widget.cliente}');
     print('indexPage$selectedIndex');
-   
+    getUsuario();
    /*  pageController = widget.cliente == null
         ? PageController(initialPage: 0)
         : PageController(initialPage: 2);
@@ -70,12 +72,24 @@ class _SelectorPantallaState extends State<SelectorPantalla> {
     } else {
       pageIndex = 2;
     } */
-   
-  }
 
+  }
+  getUsuario( )async{
+    datos= await dbBloc.getDatosUsuario();
+    
+   //--OBTENEMOS LAS ORDENES DE SERVICIOS ASIGNADAS A ESTE USUARIO
+   // print('---> $datos');
+    setState(() {});
+    
+  }
   @override
   Widget build(BuildContext context) {
-    final firebaseBloc  = Provider.firebaseBloc(context);
+     final firebaseBloc  = Provider.firebaseBloc(context);
+     if(datos!=null){
+        firebaseBloc.datosUsuarioController.sink.add(datos);
+     }
+    
+     
     if(selectedIndex==1){
       tituloPagina='Agenda';
     }
@@ -86,8 +100,8 @@ class _SelectorPantallaState extends State<SelectorPantalla> {
       tituloPagina='Crear Orden';
     }
     //print(firebaseBloc.idUsuarioController.value);
-    firebaseBloc.getDatosUsuario(firebaseBloc.idUsuarioController.value);
-    datos=firebaseBloc.datosUsuarioController.value;
+ 
+    
     
     return DefaultTabController(
       length: iconList.length,
@@ -118,6 +132,7 @@ class _SelectorPantallaState extends State<SelectorPantalla> {
       )
     );
   }
+  
 }
             
          

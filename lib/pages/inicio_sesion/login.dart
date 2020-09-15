@@ -5,6 +5,7 @@ import 'package:audicol_fiber/bloc/provider.dart';
 import 'package:audicol_fiber/pages/selector_pantalla.dart';
 import 'package:audicol_fiber/provider/Usuario_Validacion.dart';
 import 'package:audicol_fiber/utils/utils.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 class LoginPage extends StatelessWidget {
@@ -226,6 +227,8 @@ Widget _crearPassword(LoginBloc bloc){
        bloc.emailController.sink.add(null);
        bloc.passwordController.sink.add(null);
        firebaseBloc.idUsuarioController.sink.add(info['id']);
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('UsuarioId', info['id']);
         Navigator.pushReplacement(
           context,
          // MaterialPageRoute(builder: (context) => HomePage(email: info['email'], id: info['id'], nombre:info['nombreCompleto']))

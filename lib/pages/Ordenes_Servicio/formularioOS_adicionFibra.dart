@@ -39,6 +39,55 @@ class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
     'Baja',
   ];  
 
+   static const zonas = [
+    'Zona Norte 1',
+    'Zona Norte 2',
+    'Zona Norte 3',
+    'Zona Norte 4',
+    'Zona Este 1',
+    'Zona Este 2',
+    'Zona Este 3',
+    'Zona Este 4',
+    'Zona Oeste 1',
+    'Zona Oeste 2',
+    'Zona Oeste 3',
+    'Zona Oeste 4',
+    'Zona Sur 1',
+    'Zona Sur 2',
+    'Zona Sur 3',
+    'Zona Sur 4',
+    ]; 
+
+  static const sitios = [
+    'Santa Marta',
+    'Cienaga',
+    
+  ]; 
+  final List<DropdownMenuItem<String>> dropDownSitios = sitios
+      .map((String value) => DropdownMenuItem<String>(
+            value: value,
+             child: Text(value, style: TextStyle(
+              fontWeight: FontWeight.w400,
+              fontSize: 15,
+              color: Colors.grey[600]
+            )),
+          ))
+      .toList();
+
+  String sitioID = 'Santa Marta';
+
+  final List<DropdownMenuItem<String>> dropDownZonas = zonas
+      .map((String value) => DropdownMenuItem<String>(
+            value: value,
+             child: Text(value, style: TextStyle(
+              fontWeight: FontWeight.w400,
+              fontSize: 15,
+              color: Colors.grey[600]
+            )),
+          ))
+      .toList();
+
+  String zonaID = 'Zona Norte 1';
 
   final List<DropdownMenuItem<String>> dropDownProyectos = proyectos
       .map((String value) => DropdownMenuItem<String>(
@@ -66,6 +115,46 @@ class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
       .toList();
 
   String prioridadID = 'Media';
+
+   static const rolesMenu = [
+    'Jefe de cuadrilla',
+    'Coordinador',
+    'Auditor',
+    'Jefe de inventario',
+    'Contratista'
+   ];
+
+  final List<DropdownMenuItem<String>> dropDownMenuRoles = rolesMenu
+      .map((String value) => DropdownMenuItem<String>(
+            value: value,
+            child: Text(value, style: TextStyle(
+              fontWeight: FontWeight.w400,
+              fontSize: 15,
+              color: Colors.grey[600]
+            )),
+          ))
+      .toList();
+
+  String roleId = 'Auditor';
+
+   static const cuadrillasMenu = [
+    '1',
+    '2',
+    '3',
+    '4',
+   ];
+
+  final List<DropdownMenuItem<String>> dropDownMenuNumeroCuadrillas = cuadrillasMenu
+      .map((String value) => DropdownMenuItem<String>(
+            value: value,
+            child: Text(value, style: TextStyle(
+              fontWeight: FontWeight.w400,
+              fontSize: 15,
+              color: Colors.grey[600]
+            )),
+          ))
+      .toList();
+  String numeroCuadrillaId = '1';
 
   DatosRedFibra datosRedFibra= DatosRedFibra();
 
@@ -124,46 +213,14 @@ class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
               ),  
               ],
             ),
-            
-                
-            
+             
+            elegirSitio(),
            
-            SizedBox(height: 20),
-            TextFormField(
-              keyboardType: TextInputType.number,
-              
-              decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10))
-                  ),
-                  filled: false,
-                  hintText: 'Ingresar parametro en dias',
-                  labelText: 'Tiempo estimado de ejecución'),
-              controller: idDiasController,
-            ),
-            SizedBox(height: 20),
-             ListTile(
-               contentPadding: EdgeInsets.symmetric(horizontal: 0),
-              title: Text(
-                'Contratista a asignar O.S.',
-                style: TextStyle(
-                        fontSize: 16.0,
-                        //fontWeight: FontWeight.bold,
-                        color: Colors.grey[600]
-                )
-              ),
-              
-              trailing: DropdownButton(
-                hint: Text(contratistasID),
-                
-                onChanged: (String newValue) {
-                  setState(() {
-                    contratistasID = newValue;
-                  });
-                },
-                items: this.dropDownMenuItems,
-              ),
-            ),
+            proyectosID=='Conectividad Wifi'&& sitioID=='Santa Marta' ?elegirZonas():Container(),   
+             
+                        
+          
+           
              ListTile(
                contentPadding: EdgeInsets.symmetric(horizontal: 0),
               title: Text(
@@ -186,6 +243,25 @@ class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
                 items: this.dropDownPrioridad,
               ),
             ),
+            
+            role(),
+           roleId=='Jefe de cuadrilla'?numeroCuadrilla():Container(),
+           roleId=='Contratista'?elegirContratista():Container(),
+              
+             TextFormField(
+              keyboardType: TextInputType.number,
+              
+              decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10))
+                  ),
+                  filled: false,
+                  hintText: 'Ingresar parametro en dias',
+                  labelText: 'Tiempo estimado de ejecución'),
+              controller: idDiasController,
+            ),
+            SizedBox(height: 20),
+           
             TextFormField(
               keyboardType: TextInputType.text,
               maxLines: 5,
@@ -209,6 +285,31 @@ class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
     );
   }
 
+  ListTile elegirContratista() {
+    return ListTile(
+             contentPadding: EdgeInsets.symmetric(horizontal: 0),
+            title: Text(
+              'Contratista a asignar O.S.',
+              style: TextStyle(
+                      fontSize: 16.0,
+                      //fontWeight: FontWeight.bold,
+                      color: Colors.grey[600]
+              )
+            ),
+            
+            trailing: DropdownButton(
+              hint: Text(contratistasID),
+              
+              onChanged: (String newValue) {
+                setState(() {
+                  contratistasID = newValue;
+                });
+              },
+              items: this.dropDownMenuItems,
+            ),
+          );
+  }
+
   Widget botonCrear() {
     print('----------------------');
 
@@ -228,6 +329,72 @@ class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
       ],
     );
   }
+   Widget role() {
+    return  ListTile(
+              contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
+             // leading: Icon(Icons.adjust,color:Colors.deepPurple),
+              title: Text('Seleccione el cargo:',style: Theme.of(context).textTheme.headline1,),
+              trailing: DropdownButton(
+                value: roleId,
+                onChanged: (String newValue) {
+                  setState(() {
+                    roleId = newValue;
+                  });
+                },
+                items: this.dropDownMenuRoles,
+              ),
+            );
+   }
+
+   Widget elegirSitio() {
+    return  ListTile(
+              contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
+             // leading: Icon(Icons.adjust,color:Colors.deepPurple),
+              title: Text('Seleccione el sitio:',style: Theme.of(context).textTheme.headline1,),
+              trailing: DropdownButton(
+                value: sitioID,
+                onChanged: (String newValue) {
+                  setState(() {
+                    sitioID = newValue;
+                  });
+                },
+                items: this.dropDownSitios,
+              ),
+            );
+   }
+
+  Widget elegirZonas() {
+    return  ListTile(
+              contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
+             // leading: Icon(Icons.adjust,color:Colors.deepPurple),
+              title: Text('Seleccione la zona:',style: Theme.of(context).textTheme.headline1,),
+              trailing: DropdownButton(
+                value: zonaID,
+                onChanged: (String newValue) {
+                  setState(() {
+                    zonaID = newValue;
+                  });
+                },
+                items: this.dropDownZonas,
+              ),
+            );
+   }
+   Widget numeroCuadrilla() {
+      return  ListTile(
+              contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
+             // leading: Icon(Icons.format_list_numbered,color:Colors.deepPurple),
+              title: Text('Numero de cuadrilla:',style: Theme.of(context).textTheme.headline1),
+              trailing: DropdownButton(
+                value: numeroCuadrillaId,
+                onChanged: (String newValue) {
+                  setState(() {
+                    numeroCuadrillaId = newValue;
+                  });
+                },
+                items: this.dropDownMenuNumeroCuadrillas,
+              ),
+            );
+  } 
 
   void sendBaseDatos() async{
     //String idRuta = idRutaController.text;
@@ -241,12 +408,50 @@ class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
    
   
    // }
+    Map<String, dynamic> datosOrdenWifiSantaMarta= new Map();
+    Map<String, dynamic> datosOrdenWifiCienaga= new Map();
+    Map<String, dynamic> datosOrdenAudicol= new Map();
 
 
     if (tiempoEstimado.isNotEmpty  || objetivo.isNotEmpty) {
 
+      
+     if(proyectosID=='Conectividad Wifi'&&sitioID=='Santa Marta'){
+         datosOrdenWifiSantaMarta['nombreProyecto']=proyectosID;
+         datosOrdenWifiSantaMarta['sitio']=sitioID;
+         datosOrdenWifiSantaMarta['zona']=zonaID;
+         datosOrdenWifiSantaMarta['cargo']=roleId;
+         if(roleId =='Jefe de cuadrilla'){
+          datosOrdenWifiSantaMarta['numeroCuadrilla']=numeroCuadrillaId;
+         }
+         if(roleId =='Contratista'){
+          datosOrdenWifiSantaMarta['nombreContratista']=contratistasID;
+         }
+     }
+     if(proyectosID=='Conectividad Wifi'&&sitioID=='Cienaga'){
+         datosOrdenWifiCienaga['nombreProyecto']=proyectosID;
+         datosOrdenWifiCienaga['sitio']=sitioID;
+         datosOrdenWifiCienaga['cargo']=roleId;
+         if(roleId =='Jefe de cuadrilla'){
+          datosOrdenWifiCienaga['numeroCuadrilla']=numeroCuadrillaId;
+         }
+         if(roleId =='Contratista'){
+          datosOrdenWifiCienaga['nombreContratista']=contratistasID;
+         }
+     }
 
-     
+     if(proyectosID=='Audicol'){
+         datosOrdenAudicol['nombreProyecto']=proyectosID;
+         datosOrdenAudicol['sitio']=sitioID;
+         datosOrdenAudicol['cargo']=roleId;
+         if(roleId =='Jefe de cuadrilla'){
+          datosOrdenAudicol['numeroCuadrilla']=numeroCuadrillaId;
+         }
+         if(roleId =='Contratista'){
+          datosOrdenAudicol['nombreContratista']=contratistasID;
+         }
+     }
+    
 
  
       ordenesServicio
@@ -255,8 +460,10 @@ class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
         
         'proyecto'       : proyectosID,
         'NumeroOS'       : idOS,
-        'tiempoEstimado' : double.parse(tiempoEstimado),
-        'contratista'    : contratistasID,
+        'datosOrden'     : proyectosID=='Conectividad Wifi'&&sitioID=='Cienaga'?datosOrdenWifiCienaga:
+                           proyectosID=='Conectividad Wifi'&&sitioID=='Santa Marta'?datosOrdenWifiSantaMarta:
+                           datosOrdenAudicol, 
+        'tiempoEstimado' : tiempoEstimado,
         'objetivo'       : objetivo,
         'tipo'           : 'Adición de fibra óptica',
         'Estado'         : 'No iniciada',

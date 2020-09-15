@@ -28,6 +28,7 @@ class _CrearUsuarioState extends State<CrearUsuario> {
     'Coordinador',
     'Auditor',
     'Jefe de inventario',
+    'Contratista'
    ];
 
   final List<DropdownMenuItem<String>> dropDownMenuItems = rolesMenu

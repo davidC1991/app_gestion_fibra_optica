@@ -26,8 +26,8 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
    /*  Colors.blue.withOpacity(0.1),
     Colors.blue.withOpacity(0.1),
     Colors.blue.withOpacity(0.1), */
-    Colors.purple.withOpacity(0.1),
-    Colors.green.withOpacity(0.1),
+    //Colors.purple.withOpacity(0.1),
+    //Colors.green.withOpacity(0.1),
     Colors.grey.withOpacity(0.1)
   ];
 
@@ -98,12 +98,13 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
        color=coloresTarjetas[0];
      }else if(cont_tarjetas==2){
        color=coloresTarjetas[1];
-     }else if(cont_tarjetas==3){
+       cont_tarjetas=0;
+     }/* else if(cont_tarjetas==3){
        color=coloresTarjetas[2];
      }else if(cont_tarjetas==4){
        color=coloresTarjetas[3];
       cont_tarjetas=0;
-     }
+     } */
      String imagen; 
      if(datoOs.data['proyecto'].toString().contains('Conectividad Wifi')){
        imagen='assets/ordenCasa2.png';
@@ -213,6 +214,36 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
                        color: colorText
                       )
                     ),
+                  ), 
+                   Container(
+                    height: 20,
+                    width: 300,
+                    //color: Colors.red,
+                    child: datoOs.data['datosOrden']['cargo']=='Jefe de cuadrilla'?Text(
+                      'Cargo: ${datoOs.data['datosOrden']['cargo']} ${datoOs.data['datosOrden']['numeroCuadrilla']}',
+                       style: TextStyle(
+                       fontSize: 13.0,
+                       color: colorText
+                      )
+                    ):Text(
+                      'Cargo: ${datoOs.data['datosOrden']['cargo']}',
+                       style: TextStyle(
+                       fontSize: 13.0,
+                       color: colorText
+                      )
+                    ),
+                  ), 
+                   Container(
+                    height: 20,
+                    width: 300,
+                    //color: Colors.red,
+                    child: datoOs.data['datosOrden']['cargo']=='Contratista'?Text(
+                      'Nombre: ${datoOs.data['datosOrden']['nombreContratista']}',
+                       style: TextStyle(
+                       fontSize: 13.0,
+                       color: colorText
+                      )
+                    ):Text(''),
                   ), 
                   SizedBox(height: 0),
                 /*  ClipRRect(

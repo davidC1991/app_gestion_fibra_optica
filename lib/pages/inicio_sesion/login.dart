@@ -70,10 +70,10 @@ class LoginPage extends StatelessWidget {
             ),
           
 
-            FlatButton(
+          /*   FlatButton(
               child: Text('Crear una nueva cuenta'),
               onPressed: ()=> Navigator.pushReplacementNamed(context, 'RegistroPage'),
-              ), 
+              ),  */
             Text('Santa Marta D.T.C.H', style: Theme.of(context).textTheme.headline1),  
             SizedBox(height: 100.0,) 
 

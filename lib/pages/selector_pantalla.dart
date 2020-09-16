@@ -1,4 +1,5 @@
 import 'package:audicol_fiber/bloc/provider.dart';
+import 'package:audicol_fiber/pages/calculo_punto.dart';
 import 'package:audicol_fiber/widgets/header.dart';
 import 'package:audicol_fiber/widgets/menu.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -31,7 +32,7 @@ class _SelectorPantallaState extends State<SelectorPantalla> {
   FirebaseBloc dbBloc = FirebaseBloc();
   Map<String,dynamic> datos;
    int selectedIndex = 1;
-
+  TabController _tabController;
   final iconList = [
     TabIcon(
       // curveColor: Color(0xFFFFE6E6E6),
@@ -43,11 +44,11 @@ class _SelectorPantallaState extends State<SelectorPantalla> {
         iconData: Icons.settings,
         startColor: Colors.white,
         endColor: Colors.white),
-    TabIcon(
+    /* TabIcon(
       //curveColor: Color(0xFFFFE6E6E6),
         iconData: Icons.person,
         startColor: Colors.white,
-        endColor: Colors.white),
+        endColor: Colors.white), */
   ];
   void onChangeTab(int index) {
     selectedIndex = index;
@@ -61,6 +62,7 @@ class _SelectorPantallaState extends State<SelectorPantalla> {
   @override
   void initState() {
     super.initState();
+   
     print('cliente:${widget.cliente}');
     print('indexPage$selectedIndex');
     getUsuario();
@@ -76,12 +78,16 @@ class _SelectorPantallaState extends State<SelectorPantalla> {
   }
   getUsuario( )async{
     datos= await dbBloc.getDatosUsuario();
-    
    //--OBTENEMOS LAS ORDENES DE SERVICIOS ASIGNADAS A ESTE USUARIO
    // print('---> $datos');
     setState(() {});
     
   }
+  @override
+ void dispose() {
+   _tabController.dispose();
+   super.dispose();
+ }
   @override
   Widget build(BuildContext context) {
      final firebaseBloc  = Provider.firebaseBloc(context);
@@ -93,7 +99,7 @@ class _SelectorPantallaState extends State<SelectorPantalla> {
     if(selectedIndex==1){
       tituloPagina='Agenda';
     }
-      if(selectedIndex==2){
+    if(selectedIndex==2){
       tituloPagina='Ajustes';
     }
     if(selectedIndex==3){
@@ -109,10 +115,11 @@ class _SelectorPantallaState extends State<SelectorPantalla> {
           appBar: header(tituloPagina, context,''),
           drawer: Menu(datos: datos),
           body: TabBarView(
+            controller: _tabController,
             children: <Widget>[
               PantallaOrdenesServicio(),
-              ResgistrarRuta(),
-              CrearOS(),
+              CalculoCoordenada()
+              //CrearOS(),
             ],
           ),
           bottomNavigationBar: Jumping_Bar(
@@ -121,11 +128,11 @@ class _SelectorPantallaState extends State<SelectorPantalla> {
           duration: Duration(seconds: 1),
           circleGradient: RadialGradient(
             colors: [
-              Colors.blue[200],
-           
+               Colors.blue[200],
                Colors.blue[200],
             ],
           ),
+           
           items: iconList,
           selectedIndex: selectedIndex,
         ),

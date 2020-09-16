@@ -96,26 +96,48 @@ class DatosRedFibra {
 
      // listaItem.where((c) => c.toLowerCase().startsWith(query)).toList();
      //oSs[0].data.keys.map((e) => e.contains('other'))
+      List<DocumentSnapshot> listOrdenesServicio= new List();
       String cargoUsuario=mapUsuario['cargo'];
-      String cargo='', cuadrillaBD='';
-      String cuadrillaUsuario=mapUsuario['cargo'];
+      String cargoBD='', cuadrillaBD='',nombreContratistaDB='';
+      String cuadrillaUsuario=mapUsuario['numeroCuadrilla'],nombreContratista=mapUsuario['nombres'];
       for (var i = 0; i < oSs.length; i++) {
-        cargo=oSs[i].data['datosOrden']['cargo'];
-        if(cargo=='Jefe de cuadrilla'){
-        
-            cuadrillaBD=oSs[i].data['datosOrden']['numeroCuadrilla'];
-            if(cargo==cargoUsuario&&cuadrillaBD==cuadrillaUsuario){
-              
+        cargoBD=oSs[i].data['datosOrden']['cargo'];
+        if(cargoUsuario=='Jefe de cuadrilla'&&cargoBD=='Jefe de cuadrilla'){
+           cuadrillaBD=oSs[i].data['datosOrden']['numeroCuadrilla'];
+            
+            if(cargoBD==cargoUsuario&&cuadrillaBD==cuadrillaUsuario){
+               listOrdenesServicio.add(oSs[i]); 
             }
         }
+        if(cargoUsuario=='Contratista'&&cargoBD=='Contratista'){
+           nombreContratistaDB=oSs[i].data['datosOrden']['nombreContratista'];
+            
+            if(cargoBD==cargoUsuario&&nombreContratista==nombreContratistaDB){
+               listOrdenesServicio.add(oSs[i]); 
+            }
+        }
+        if(cargoUsuario=='Coordinador'&&cargoBD=='Coordinador'){
+          //listOrdenesServicio.add(oSs[i]);
+          return oSs; 
+        }
+        if(cargoUsuario=='Auditor'&&cargoBD=='Auditor'){
+          listOrdenesServicio.add(oSs[i]); 
+        }
+        if(cargoUsuario=='Jefe de inventario'&&cargoBD=='Jefe de inventario'){
+          listOrdenesServicio.add(oSs[i]); 
+        }
+            
+        
       }
-      return oSs;
+      return listOrdenesServicio;
    }
 
-    getDatosUsuario(String id)async{
-
+    Future<Map<String,dynamic>>getDatosUsuario()async{
+      String usuarioId='';
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      usuarioId= prefs.getString('UsuarioId'); 
       DocumentSnapshot datos;
-       await usuarios.document(id).get().then((value) {
+       await usuarios.document(usuarioId).get().then((value) {
                        datos=value; 
                        //print('entró');
                        //print(datos.data);
@@ -123,6 +145,19 @@ class DatosRedFibra {
     return datos.data;
      
    }
+   getDatosTodosUsuario()async{
+      List<String> contratistas= List();
+      
+      QuerySnapshot datos=   await usuarios.getDocuments();
+      print(datos.documents[0].data);
+      for (var i = 0; i < datos.documents.length; i++) {
+        if(datos.documents[i].data['cargo']=='Contratista'){
+          contratistas.add(datos.documents[i].data['nombres']);
+        }
+      }
+    return contratistas;
+     
+   } 
            
   Future<String> getUltimoNumueroOrdenes()async{
     String ultimoNumeroOrden='';

@@ -76,24 +76,24 @@ class FirebaseBloc{
      
   
     getOservicios()async {
+       // await getDatosUsuario();
         Map<String, dynamic> mapUsuario= new Map();
-        datosUsuarioControllerStream.listen((event) { 
+       // datosUsuarioControllerStream.listen((event) { 
           print('esots son los datos del usuario');
-          print(event);
-          mapUsuario=event;
-        });
-
+          mapUsuario=datosUsuarioController.value;
+          print(mapUsuario);
+       // });
+       if(mapUsuario!=null){ 
        final oSs= await datosRedFibra.getOrdenesServicio(mapUsuario);
        _ordenesServicioController.sink.add(oSs);
-  
+       }
       
     }
 
-    getDatosUsuario()async{
-      String usuarioId='';
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      usuarioId= prefs.getString('UsuarioId'); 
-      final usuario= await datosRedFibra.getDatosUsuario(usuarioId);
+    Future<Map<String,dynamic>>getDatosUsuario()async{
+      print('entro a getDatosUsuarios................');
+     
+      final usuario= await datosRedFibra.getDatosUsuario();
       datosUsuarioController.sink.add(usuario);
 
       return usuario;

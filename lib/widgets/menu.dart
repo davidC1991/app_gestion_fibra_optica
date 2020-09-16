@@ -13,40 +13,63 @@ class Menu extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       
-      child: ListView(
-        padding: EdgeInsets.zero,
+      child: Column(
+       /*  padding: EdgeInsets.zero,
+        shrinkWrap: true, */
         children: [
          drawerHeader(),
          //-------------------------------------------
-         ListTile(
+         datos['cargo']=='Coordinador'||datos['cargo']=='Jefe de inventario'?ListTile(
            leading: Icon(Icons.pages,color:Colors.blue),
            title: Text('Inventario'),
             onTap: (){ 
              Navigator.pop(context);
              Navigator.pushNamed(context, 'CrearProducto');
            },
-         ),
-         ListTile(
+         ):Container(),
+         datos['cargo']=='Coordinador'?ListTile(
            leading: Icon(Icons.people,color:Colors.blue),
            title: Text('Usuarios'),
            onTap: (){
              Navigator.pop(context);
              Navigator.pushNamed(context, 'CrearUsuario');
            },
-         ),
-         ListTile(
+         ):Container(),
+         datos['cargo']=='Coordinador'||datos['cargo']=='Jefe de cuadrilla'||datos['cargo']=='Contratista'?ListTile(
            leading: Icon(Icons.settings,color:Colors.blue),
            title: Text('OTDR'),
            onTap: (){ 
              Navigator.pop(context);
              Navigator.pushNamed(context, 'CalculoCoordenada');
            }
-         ),
+         ):Container(),
          ListTile(
            leading: Icon(Icons.account_balance_wallet,color:Colors.blue),
            title: Text('Agenda'),
            onTap: (){},
          ),
+         datos['cargo']=='Coordinador'?ListTile(
+           leading: Icon(Icons.accessibility,color:Colors.blue),
+           title: Text('Crear Orden de Servicio'),
+           onTap: (){
+             Navigator.pop(context);
+             Navigator.pushNamed(context, 'CrearOS');
+           },
+         ):Container(), 
+          Expanded(
+            flex: 3,
+            child: Container(
+              alignment: Alignment.bottomLeft,
+              //color: Colors.red,
+              child: ListTile(
+               leading: Text('Cerrar sesion'),
+               onTap: (){
+                 Navigator.of(context).pushNamedAndRemoveUntil('LoginPage', (Route<dynamic> route) => false);
+               },
+         ),
+            ),
+          ),
+         
         ],
       ),
     );

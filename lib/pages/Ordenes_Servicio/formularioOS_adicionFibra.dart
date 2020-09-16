@@ -21,12 +21,13 @@ class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
  TextEditingController objetivoController = TextEditingController();
  int numeroOrdenServicio;
  
+ List<String> listaContratistas= List();
 
- static const contratistas = [
+ /* static const contratistas = [
     'Orlando xxxxxx',
     'Macias xxxxxx',
     'Gerson xxxxxx',
-  ];
+  ]; */
 
   static const proyectos = [
     'Audicol',
@@ -98,14 +99,14 @@ class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
 
   String proyectosID = 'Conectividad Wifi';
 
-  final List<DropdownMenuItem<String>> dropDownMenuItems = contratistas
+  /* final List<DropdownMenuItem<String>> dropDownMenuItems = listaContratistas
       .map((String value) => DropdownMenuItem<String>(
             value: value,
             child: Text(value),
           ))
-      .toList();
+      .toList(); */
 
-  String contratistasID = 'Gerson xxxxxx';
+  String contratistasID = 'gerson';
 
    final List<DropdownMenuItem<String>> dropDownPrioridad = prioridad
       .map((String value) => DropdownMenuItem<String>(
@@ -157,6 +158,21 @@ class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
   String numeroCuadrillaId = '1';
 
   DatosRedFibra datosRedFibra= DatosRedFibra();
+
+  @override
+  void initState() { 
+    super.initState();
+    getDatosUsuarios();
+  }
+
+  getDatosUsuarios( )async{
+  listaContratistas= await datosRedFibra.getDatosTodosUsuario();
+    
+   //--OBTENEMOS LAS ORDENES DE SERVICIOS ASIGNADAS A ESTE USUARIO
+   // print('---> $datos');
+    setState(() {});
+    
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -305,7 +321,10 @@ class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
                   contratistasID = newValue;
                 });
               },
-              items: this.dropDownMenuItems,
+              items:  listaContratistas.map((String a) {
+                  return new DropdownMenuItem<String>(
+                      value: a, child: new Text(a));
+                }).toList(),
             ),
           );
   }

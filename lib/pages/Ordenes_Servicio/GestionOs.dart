@@ -206,7 +206,7 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
     firebaseBloc.getDetallePosteInstalado(widget.numeroOrdenS);
     print('listaPostesIdController:${firebaseBloc.listaPostesIdController.value}');
         return Scaffold(
-          appBar: header('Gestion',context,'mapa'),
+          appBar: header('Orden ${widget.numeroOrdenS}',context,'mapa'),
           body: streamAgendaOrdenes(firebaseBloc),
           floatingActionButton: FloatingActionButton(
             child: Icon(Icons.add),
@@ -242,8 +242,11 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
   } 
           
   Widget hiloLibres(){
-    int catidadHilos=int.parse(cantidadHilosController.text.toString());
-    return Text('  ${catidadHilos-listaFinalEmpalme.length} hilos libres de $catidadHilos en total',style: Theme.of(context).textTheme.headline1);
+    if(cantidadHilosController.text!=''){
+     int catidadHilos=int.parse(cantidadHilosController.text.toString());
+     return Text('  ${catidadHilos-listaFinalEmpalme.length} hilos libres de $catidadHilos en total',style: Theme.of(context).textTheme.headline1);
+    }
+    return Text('');
   }
       mostrarCuadroOopciones(BuildContext context, FirebaseBloc firebaseBloc) {
         DocumentSnapshot dato= firebaseBloc.posteSeleccionadoController.value;
@@ -297,7 +300,7 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                                      
                       
                        Divider(color: Colors.black, height: 15.0),
-                       subTitulos('Caja de Empalme',Icon(Icons.add, color: Colors.white), 'cajaEmpalme', firebaseBloc, true),
+                       subTitulos('Caja de Empalme',Icon(Icons.add, color: Colors.white), '', firebaseBloc, true),
 
                        textFormDoble(  
                                       'Reserva (Metros)', 
@@ -315,7 +318,7 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                          width: 300, */
                          child: Column(
                            children: [
-                             Divider(color: Colors.black, height: 15.0),
+                             Divider(color: Colors.black, height: 10.0),
                              contHilosUtilizados>0?subTitulos('Relación de Empalme Hilos',Icon(Icons.add_box, color: Colors.white), '', firebaseBloc, true):Container(),
                              contHilosUtilizados>0?ListView(
                               physics: NeverScrollableScrollPhysics(),
@@ -331,9 +334,9 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
                          
                                
                        
-                       SizedBox(height: 10,),
-                       fotografiaEvidenciaCajaEmpalme(context, firebaseBloc, 'cajaEmpalme'),
-                       Divider(color: Colors.black, height: 15.0),
+                       SizedBox(height: 0,),
+                       //fotografiaEvidenciaCajaEmpalme(context, firebaseBloc, 'cajaEmpalme'),
+                       Divider(color: Colors.black, height: 5.0),
                        subTitulos('Fibra Optica',Icon(Icons.linear_scale, color: Colors.white), '', firebaseBloc, false),
                        
                        textFormDoble(
@@ -972,14 +975,34 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
 
 if(longitudController.text.isEmpty||latitudController.text.isEmpty){
    mensajePantalla('Complete las coordenadas!');
+   return Container();
 }else if(longitudController.text.contains('.')==false||latitudController.text.contains('.')==false){
    mensajePantalla('Ingrese las coordenadas en decimales!');
+   return Container();
 }else if(longitudController.text.length<8||latitudController.text.length<8){
-    mensajePantalla('Ingrese minimo 6  decimales!'); 
+    mensajePantalla('Ingrese minimo 6  decimales!');
+    return Container(); 
+}else if(abscisaInicialController.text.isEmpty){
+   mensajePantalla('Ingrese la abscisa inicial incluyendo la reserva, si es el caso!');
+   return Container();
+}else if(intervaloHilosController.text.isEmpty){
+   mensajePantalla('Ingrese el intervalo de hilos utilizados de la estación central que pasan por este poste! ejemplo: 12-32');
+   return Container();
+}else if(intervaloHilosController.text.contains('-')==false){
+   mensajePantalla('Escriba el intervalo de hilos separados por un guión, ejemplo: 12-32');
+   return Container();
 }else if(cantidadHilosController.text.isEmpty){
    mensajePantalla('Ingrese la cantidad de hilos de la fibra que pasa por el poste!');
-}if(cantidadHilosController.text.contains('.')){
+   return Container();
+}else if(cantidadHilosController.text.contains('.')==true){
    mensajePantalla('Ingrese la cantidad de hilos sin puntos');
+   return Container();
+}else if(propietarioController.text.isEmpty){
+   mensajePantalla('Ingrese el propietario del poste!');
+   return Container();
+}else if(idPosteController .text.isEmpty){
+   mensajePantalla('Ingrese el id del poste, si no tiene escriba 0000!');
+   return Container();
 }else{
   
    listaFinalEmpalme.clear();
@@ -1068,7 +1091,8 @@ if(longitudController.text.isEmpty||latitudController.text.isEmpty){
         'posteID':posteNumero,
         'georeferenciacion'   : {'latitud': latitudController.text, 'longitud': longitudController.text},
         'abscisas'            : {'inicial':abscisaInicialController.text, 'final':abscisaFinalController.text},
-        'mediaUrl'            : {'mediaUrlPoste': mediaUrlPoste, 'mediaUrlCajaEmpalme':mediaUrlCajaEmpalme},
+        //'mediaUrl'            : {'mediaUrlPoste': mediaUrlPoste, 'mediaUrlCajaEmpalme':mediaUrlCajaEmpalme},
+        'mediaUrl'            : {'mediaUrlPoste': mediaUrlPoste},
         'cajaEmpalme'         : {
                                  'reserva':reservaController.text ,
                                  'hilosIntervalo':intervaloHilosController.text,
@@ -1118,7 +1142,8 @@ if(longitudController.text.isEmpty||latitudController.text.isEmpty){
         'posteID':posteNumero,
         'georeferenciacion'   : {'latitud': latitudController.text, 'longitud': longitudController.text},
         'abscisas'            : {'inicial':abscisaInicialController.text, 'final':abscisaFinalController.text},
-        'mediaUrl'            : {'mediaUrlPoste': mediaUrlPoste, 'mediaUrlCajaEmpalme':mediaUrlCajaEmpalme},
+        //'mediaUrl'            : {'mediaUrlPoste': mediaUrlPoste, 'mediaUrlCajaEmpalme':mediaUrlCajaEmpalme},
+        'mediaUrl'            : {'mediaUrlPoste': mediaUrlPoste},
         'cajaEmpalme'         : {
                                  'reserva':reservaController.text ,
                                  'hilosIntervalo':intervaloHilosController.text,

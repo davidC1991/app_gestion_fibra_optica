@@ -81,7 +81,7 @@ class _CrearProductoState extends State<CrearProducto> {
           ),
           SizedBox(height: 20),
           TextFormField(
-            keyboardType: TextInputType.number,
+            keyboardType: TextInputType.text,
             
             decoration: InputDecoration(
               hoverColor: CupertinoColors.activeBlue,

@@ -121,10 +121,12 @@ class DatosRedFibra {
           return oSs; 
         }
         if(cargoUsuario=='Auditor'&&cargoBD=='Auditor'){
-          listOrdenesServicio.add(oSs[i]); 
+          //listOrdenesServicio.add(oSs[i]); 
+          return oSs;
         }
         if(cargoUsuario=='Jefe de inventario'&&cargoBD=='Jefe de inventario'){
-          listOrdenesServicio.add(oSs[i]); 
+          //listOrdenesServicio.add(oSs[i]);
+           return oSs; 
         }
             
         
@@ -297,7 +299,7 @@ class DatosRedFibra {
         .collection('productoA')
         .getDocuments();
        
-     
+       // print(snapshot.documents[0].data);
         return snapshot.documents;
   }
        

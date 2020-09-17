@@ -1,5 +1,8 @@
+import 'dart:async';
 import 'dart:ui';
 import 'package:audicol_fiber/bloc/provider.dart';
+import 'package:audicol_fiber/pages/calculo_punto.dart';
+import 'package:audicol_fiber/pages/inventario/formularioEntregaInsumos.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 //import 'package:audicol_fiber/bloc/dbBloc.dart';
@@ -30,7 +33,23 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
     //Colors.green.withOpacity(0.1),
     Colors.grey.withOpacity(0.1)
   ];
+  static const estadosInsumos = [
+    'Entregado 10%',
+    'Entregado 30%',
+    'Entregado 50%',
+    'Entregado 70%',
+    'Entregado 90%',
+    'Entregado 100%',
+    'Bodega',
+  ];
 
+   final List<PopupMenuItem<String>> popupMenuEstadoInsumos = estadosInsumos
+      .map((String value) => PopupMenuItem<String>(
+            value: value,
+            child: Text(value, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          ))
+      .toList();
+  String estadoInsumoID='Bodega';
   static const estadoOs = [
     'Iniciar',
     'Pausar',
@@ -70,13 +89,16 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
       List<DocumentSnapshot> datosOs=snapshot.data;
       //print(snapshot.data[0].data);
       //return Container();
-      return ListView.builder(
-        //physics: NeverScrollableScrollPhysics(),
-        //shrinkWrap: true,
-        itemCount: datosOs.length,
-        itemBuilder: (context, i){
-          return  _crearBotonRedondeado(Colors.blue, datosOs[i],context, i);
-        }  
+      return RefreshIndicator(
+        onRefresh: actualizar,
+        child: ListView.builder(
+          //physics: NeverScrollableScrollPhysics(),
+          //shrinkWrap: true,
+          itemCount: datosOs.length,
+          itemBuilder: (context, i){
+            return  _crearBotonRedondeado(Colors.blue, datosOs[i],context, i,firebaseBloc);
+          }  
+        ),
       );
     }else{
       return SpinKitRotatingCircle(
@@ -89,10 +111,17 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
 );
   }
           
-         
+  Future<Null> actualizar()async{
+    final duration= new Duration(seconds: 2);
+    new Timer(duration,(){
+      setState(() {  });
+    });
+    return Future.delayed(duration);
+  }       
 
-  Widget _crearBotonRedondeado(Color color,  DocumentSnapshot datoOs, BuildContext context, int i){
+  Widget _crearBotonRedondeado(Color color,  DocumentSnapshot datoOs, BuildContext context, int i, FirebaseBloc firebaseBloc){
      //final widthPantalla = MediaQuery.of(context).size.width;
+    
      cont_tarjetas++;
      if (cont_tarjetas==1){
        color=coloresTarjetas[0];
@@ -108,16 +137,17 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
      String imagen; 
      if(datoOs.data['proyecto'].toString().contains('Conectividad Wifi')){
        imagen='assets/ordenCasa2.png';
-       print(imagen);
+       //print(imagen);
        
      }else  if(datoOs.data['proyecto'].toString().contains('Audicol')){
       imagen='assets/cliente.png';
-      print(imagen);
+      //print(imagen);
      }
-    return tarjetas(color, datoOs, imagen, context);
+    return tarjetas(color, datoOs, imagen, context, firebaseBloc);
   }
 
-   tarjetas(Color color, DocumentSnapshot datoOs, String imagen, BuildContext context) {
+   tarjetas(Color color, DocumentSnapshot datoOs, String imagen, BuildContext context, FirebaseBloc firebaseBloc) {
+     String cargo=firebaseBloc.datosUsuarioController.value['cargo'];
     final widthPantalla = MediaQuery.of(context).size.width;
     final heightPantalla = MediaQuery.of(context).size.height;
     return Column(
@@ -207,6 +237,7 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
                     height: 20,
                     width: 300,
                     //color: Colors.red,
+                    
                     child: Text(
                       'Insumos: ${datoOs.data['insumos']}',
                        style: TextStyle(
@@ -294,23 +325,7 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
                             )
                         ),
                       ),
-                      PopupMenuButton<String>(
-                        elevation: 85.0,
-                        icon: Icon(Icons.linear_scale,size: 30.0, color:Theme.of(context).accentColor),
-                        padding: EdgeInsets.only(right: 0),
-                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                        ),
-                        onSelected: (String newValue){
-                        setState(() {
-                          estadoId=newValue;
-                          if(estadoId=='Iniciar'){
-                             Navigator.push(context, MaterialPageRoute(builder: (context)=> GestionOrdenServicio(numeroOrdenS:datoOs.data['NumeroOS'], estado:datoOs.data['Estado'])));
-                             }
-                        });
-                        },
-                        itemBuilder: (BuildContext context)=> popupMenuEstado
-                      )
+                      cargo=='Jefe de inventario'?insumosOpciones(datoOs.data['NumeroOS']):popupMenuButtonOrdenesServicio(context, datoOs)
                     ],
                   ),
                  ),
@@ -321,6 +336,58 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
       ],
     );
   }
+
+   PopupMenuButton<String> popupMenuButtonOrdenesServicio(BuildContext context, DocumentSnapshot datoOs) {
+     return PopupMenuButton<String>(
+                      elevation: 85.0,
+                      icon: Icon(Icons.linear_scale,size: 30.0, color:Theme.of(context).accentColor),
+                      padding: EdgeInsets.only(right: 0),
+                       shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                      onSelected: (String newValue){
+                      setState(() {
+                        estadoId=newValue;
+                        if(estadoId=='Iniciar'){
+                           Navigator.push(context, MaterialPageRoute(builder: (context)=> GestionOrdenServicio(numeroOrdenS:datoOs.data['NumeroOS'], estado:datoOs.data['Estado'])));
+                           }
+                      });
+                      },
+                      itemBuilder: (BuildContext context)=> popupMenuEstado
+                    );
+   }
+   updateEstadoInsumo(String numeroOS){
+     ordenesServicio
+          .document(numeroOS)
+          .updateData({
+            'insumos': estadoInsumoID,
+              
+          });
+   }         
+
+  insumosOpciones(String numeroOS){
+    return   PopupMenuButton<String>(
+             elevation: 85.0,
+             icon: Icon(Icons.linear_scale,size: 30.0, color:Theme.of(context).accentColor),
+             padding: EdgeInsets.only(right: 0),
+             shape: RoundedRectangleBorder(
+               borderRadius: BorderRadius.circular(10.0),
+             ),
+             onSelected: (String newValue){
+             setState(() {
+               estadoInsumoID=newValue;
+               //updateEstadoInsumo(numeroOS);
+               Navigator.push(context, MaterialPageRoute(builder: (context)=> EntregaInsumos()));
+                           
+             });
+             },
+             itemBuilder: (BuildContext context)=> popupMenuEstadoInsumos
+           );
+  }
+                            
+
+                    
+                               
         
       
 

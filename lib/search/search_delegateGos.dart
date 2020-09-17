@@ -2,6 +2,7 @@ import 'package:audicol_fiber/bloc/dbBloc.dart';
 import 'package:audicol_fiber/bloc/peticiones_firebase.dart';
 import 'package:audicol_fiber/bloc/provider.dart';
 import 'package:audicol_fiber/pages/Ordenes_Servicio/GestionOs.dart';
+import 'package:audicol_fiber/pages/inventario/formularioEntregaInsumos.dart';
 import 'package:audicol_fiber/pages/selector_pantalla.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -66,26 +67,30 @@ class DataSearch_OS extends SearchDelegate {
            List<String> listaItem= new List();
           //final cliente = snapshot.data;
            final datos=snapshot.data;
+           Map<String, int> mapIndex= new Map();
+           int cont=0;
            for (var item in datos) {
              listaItem.add(item.data['nombreProducto']);
+             mapIndex[item.data['nombreProducto']]=cont;
+             cont++;
            }
             
           
-          final clientesFiltrados =
-              listaItem.where((c) => c.toLowerCase().startsWith(query)).toList();
+          final clientesFiltrados = listaItem.where((c) => c.toLowerCase().startsWith(query)).toList();
           //print('clientesFiltrados: $clientesFiltrados');
           return ListView(
               children: clientesFiltrados.map((item) {
                
             return ListTile(
-              /*  leading: FadeInImage(
-              image: NetworkImage(pelicula.getPosterImg(),
-              placeholder: AssetImage('assets/img/no-image.jpg'),
+              contentPadding: EdgeInsets.only(top: 5.0,bottom: 5.0,right: 10.0, left: 10.0),
+             leading: FadeInImage(
+              image: NetworkImage(datos[mapIndex[item]].data['mediaUrl']),
+              placeholder: AssetImage('assets/cargando.gif'),
               width: 50.0,
               fit: BoxFit.contain,
-            ), */
+              ), 
               title: Text(item),
-              //subtitle: Text(),
+              subtitle: Text(datos[mapIndex[item]].data['descripcionProducto'],style: TextStyle(fontSize: 12),),
               onTap: () {
                 close(context, null);
                 int i= listaItem.indexWhere((element) => element==item);
@@ -97,7 +102,7 @@ class DataSearch_OS extends SearchDelegate {
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                            GestionOrdenServicio()));
+                            EntregaInsumos()));
 
                 //Navigator.pop(context);
               },

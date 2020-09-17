@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:audicol_fiber/pages/Ordenes_Servicio/detallePoste.dart';
@@ -226,13 +227,16 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
       //print(datosPostes[0].data);
       //print(datosPostes.length);
       //return Container();
-      return ListView.builder(
-        //physics: NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        itemCount: datosPostes.length,
-        itemBuilder: (context, i){
-          return _crearBotonRedondeado(Colors.blue, datosPostes,context, i, firebaseBloc);
-        }  
+      return RefreshIndicator(
+        onRefresh: actualizar,
+        child: ListView.builder(
+          //physics: NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: datosPostes.length,
+          itemBuilder: (context, i){
+            return _crearBotonRedondeado(Colors.blue, datosPostes,context, i, firebaseBloc);
+          }  
+        ),
       );
     }else{
       return Center(child:Text('Aun no hay información en esta orden de servicio'),);
@@ -240,7 +244,13 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
   },
 );
   } 
-          
+  Future<Null> actualizar()async{
+    final duration= new Duration(seconds: 2);
+    new Timer(duration,(){
+      setState(() {  });
+    });
+    return Future.delayed(duration);
+  }            
   Widget hiloLibres(){
     if(cantidadHilosController.text!=''){
      int catidadHilos=int.parse(cantidadHilosController.text.toString());

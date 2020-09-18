@@ -50,7 +50,7 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
  TextEditingController reservaController = TextEditingController();
  
  
- DocumentSnapshot datosItem;
+ //DocumentSnapshot datosItem;
  String estadoOrdenServicio='';
  String mediaUrlPoste='';
  String mediaUrlCajaEmpalme='';
@@ -746,7 +746,7 @@ class _GestionOrdenServicioState extends State<GestionOrdenServicio> {
          firebaseBloc.estadoPostesIDController.sink.add('');
          firebaseBloc.checkBoxAereaController.sink.add(false);
          firebaseBloc.checkBoxCanalizadaController.sink.add(false); */
-        firebaseBloc.itemsSeleccionadosStream.listen((event) {datosItem=event;});
+        //firebaseBloc.itemsSeleccionadosStream.listen((event) {datosItem=event;});
       }  
     
      Widget _crearBotonRedondeado(Color color,  List<DocumentSnapshot> datosPostes, BuildContext context, int i, FirebaseBloc firebaseBloc){

@@ -14,7 +14,7 @@ class FirebaseBloc{
 
   
   final _ordenesServicioController = new BehaviorSubject<List<DocumentSnapshot>>();
-  final itemsSeleccionadosController = new BehaviorSubject<DocumentSnapshot>();
+  final itemsSeleccionadosController = new BehaviorSubject<List<DocumentSnapshot>>();
   final posteSeleccionadoController = new BehaviorSubject<DocumentSnapshot>();
   final listaPostesOSController = new BehaviorSubject<List<DocumentSnapshot>>();
   
@@ -48,7 +48,7 @@ class FirebaseBloc{
     Stream<List<DocumentSnapshot>> get ordenServicioStream => _ordenesServicioController;
     Stream<List<DocumentSnapshot>> get listaPostesOSControllerStream => listaPostesOSController;
     Stream<List<String>> get listaHilosAgregadosStream => listaHilosAgregadosController;
-    Stream<DocumentSnapshot> get itemsSeleccionadosStream => itemsSeleccionadosController;
+    Stream<List<DocumentSnapshot>> get itemsSeleccionadosStream => itemsSeleccionadosController;
     Stream<DocumentSnapshot> get posteSeleccionadoStream => posteSeleccionadoController;
     Stream<String> get itemStream => itemController;
     Stream<String> get latitudStream => latitudController;
@@ -114,9 +114,9 @@ class FirebaseBloc{
      
     }
   
-    getItemsSeleccionados(DocumentSnapshot datositem) async {
-      print('entro a getItemSeleccionado--$datositem');
-       itemsSeleccionadosController.sink.add(datositem);
+    getItemsSeleccionados(List<DocumentSnapshot> listDatosItem) async {
+      print('entro a getItemSeleccionado--$listDatosItem');
+       itemsSeleccionadosController.sink.add(listDatosItem);
      //final items = datosRedFibra.getListaProductos();
       // itemsSeleccionadosController.sink.add(items);
     }

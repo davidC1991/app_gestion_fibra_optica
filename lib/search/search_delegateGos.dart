@@ -10,7 +10,7 @@ import 'package:flutter/material.dart';
 class DataSearch_OS extends SearchDelegate {
   String seleccion = '';
   DatosRedFibra datosRedFibra = new DatosRedFibra();
- 
+  List<DocumentSnapshot> listInsumosTotal= new List();
   @override
   List<Widget> buildActions(BuildContext context) {
     // las acciones de nuestro appbar
@@ -46,7 +46,7 @@ class DataSearch_OS extends SearchDelegate {
         height: 100.0,
         width: 100.0,
         color: Colors.blueAccent,
-        child: Text(seleccion),
+        child: Text('seleccion'),
       ),
     );
   }
@@ -95,14 +95,22 @@ class DataSearch_OS extends SearchDelegate {
                 close(context, null);
                 int i= listaItem.indexWhere((element) => element==item);
                 print('------>i$i');
-                //firebaseBloc.itemsSeleccionadosController.sink.add(datos[i]);
-                firebaseBloc.getItemsSeleccionados(datos[i]);
-               //firebaseBloc.getItemsSeleccionados('burro');
-                Navigator.pushReplacement(
+                if(firebaseBloc.itemsSeleccionadosController.value!=null){
+                for (var i = 0; i < firebaseBloc.itemsSeleccionadosController.value.length; i++) {
+                  listInsumosTotal.add(firebaseBloc.itemsSeleccionadosController.value[i]);
+                }}
+                listInsumosTotal.add(datos[i]);
+                
+                
+                firebaseBloc.itemsSeleccionadosController.sink.add(listInsumosTotal);
+                //firebaseBloc.getItemsSeleccionados(datos[i]);
+                //firebaseBloc.getItemsSeleccionados('burro');
+             
+                  Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                            EntregaInsumos()));
+                            EntregaInsumos()));  
 
                 //Navigator.pop(context);
               },

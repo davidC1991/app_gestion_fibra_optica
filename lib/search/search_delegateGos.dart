@@ -27,12 +27,14 @@ class DataSearch_OS extends SearchDelegate {
   @override
   Widget buildLeading(BuildContext context) {
     // icono a la izquierda del appbar
+    final firebaseBloc  = Provider.firebaseBloc(context);
     return IconButton(
       icon: AnimatedIcon(
         icon: AnimatedIcons.menu_arrow,
         progress: transitionAnimation,
       ),
       onPressed: () {
+        firebaseBloc.itemsSeleccionadosController.sink.add(null);
         close(context, null);
       },
     );
@@ -95,14 +97,14 @@ class DataSearch_OS extends SearchDelegate {
                 close(context, null);
                 int i= listaItem.indexWhere((element) => element==item);
                 print('------>i$i');
-                if(firebaseBloc.itemsSeleccionadosController.value!=null){
+               /*  if(firebaseBloc.itemsSeleccionadosController.value!=null){
                 for (var i = 0; i < firebaseBloc.itemsSeleccionadosController.value.length; i++) {
                   listInsumosTotal.add(firebaseBloc.itemsSeleccionadosController.value[i]);
-                }}
-                listInsumosTotal.add(datos[i]);
+                }} */
+                //listInsumosTotal.add(datos[i]);
                 
                 
-                firebaseBloc.itemsSeleccionadosController.sink.add(listInsumosTotal);
+                //firebaseBloc.itemsSeleccionadosController.sink.add(datos[i]);
                 //firebaseBloc.getItemsSeleccionados(datos[i]);
                 //firebaseBloc.getItemsSeleccionados('burro');
              
@@ -110,7 +112,7 @@ class DataSearch_OS extends SearchDelegate {
                     context,
                     MaterialPageRoute(
                         builder: (context) =>
-                            EntregaInsumos()));  
+                            EntregaInsumos(item:datos[i])));  
 
                 //Navigator.pop(context);
               },

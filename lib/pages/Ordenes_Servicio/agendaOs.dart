@@ -20,7 +20,7 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
 
 
   
-  //FirebaseBloc dbBloc = FirebaseBloc();
+  FirebaseBloc bloc = FirebaseBloc();
   
   Color colorText= Colors.grey[500];
   int cont_tarjetas=0;
@@ -70,7 +70,12 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
    // dbBloc.getOservicios();
     
   }
-
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    bloc.dispose();
+  } 
   @override
   Widget build(BuildContext context) {
      final firebaseBloc  = Provider.firebaseBloc(context);

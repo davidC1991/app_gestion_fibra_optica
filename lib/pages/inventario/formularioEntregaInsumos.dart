@@ -4,9 +4,12 @@ import 'package:audicol_fiber/search/search_delegateGos.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:uuid/uuid.dart';
 
 class EntregaInsumos extends StatefulWidget {
- 
+  DocumentSnapshot item;
+  EntregaInsumos({this.item});
   @override
   _EntregaInsumosState createState() => _EntregaInsumosState();
 }
@@ -14,26 +17,83 @@ class EntregaInsumos extends StatefulWidget {
 class _EntregaInsumosState extends State<EntregaInsumos> {
   List<Widget> listWidgetItems= new List();
   List<DocumentSnapshot> listItems= new List();
+  List<TextEditingController> listTextEditingController= new List();
+  FirebaseBloc bloc=FirebaseBloc();
+  DocumentSnapshot datoItem=null;
+
+
   TextEditingController itemController = TextEditingController();
   @override
   void initState() {
     // TODO: implement initState
-    super.initState();
-   
+   super.initState();
+   datoItem=widget.item;
+  
    
   }
  
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    bloc.dispose();
+  } 
 
   @override
   Widget build(BuildContext context) {
       final firebaseBloc  = Provider.firebaseBloc(context);
       final anchoPantalla= MediaQuery.of(context).size.width;
       final altoPantalla= MediaQuery.of(context).size.height;
-      listItems=firebaseBloc.itemsSeleccionadosController.value;
-      if(listItems!=null){
-      for (var i = 0; i < listItems.length; i++) {
-        listWidgetItems.add(itemInsumo(listItems[i],anchoPantalla));
-      }}
+      
+      if(datoItem!=null){
+       //listItems.add(datoItem);
+       if(firebaseBloc.itemsSeleccionadosController.value!=null){
+          for (var i = 0; i < firebaseBloc.itemsSeleccionadosController.value.length; i++) {
+                listItems.add(firebaseBloc.itemsSeleccionadosController.value[i]);
+                listTextEditingController.add(TextEditingController());
+          }} 
+       
+       int contItemRepetido=0;
+       for (var i = 0; i < listItems.length; i++) {
+         if(datoItem.data['nombreProducto']==listItems[i].data['nombreProducto']){
+           
+           mensajePantalla('ya tiene este item en la lista!');
+           contItemRepetido=1;
+           break;
+         }
+        
+       }
+       if(contItemRepetido==0){ 
+       listItems.add(datoItem);  
+       firebaseBloc.itemsSeleccionadosController.sink.add(listItems);
+       listTextEditingController.add(TextEditingController());
+       }
+       datoItem=null; 
+       
+      }   
+       /* if(listItems.isEmpty){
+        firebaseBloc.itemsSeleccionadosController.sink.add(null);
+      } */
+      /* firebaseBloc.itemsSeleccionadosStream.listen((event) {
+        print('-------------------');
+        print(event); 
+        if(event!=null){
+        listItems=event;
+        listTextEditingController.clear();
+        listWidgetItems.clear();
+        for (var i = 0; i < listItems.length; i++) {
+          listTextEditingController.add(TextEditingController());
+          listWidgetItems.add(itemInsumo(listItems[i],anchoPantalla,listTextEditingController[i], i));
+        }
+        }
+        //bloc.dispose();
+        //firebaseBloc.itemsSeleccionadosController.sink.add(null);
+      },onDone: (){
+        print('Tarea hecha');
+      },onError: (error){
+        print(error);
+      }); */
+    
 
    
 
@@ -52,73 +112,123 @@ class _EntregaInsumosState extends State<EntregaInsumos> {
           ),
         ],
       ),
-     body: Column(
-       children: [
-         Row(
-           
-           children: [
-           Container(
-             margin: EdgeInsets.only(left: anchoPantalla*0.04,top: 10),
-             //padding: EdgeInsets.only(left: 30),
-             child:Text('FOTO',style: TextStyle(color: Colors.grey[600],fontSize: 16,fontWeight: FontWeight.bold),),
-             //color: Colors.red,
-           ),
-           Container(
-             margin: EdgeInsets.only(left: anchoPantalla*0.2,top: 10),
-             child:Text('ITEM',style: TextStyle(color: Colors.grey[600],fontSize: 16,fontWeight: FontWeight.bold)),
-            // color: Colors.yellow,
-           ),
-           Container(
-              margin: EdgeInsets.only(left: anchoPantalla*0.30,top: 10),
-             child:Text('CANTIDAD',style: TextStyle(color: Colors.grey[600],fontSize: 16,fontWeight: FontWeight.bold)),
-             //color: Colors.blue,
-           )
-         ],),
-         ListView(
+     body: SingleChildScrollView(
+       child: Column(
+         children: [
+           Row(
+             
+             children: [
+             tituloTablaIsumos( anchoPantalla*0.04,'FOTO'),
+             tituloTablaIsumos( anchoPantalla*0.2,'ITEM'),
+             tituloTablaIsumos( anchoPantalla*0.30,'CANTIDAD'),
+             
+           ],),
+            listItems.isNotEmpty?ListView.builder(
+            physics: NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: listItems.length,
+            itemBuilder: (context, i){
+            
+            return  itemInsumo(listItems[i],anchoPantalla,listTextEditingController[i], i);
+          }  
+          ):Container(),
+           /* ListView(
            shrinkWrap: true,
+           physics: NeverScrollableScrollPhysics(),
            children: listWidgetItems
-         ),
-       ],
+          )  */
+                      
+           
+         ],
+       ),
      ), 
+     floatingActionButton:RaisedButton(
+            child: Text('Guardar',style: TextStyle(color: Colors.white),),
+            onPressed: ()=>sendDatos(firebaseBloc)
+          ),
     );
   }
 
-  itemInsumo(DocumentSnapshot item, double anchoPantalla) {
+  Container tituloTablaIsumos(double anchoPantalla,String text) {
+    return Container(
+             margin: EdgeInsets.only(left: anchoPantalla,top: 10),
+             //padding: EdgeInsets.only(left: 30),
+             child:Text(text,style: TextStyle(color: Colors.grey[600],fontSize: 16,fontWeight: FontWeight.bold),),
+             //color: Colors.red,
+           );
+  }
+
+  itemInsumo(DocumentSnapshot item, double anchoPantalla, TextEditingController controller, int i) {
     
-    
-    return ListTile(
-      contentPadding: EdgeInsets.only(top: 10.0,bottom: 5.0,right: 10.0, left: 10.0),
-      leading: FadeInImage(
-              image: NetworkImage(item['mediaUrl']),
-              placeholder: AssetImage('assets/cargando.gif'),
-              width: 50.0,
-              fit: BoxFit.contain,
-              ), 
-      title: Row(
-        children: [
-          SizedBox(width:anchoPantalla*0.08),
-          Text(item['nombreProducto']),
-        ],
+    String itemKey=item['nombreProducto']+(i*3).toString();
+   // print(itemKey);
+    return Dismissible(
+      key: Key(itemKey),
+      onDismissed: (DismissDirection dir){
+        listTextEditingController.removeAt(i);
+        listItems.removeAt(i);
+        setState(() {});
+      },
+      background: Container(
+        color: Colors.red,
+        child: Icon(Icons.delete),
+        alignment: Alignment.centerRight,
       ),
-      trailing: Container(
-        //color:Colors.blue,
-        height: 30,
-        width: 100,
-         child: TextFormField(
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
-              hoverColor:Colors.red,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10))
-                ),
-                //filled: false,
-               // hintText: 'Codigo de 4 digitos',
-               // labelText: 'Codigo del producto'),
-            ),
-            controller: itemController,
-           
+      direction: DismissDirection.endToStart,
+      child: ListTile(
+        contentPadding: EdgeInsets.only(top: 10.0,bottom: 5.0,right: 10.0, left: 10.0),
+        leading: FadeInImage(
+                image: NetworkImage(item['mediaUrl']),
+                placeholder: AssetImage('assets/cargando.gif'),
+                width: 50.0,
+                fit: BoxFit.contain,
+                ), 
+        title: Row(
+          children: [
+            //SizedBox(width:anchoPantalla*0.08),
+            Text(item['nombreProducto']),
+          ],
         ),
-      ) , 
+        subtitle:  Text(item['descripcionProducto']),
+        trailing: Container(
+         // color:Colors.blue,
+          alignment: Alignment.center,
+          height: 70,
+          width: 100,
+           child: TextFormField(
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                hoverColor:Colors.red,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(10))
+                  ),
+                  //filled: false,
+                 // hintText: 'Codigo de 4 digitos',
+                 // labelText: 'Codigo del producto'),
+              ),
+              controller: controller,
+             
+          ),
+        ) , 
+      ),
     );
   }
+  sendDatos(FirebaseBloc firebaseBloc){
+    for (var i = 0; i < listTextEditingController.length; i++) {
+        print(listTextEditingController[i].text);  
+    }
+    // firebaseBloc.itemsSeleccionadosController.sink.add(null);
+  }
+  
+   void mensajePantalla(String mensaje) {
+   Fluttertoast.showToast(
+          msg: mensaje,
+          toastLength: Toast.LENGTH_LONG,
+          gravity: ToastGravity.CENTER,
+          fontSize: 15,
+          backgroundColor: Colors.grey
+    );  
+ }
+  
+  
 }

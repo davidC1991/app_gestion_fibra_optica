@@ -114,12 +114,12 @@ class FirebaseBloc{
      
     }
   
-    getItemsSeleccionados(List<DocumentSnapshot> listDatosItem) async {
+   /*  getItemsSeleccionados(List<DocumentSnapshot> listDatosItem) async {
       print('entro a getItemSeleccionado--$listDatosItem');
        itemsSeleccionadosController.sink.add(listDatosItem);
      //final items = datosRedFibra.getListaProductos();
       // itemsSeleccionadosController.sink.add(items);
-    }
+    } */
       
      dispose(){
       _ordenesServicioController?.close();

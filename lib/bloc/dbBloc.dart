@@ -42,6 +42,7 @@ class FirebaseBloc{
      final listaHilosAgregadosController = new BehaviorSubject<List<String>>();
      final agregadarHiloController = new BehaviorSubject<bool>();
      final idUsuarioController = new BehaviorSubject<String>();
+     final numeroOrdenServicioController = new BehaviorSubject<String>();
      final datosUsuarioController = new BehaviorSubject<Map<String,dynamic>>();
     
     
@@ -72,6 +73,7 @@ class FirebaseBloc{
     Stream<bool> get agregadarHiloIdStream => agregadarHiloController;
     Stream<String> get idUsuarioControllerStream => idUsuarioController;
     Stream<Map<String,dynamic>> get datosUsuarioControllerStream => datosUsuarioController;
+    Stream<String> get numeroOrdenServicioControllerStream => numeroOrdenServicioController;
   
      
   
@@ -149,6 +151,7 @@ class FirebaseBloc{
       agregadarHiloController?.close();
       idUsuarioController?.close();
       datosUsuarioController?.close();
+      numeroOrdenServicioController?.close();
     }
   
   

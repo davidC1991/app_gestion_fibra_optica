@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:audicol_fiber/bloc/provider.dart';
 import 'package:audicol_fiber/pages/calculo_punto.dart';
 import 'package:audicol_fiber/pages/inventario/formularioEntregaInsumos.dart';
+import 'package:audicol_fiber/pages/inventario/registroIsumos.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 //import 'package:audicol_fiber/bloc/dbBloc.dart';
@@ -34,13 +35,8 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
     Colors.grey.withOpacity(0.1)
   ];
   static const estadosInsumos = [
-    'Entregado 10%',
-    'Entregado 30%',
-    'Entregado 50%',
-    'Entregado 70%',
-    'Entregado 90%',
-    'Entregado 100%',
-    'Bodega',
+    'Registrar Insumos',
+    'Entregar Insumos',
   ];
 
    final List<PopupMenuItem<String>> popupMenuEstadoInsumos = estadosInsumos
@@ -49,7 +45,7 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
             child: Text(value, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
           ))
       .toList();
-  String estadoInsumoID='Bodega';
+  String estadoInsumoID='Registrar Insumos';
   static const estadoOs = [
     'Iniciar',
     'Pausar',
@@ -63,6 +59,19 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
             child: Text(value, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
           ))
       .toList();
+
+   static const solicitudInsumos = [
+    'Solicitar Insumos',
+  ];
+    
+  String solicitudInsumosId='';
+
+  final List<PopupMenuItem<String>> popupMenuSolicitudInsumos = solicitudInsumos
+      .map((String value) => PopupMenuItem<String>(
+            value: value,
+            child: Text(value, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          ))
+      .toList();    
 
   @override
   void initState() {
@@ -79,7 +88,10 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
   @override
   Widget build(BuildContext context) {
      final firebaseBloc  = Provider.firebaseBloc(context);
-     firebaseBloc.getOservicios();
+     //BORRA TODOS LOS ITEMS ESCOGIDOS EN LA SOLICITUD DE INSUMOS---
+      firebaseBloc.itemsSeleccionadosController.sink.add(null);
+     //---------------------------------------------------------------
+    firebaseBloc.getOservicios();
     return Scaffold(
      body:  streamAgendaOrdenes(firebaseBloc)
   );
@@ -155,6 +167,10 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
      String cargo=firebaseBloc.datosUsuarioController.value['cargo'];
     final widthPantalla = MediaQuery.of(context).size.width;
     final heightPantalla = MediaQuery.of(context).size.height;
+    String tituloActividad='Orden de servicio';
+    if(datoOs.data['orden']=='prefactibilidad'){
+      tituloActividad='Estudio prefactibilidad';
+    }
     return Column(
       children: [
         Container(
@@ -181,7 +197,7 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
                 children: <Widget>[
                   SizedBox(height: 8,),
                   Text(
-                    'Orden de Servicio # ${datoOs.data['NumeroOS']}',
+                    '$tituloActividad ${datoOs.data['NumeroOS']}',
                      style: TextStyle(
                               fontSize: 16.0,
                               fontWeight: FontWeight.bold,
@@ -330,7 +346,9 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
                             )
                         ),
                       ),
-                      cargo=='Jefe de inventario'?insumosOpciones(datoOs.data['NumeroOS']):popupMenuButtonOrdenesServicio(context, datoOs)
+                      cargo=='Jefe de inventario'?insumosEntrega(datoOs.data['NumeroOS']):
+                      tituloActividad=='Estudio prefactibilidad'?solicitudInsumosOpciones(datoOs.data['NumeroOS'], firebaseBloc):
+                      popupMenuButtonOrdenesServicio(context, datoOs)
                     ],
                   ),
                  ),
@@ -370,7 +388,7 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
           });
    }         
 
-  insumosOpciones(String numeroOS){
+  insumosEntrega(String numeroOS){
     return   PopupMenuButton<String>(
              elevation: 85.0,
              icon: Icon(Icons.linear_scale,size: 30.0, color:Theme.of(context).accentColor),
@@ -382,11 +400,32 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
              setState(() {
                estadoInsumoID=newValue;
                //updateEstadoInsumo(numeroOS);
-               Navigator.push(context, MaterialPageRoute(builder: (context)=> EntregaInsumos()));
+               Navigator.push(context, MaterialPageRoute(builder: (context)=> RegistroInsumos(numeroOS: numeroOS)));
                            
              });
              },
              itemBuilder: (BuildContext context)=> popupMenuEstadoInsumos
+           );
+  }
+
+  solicitudInsumosOpciones(String numeroOS,FirebaseBloc firebaseBloc){
+    return   PopupMenuButton<String>(
+             elevation: 85.0,
+             icon: Icon(Icons.linear_scale,size: 30.0, color:Theme.of(context).accentColor),
+             padding: EdgeInsets.only(right: 0),
+             shape: RoundedRectangleBorder(
+               borderRadius: BorderRadius.circular(10.0),
+             ),
+             onSelected: (String newValue){
+             setState(() {
+               solicitudInsumosId=newValue;
+               //updateEstadoInsumo(numeroOS);
+               firebaseBloc.numeroOrdenServicioController.sink.add(numeroOS);
+               Navigator.push(context, MaterialPageRoute(builder: (context)=> EntregaInsumos()));
+                           
+             });
+             },
+             itemBuilder: (BuildContext context)=> popupMenuSolicitudInsumos
            );
   }
                             

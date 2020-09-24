@@ -89,13 +89,12 @@ class DatosRedFibra {
      SharedPreferences prefs = await SharedPreferences.getInstance();
      usuarioId= prefs.getString('UsuarioId');  
      List<DocumentSnapshot> oSs= new List();
-      QuerySnapshot snapshot = await ordenesServicio.getDocuments(); 
-      print(snapshot.documents[0].data);
-      oSs=snapshot.documents;
+     QuerySnapshot snapshot = await ordenesServicio.getDocuments(); 
+     //print(snapshot.documents[0].data);
+     oSs=snapshot.documents;
 
 
-     // listaItem.where((c) => c.toLowerCase().startsWith(query)).toList();
-     //oSs[0].data.keys.map((e) => e.contains('other'))
+      //ITERACION PARA ASIGNAR EN UNA LISTA LAS ORDENES DE SERVICIO QUE PERTENECES CADA USUARIO
       List<DocumentSnapshot> listOrdenesServicio= new List();
       String cargoUsuario=mapUsuario['cargo'];
       String cargoBD='', cuadrillaBD='',nombreContratistaDB='';
@@ -118,20 +117,62 @@ class DatosRedFibra {
         }
         if(cargoUsuario=='Coordinador'&&cargoBD=='Coordinador'){
           //listOrdenesServicio.add(oSs[i]);
-          return oSs; 
+          //return oSs; 
         }
         if(cargoUsuario=='Auditor'&&cargoBD=='Auditor'){
-          //listOrdenesServicio.add(oSs[i]); 
-          return oSs;
+          listOrdenesServicio.add(oSs[i]); 
+          //return oSs;
         }
         if(cargoUsuario=='Jefe de inventario'&&cargoBD=='Jefe de inventario'){
           //listOrdenesServicio.add(oSs[i]);
-           return oSs; 
+           //return oSs; 
         }
-            
-        
       }
-      return listOrdenesServicio;
+
+     List<DocumentSnapshot> listaGeneralPrefactibilidad= new List();
+     QuerySnapshot snapshot1 = await prefactibilidad.getDocuments(); 
+     //print(snapshot.documents[0].data);
+     listaGeneralPrefactibilidad=snapshot1.documents;
+     //ITERACION PARA ASIGNAR EN UNA LISTA LOS ESTUDIOS DE PREFACTIBILIDAD QUE PERTENECES CADA USUARIO
+     List<DocumentSnapshot> listEstudioPrefactibilidad= new List();
+     
+      for (var i = 0; i < listaGeneralPrefactibilidad.length; i++) {
+        cargoBD=listaGeneralPrefactibilidad[i].data['datosOrden']['cargo'];
+        if(cargoUsuario=='Jefe de cuadrilla'&&cargoBD=='Jefe de cuadrilla'){
+           cuadrillaBD=listaGeneralPrefactibilidad[i].data['datosOrden']['numeroCuadrilla'];
+           if(cargoBD==cargoUsuario&&cuadrillaBD==cuadrillaUsuario){
+               listEstudioPrefactibilidad.add(listaGeneralPrefactibilidad[i]); 
+            }
+        }
+        if(cargoUsuario=='Contratista'&&cargoBD=='Contratista'){
+           nombreContratistaDB=listaGeneralPrefactibilidad[i].data['datosOrden']['nombreContratista'];
+            
+            if(cargoBD==cargoUsuario&&nombreContratista==nombreContratistaDB){
+               listEstudioPrefactibilidad.add(listaGeneralPrefactibilidad[i]); 
+            }
+        }
+        
+       
+      }      
+            
+      if(cargoUsuario=='Contratista'||cargoUsuario=='Jefe de cuadrilla'){
+        return listOrdenesServicio + listEstudioPrefactibilidad;
+      }  
+      
+      if(cargoUsuario=='Auditor'){
+        return listOrdenesServicio; 
+      }
+          
+      if(cargoUsuario=='Jefe de inventario'){
+        return listaGeneralPrefactibilidad+oSs;
+      }
+
+      if(cargoUsuario=='Coordinador'){
+        return listaGeneralPrefactibilidad+oSs; 
+      }
+          
+        
+      
    }
 
     Future<Map<String,dynamic>>getDatosUsuario()async{
@@ -189,7 +230,36 @@ class DatosRedFibra {
     print(ultimoNumeroOrden);
     return ultimoNumeroOrden;
   }  
+
+   Future<String> getUltimoNumueroPrefactibilidad()async{
+    String ultimoNumeroOrden='';
+    QuerySnapshot snapshot= await prefactibilidad.getDocuments();
+
+    if(snapshot.documents.length==0){
+      return '00000';
+    }
     
+    ultimoNumeroOrden=snapshot.documents[snapshot.documents.length-1].documentID;
+
+    int numeroOs= int.parse(ultimoNumeroOrden)+1;
+    print('numeroOs: $numeroOs');
+
+    if(numeroOs>9){
+      ultimoNumeroOrden='000' + numeroOs.toString();
+    }else if(numeroOs>99){
+      ultimoNumeroOrden='00' + numeroOs.toString();
+    }else if(numeroOs>999){
+      ultimoNumeroOrden='0' + numeroOs.toString();
+    }else{
+      ultimoNumeroOrden='0000' + numeroOs.toString();
+    }
+    /* if(snapshot.documents.length==1){
+      ultimoNumeroOrden=snapshot.documents[0].documentID;
+    }else{ */
+        //}
+    print(ultimoNumeroOrden);
+    return ultimoNumeroOrden;
+  }     
 
       
 

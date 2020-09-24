@@ -1,3 +1,4 @@
+import 'package:audicol_fiber/EstudioPrefactibilidad/tipoPrefactibilidad.dart';
 import 'package:audicol_fiber/bloc/provider.dart';
 import 'package:audicol_fiber/pages/Ordenes_Servicio/formularioOS_adicionFibra.dart';
 import 'package:audicol_fiber/pages/Ordenes_Servicio/tiposDeOS.dart';
@@ -18,7 +19,7 @@ import 'package:audicol_fiber/pages/registro_reserva.dart';
 import 'package:audicol_fiber/pages/registro_sangria.dart';
 import 'package:audicol_fiber/pages/registro_vertices.dart';
 //import 'package:audicol_fiber/pages/selector_pantalla.dart';
-import 'package:audicol_fiber/pages/Ordenes_Servicio/estudioPrefactibilidad.dart';
+import 'package:audicol_fiber/EstudioPrefactibilidad/estudioPrefactibilidad.dart';
 
 
 import 'package:audicol_fiber/pages/Ordenes_Servicio/agendaOs.dart';
@@ -99,7 +100,8 @@ MaterialColor colorPickDisable = MaterialColor(0xFFFFE6E6E6, color);
           'LoginPage': (BuildContext context) => LoginPage(),
           'CalculoCoordenada': (BuildContext context) => CalculoCoordenada(),
           'CrearProducto': (BuildContext context) => CrearProducto(),
-          'CrearUsuario': (BuildContext context) => CrearUsuario()
+          'CrearUsuario': (BuildContext context) => CrearUsuario(),
+          'CrearPrefactibilidad': (BuildContext context) => CrearPrefactibilidad()
           
          
           

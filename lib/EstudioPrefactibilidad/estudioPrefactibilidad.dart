@@ -1,4 +1,7 @@
+
 import 'package:audicol_fiber/bloc/peticiones_firebase.dart';
+import 'package:audicol_fiber/pages/selector_pantalla.dart';
+import 'package:audicol_fiber/widgets/header.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:audicol_fiber/pages/calculo_punto.dart';
@@ -6,15 +9,15 @@ import 'package:fluttertoast/fluttertoast.dart';
 
 
 // ignore: must_be_immutable
-class DetallesOSadicionFibra extends StatefulWidget {
+class EstudioPrefactibilidad extends StatefulWidget {
   
  
 
   @override
-  _DetallesOSadicionFibraState createState() => _DetallesOSadicionFibraState();
+  _EstudioPrefactibilidadState createState() => _EstudioPrefactibilidadState();
 }
 
-class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
+class _EstudioPrefactibilidadState extends State<EstudioPrefactibilidad> {
  
  
  TextEditingController idDiasController = TextEditingController();
@@ -120,8 +123,6 @@ class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
    static const rolesMenu = [
     'Jefe de cuadrilla',
     'Coordinador',
-    'Auditor',
-    'Jefe de inventario',
     'Contratista'
    ];
 
@@ -136,7 +137,7 @@ class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
           ))
       .toList();
 
-  String roleId = 'Auditor';
+  String roleId = 'Contratista';
 
    static const cuadrillasMenu = [
     '1',
@@ -178,27 +179,7 @@ class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
   Widget build(BuildContext context) {
    
     return Scaffold(
-      appBar: AppBar(
-         iconTheme: CupertinoIconThemeData(color: Colors.grey),
-         title: Center(
-           child: Text(
-                'Crear Orden de Servicio',
-                 style: TextStyle(
-                          fontSize: 15.0,
-                          color: Colors.grey[400]
-                  )
-               
-        ),
-         ), 
-        backgroundColor: Colors.white24,
-        elevation: 0.0,
-        actions: <Widget>[
-            IconButton(
-              icon: Icon(Icons.account_circle,size: 30.0, color: Colors.blue,),
-              onPressed: (){},
-            )
-        ],
-      ),
+      appBar:  header('Formato de Prefactibilidad', context,''),
       body: SingleChildScrollView(
         padding: EdgeInsets.all(30),
         child: Column(
@@ -209,13 +190,7 @@ class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
             SizedBox(height: 20),
             Row(
               children: [
-                Text(
-                  'Nombre del Proyecto',
-                   style: TextStyle(
-                        fontSize: 16.0,
-                        color: Colors.grey[600]
-                )
-                ),
+                titulo('Nombre del Proyecto'),
                 SizedBox(width: 30),
                 DropdownButton(
                   
@@ -238,7 +213,7 @@ class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
           
            
              ListTile(
-               contentPadding: EdgeInsets.symmetric(horizontal: 0),
+              contentPadding: EdgeInsets.symmetric(horizontal: 0),
               title: Text(
                 'Prioridad',
                 style: TextStyle(
@@ -249,22 +224,22 @@ class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
               ),
               
               trailing: DropdownButton(
-                hint: Text(prioridadID),
+              hint: Text(prioridadID),
                 
-                onChanged: (String newValue) {
+              onChanged: (String newValue) {
                   setState(() {
                     prioridadID = newValue;
                   });
                 },
-                items: this.dropDownPrioridad,
+              items: this.dropDownPrioridad,
               ),
             ),
             
-            role(),
+           role(),
            roleId=='Jefe de cuadrilla'?numeroCuadrilla():Container(),
            roleId=='Contratista'?elegirContratista():Container(),
               
-             TextFormField(
+           TextFormField(
               keyboardType: TextInputType.number,
               
               decoration: InputDecoration(
@@ -286,8 +261,8 @@ class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
                     borderRadius: BorderRadius.all(Radius.circular(10))
                   ),
                   filled: false,
-                  hintText: 'Descripcion de la O.S.',
-                  labelText: 'Objetivo de Orden de Servicio'),
+                  hintText: 'Descripcion',
+                  labelText: 'Objetivo del estudio de prefactibilidad'),
               controller: objetivoController,
             ),
             SizedBox(height: 20),
@@ -299,6 +274,16 @@ class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
         ),
       ),
     );
+  }
+
+  Text titulo(String titulo) {
+    return Text(
+                titulo,
+                 style: TextStyle(
+                      fontSize: 16.0,
+                      color: Colors.grey[600]
+              )
+              );
   }
 
   ListTile elegirContratista() {
@@ -422,7 +407,7 @@ class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
     String tiempoEstimado = idDiasController.text;
     String objetivo = objetivoController.text;
   
-    idOS= await datosRedFibra.getUltimoNumueroOrdenes();
+    idOS= await datosRedFibra.getUltimoNumueroPrefactibilidad();
    // if(idOS!='00000'){
    
   
@@ -473,10 +458,10 @@ class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
     
 
  
-      ordenesServicio
-          .document(idOS)
-          .setData({
-        
+      prefactibilidad
+        .document(idOS)
+        .setData({
+        'orden'          : 'prefactibilidad',
         'proyecto'       : proyectosID,
         'NumeroOS'       : idOS,
         'datosOrden'     : proyectosID=='Conectividad Wifi'&&sitioID=='Cienaga'?datosOrdenWifiCienaga:
@@ -493,7 +478,7 @@ class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
       });
  
       Fluttertoast.showToast(
-          msg: 'La Orden de servicio fue guardada con exito!',
+          msg: 'El estudio de prefactibilidad fue guardado con exito!',
           toastLength: Toast.LENGTH_SHORT,
           gravity: ToastGravity.CENTER,
           fontSize: 13,

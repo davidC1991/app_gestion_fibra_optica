@@ -1,5 +1,6 @@
 
 import 'package:audicol_fiber/bloc/provider.dart';
+import 'package:audicol_fiber/pages/selector_pantalla.dart';
 import 'package:audicol_fiber/search/search_delegateGos.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,7 +9,9 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:uuid/uuid.dart';
 
 class EntregaInsumos extends StatefulWidget {
+  
   DocumentSnapshot item;
+  
   EntregaInsumos({this.item});
   @override
   _EntregaInsumosState createState() => _EntregaInsumosState();
@@ -20,7 +23,7 @@ class _EntregaInsumosState extends State<EntregaInsumos> {
   List<TextEditingController> listTextEditingController= new List();
   FirebaseBloc bloc=FirebaseBloc();
   DocumentSnapshot datoItem=null;
-
+  String solicitudInsumoId= Uuid().v4();
 
   TextEditingController itemController = TextEditingController();
   @override
@@ -45,6 +48,7 @@ class _EntregaInsumosState extends State<EntregaInsumos> {
       final anchoPantalla= MediaQuery.of(context).size.width;
       final altoPantalla= MediaQuery.of(context).size.height;
       
+     
       if(datoItem!=null){
        //listItems.add(datoItem);
        if(firebaseBloc.itemsSeleccionadosController.value!=null){
@@ -71,29 +75,6 @@ class _EntregaInsumosState extends State<EntregaInsumos> {
        datoItem=null; 
        
       }   
-       /* if(listItems.isEmpty){
-        firebaseBloc.itemsSeleccionadosController.sink.add(null);
-      } */
-      /* firebaseBloc.itemsSeleccionadosStream.listen((event) {
-        print('-------------------');
-        print(event); 
-        if(event!=null){
-        listItems=event;
-        listTextEditingController.clear();
-        listWidgetItems.clear();
-        for (var i = 0; i < listItems.length; i++) {
-          listTextEditingController.add(TextEditingController());
-          listWidgetItems.add(itemInsumo(listItems[i],anchoPantalla,listTextEditingController[i], i));
-        }
-        }
-        //bloc.dispose();
-        //firebaseBloc.itemsSeleccionadosController.sink.add(null);
-      },onDone: (){
-        print('Tarea hecha');
-      },onError: (error){
-        print(error);
-      }); */
-    
 
    
 
@@ -214,21 +195,66 @@ class _EntregaInsumosState extends State<EntregaInsumos> {
     );
   }
   sendDatos(FirebaseBloc firebaseBloc){
+    bool camposVacios=false;
     for (var i = 0; i < listTextEditingController.length; i++) {
-        print(listTextEditingController[i].text);  
+        if(listTextEditingController[i].text.isEmpty){
+          camposVacios=true;
+          break;
+        }
     }
-    // firebaseBloc.itemsSeleccionadosController.sink.add(null);
-  }
-  
-   void mensajePantalla(String mensaje) {
-   Fluttertoast.showToast(
-          msg: mensaje,
-          toastLength: Toast.LENGTH_LONG,
-          gravity: ToastGravity.CENTER,
-          fontSize: 15,
-          backgroundColor: Colors.grey
-    );  
- }
-  
-  
-}
+    if(!camposVacios){
+    Map<String,dynamic> materiales= Map();
+    for (var i = 0; i < listItems.length; i++) {
+       materiales[listItems[i].data['nombreProducto']]=listTextEditingController[i].text;
+    }
+    
+    String solicitudInsumoN='insumo-'+ DateTime.now().toString();
+    String numeroOs=firebaseBloc.numeroOrdenServicioController.value;
+    print(solicitudInsumoN);
+    print(numeroOs);
+    
+    prefactibilidad.
+      document(numeroOs).
+      collection('insumos').
+      document(solicitudInsumoN).
+        setData({
+          'materiales'      : materiales,
+          'timestamp'       : DateTime.now(),
+          'id'              : solicitudInsumoN,
+          'ordenServicioId' : numeroOs
+        }); 
+       
+       
+       prefactibilidad
+            .document(numeroOs)
+            .updateData({
+            'insumos': 'En espera-'+ DateTime.now().day.toString() +  DateTime.now().month.toString(),
+            'Estado' : 'Iniciado'
+            }); 
+       
+       
+        listItems.clear();
+        listTextEditingController.clear();
+        firebaseBloc.itemsSeleccionadosController.sink.add(null);
+        mensajePantalla('Solicitud de insumos registrada!');
+        Navigator.pop(context);
+        }else{
+          mensajePantalla('Ingrese las cantidades de todos los items!');
+        }
+        // firebaseBloc.itemsSeleccionadosController.sink.add(null);
+      }
+          
+           void mensajePantalla(String mensaje) {
+           Fluttertoast.showToast(
+                  msg: mensaje,
+                  toastLength: Toast.LENGTH_LONG,
+                  gravity: ToastGravity.CENTER,
+                  fontSize: 15,
+                  backgroundColor: Colors.grey
+            );  
+         }
+       
+          
+        }
+        
+       

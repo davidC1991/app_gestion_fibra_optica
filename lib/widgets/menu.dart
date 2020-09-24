@@ -56,6 +56,14 @@ class Menu extends StatelessWidget {
              Navigator.pushNamed(context, 'CrearOS');
            },
          ):Container(), 
+         datos['cargo']=='Coordinador'?ListTile(
+           leading: Icon(Icons.album,color:Colors.blue),
+           title: Text('Crear Estudio de Prefactibilidad'),
+           onTap: (){
+             Navigator.pop(context);
+             Navigator.pushNamed(context, 'CrearPrefactibilidad');
+           },
+         ):Container(), 
           Expanded(
             flex: 3,
             child: Container(

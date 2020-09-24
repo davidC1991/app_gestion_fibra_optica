@@ -27,14 +27,15 @@ class DataSearch_OS extends SearchDelegate {
   @override
   Widget buildLeading(BuildContext context) {
     // icono a la izquierda del appbar
-    final firebaseBloc  = Provider.firebaseBloc(context);
+  
+    
     return IconButton(
       icon: AnimatedIcon(
         icon: AnimatedIcons.menu_arrow,
         progress: transitionAnimation,
       ),
       onPressed: () {
-        firebaseBloc.itemsSeleccionadosController.sink.add(null);
+        //firebaseBloc.itemsSeleccionadosController.sink.add(null);
         close(context, null);
       },
     );

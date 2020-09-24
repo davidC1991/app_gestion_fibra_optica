@@ -4,16 +4,14 @@ import 'package:audicol_fiber/widgets/header.dart';
 import 'package:audicol_fiber/widgets/menu.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:audicol_fiber/bloc/peticiones_firebase.dart';
-import 'package:audicol_fiber/pages/Ordenes_Servicio/tiposDeOS.dart';
 import 'package:audicol_fiber/pages/Ordenes_Servicio/agendaOs.dart';
-import 'package:audicol_fiber/pages/configuracion_rutas.dart';
 import 'package:jumping_bottom_nav_bar_flutter/jumping_bottom_nav_bar_flutter.dart';
 import 'package:jumping_bottom_nav_bar_flutter/source/tab_icon.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+
 
 final inventario = Firestore.instance.collection('inventario');
 final usuarios = Firestore.instance.collection('usuarios');
+final prefactibilidad = Firestore.instance.collection('prefactibilidad');
 
 // ignore: must_be_immutable
 class SelectorPantalla extends StatefulWidget {

@@ -474,8 +474,8 @@ class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
 
  
       ordenesServicio
-          .document(idOS)
-          .setData({
+        .document(idOS)
+        .setData({
         
         'proyecto'       : proyectosID,
         'NumeroOS'       : idOS,
@@ -485,7 +485,7 @@ class _DetallesOSadicionFibraState extends State<DetallesOSadicionFibra> {
         'tiempoEstimado' : tiempoEstimado,
         'objetivo'       : objetivo,
         'tipo'           : 'Adición de fibra óptica',
-        'Estado'         : 'No iniciada',
+        'Estado'         : 'No iniciada'+DateTime.now().day.toString() +  DateTime.now().month.toString()+  DateTime.now().year.toString() +  DateTime.now().hour.toString(),
         'Prioridad'      : prioridadID,
         'insumos'        : 'No solicitados',
         'timestamp'      : DateTime.now(),

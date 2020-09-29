@@ -2,9 +2,10 @@ import 'package:audicol_fiber/bloc/provider.dart';
 import 'package:audicol_fiber/pages/selector_pantalla.dart';
 import 'package:audicol_fiber/widgets/header.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:slimy_card/slimy_card.dart';
+
 
 class RegistroInsumos extends StatefulWidget {
   String numeroOS;
@@ -34,7 +35,19 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
   List<String> listaKey=new List();
   List<String> listaValue=new List();
   List<Map<String,dynamic>> listaCantidadesEntregadas=new List();
+  List<Map<String,List<dynamic>>> materialesParaReceptor=new List();
+   static const opcionesPrepararInsumos = [
+    'Preparados',
+    'Entregar',
+  ];
 
+  final List<PopupMenuItem<String>> popupOpcionesPrepararInsumos = opcionesPrepararInsumos
+      .map((String value) => PopupMenuItem<String>(
+            value: value,
+            child: Text(value, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          ))
+      .toList();
+  String opcionPrepararId='Preparados';
    
   @override
   Widget build(BuildContext context) {
@@ -43,14 +56,23 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
     double altoPantalla=MediaQuery.of(context).size.height;
     print(widget.numeroOS);
     return Scaffold(
-      appBar:header('Registro de Insumos',context,''),
+      appBar:AppBar(
+        title: Center(child: Text('Registro de Insumos',style: TextStyle(fontSize: 17.0,color: Colors.grey[600]))),  
+        iconTheme: CupertinoIconThemeData(color: Theme.of(context).accentColor),
+        //shadowColor: Colors.red,
+        backgroundColor: Colors.white70,
+        elevation: 0.0,
+        actions: <Widget>[
+          opcionesEntrega(firebaseBloc)
+        ],
+      ),
       body:  StreamBuilder<QuerySnapshot>(
         stream: prefactibilidad.document(widget.numeroOS).collection('insumos').snapshots(),
         builder: (context, AsyncSnapshot <QuerySnapshot>snapshot) {
           print('--------------');
           if(snapshot.hasData){
           List<DocumentSnapshot> docs=snapshot.data.documents;
-         
+          firebaseBloc.listaInsumosSolicitadosController.sink.add(docs);
           //listaMapaItems.clear();
           print(docs);
           return ListView.builder(
@@ -116,9 +138,26 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
             listaEntregables.add({tituloSolicitud:entregables});
             listaItemsCantidad.add({tituloSolicitud:cantidades});
             listaMapaItems.add({tituloSolicitud:boleanos});
+           //CICLO PARA ARMAR LA LISTA DE MATERIALES QUE SE ESTAN ENTREGANDO 
+            listaEntregables.forEach((element){
+              element.forEach((keyId, valueListaCantidades) { 
+                if(docs[j].data['id']==keyId){
+                  
+                    for (var i = 0; i < valueListaCantidades.length; i++) {
+                      if(int.parse(valueListaCantidades[i])!=0){
+                      materialesParaReceptor.add({keyId:[nombres[i],valueListaCantidades[i]]});  
+                      }
+                    }
+                }
+              });
+            });
+
             print(listaItemsNombres);
             print(listaEntregables);
             print(listaMapaItems);
+           // print(materialesParaReceptor);
+          
+            //materialesParaReceptor
            
             
            }else{
@@ -151,42 +190,28 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
             }
           
            );
+          }else{
+            return Center(child: Text('No hay solicitudes de insumos'));
           }
             
-                      /* return ListView(
-                        children:[
-                        SlimyCard(
-                          color: Colors.grey,
-                          width: anchoPantalla*0.8,
-                          topCardHeight: altoPantalla*0.2,
-                          bottomCardHeight: altoPantalla*0.6,
-                          borderRadius: 15,
-                          topCardWidget: Text('Arriba'),
-                          bottomCardWidget: Text('Abajo'),
-                          slimeEnabled: true,
-                        ),
-                        
-                        ] 
-                      ); */
+    
                     }
                   ),
-            floatingActionButton:RaisedButton(
-            child: Text('Registrar',style: TextStyle(color: Colors.white),),
-            onPressed: ()=>sendDatos(firebaseBloc)
-          ),      
+           
                 );
               }
             
               Widget solicitudInsumos(String entregables,String nombre, String cantidad,double anchoPantalla, int i,String insumos,String tituloSolicitud,FirebaseBloc firebaseBloc, bool checkBox, int j) {
                // bool aux_1=false;
-
+               int insumosSolicitados=int.parse(cantidad);
+               int insumosEntregados=int.parse(entregables); 
               
                 return GestureDetector(
-                  onTap: () {
+                  onTap: insumosEntregados>=insumosSolicitados?(){}:() {
                     if(nombre.contains('router')){
                      
                      aux=true;
-                     firebaseBloc.itemNombreController.sink.add(nombre);
+                    // firebaseBloc.itemNombreController.sink.add(nombre);
                      listaCampos.clear();
                      listaController.clear();
                      for (var i = 0; i < int.parse(cantidad); i++) {
@@ -223,25 +248,27 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
                       }
                       
                   });
-                  
-                  
-                  
-                  });
+                 });
+                                 
+                int insumosSolicitados=int.parse(cantidad);
+                int insumosEntregados=int.parse(entregables);
+                
                 return Column(
                       children: [
                         
                         Container(
                                 
-                               //color: Colors.blue,
+                               //color: insumosEntregados>=insumosSolicitados? Colors.grey[200]:Colors.white,
                                child:ListTile(
+                               enabled:  insumosEntregados>=insumosSolicitados? false:true,
                                contentPadding: EdgeInsets.only(top: 0.0,bottom: 5.0,right: 10.0, left: 10.0),
                                leading: Checkbox(
                                 /*  tristate: insumos!='Preparados'?false:true,
                                  value: insumos!='Preparados'?listaCheckBoxes[i]:null,
                                  onChanged: insumos!='Preparados'?(bool value){ */
-                                //tristate: insumos!='Preparados'?false:true,
-                                 value: checkBox,  //no puede ser el contador i
-                                 onChanged: (bool dato){
+                                 tristate: (insumosEntregados>=insumosSolicitados)&&insumos.contains('Entregados')?true:false,
+                                 value: (insumosEntregados>=insumosSolicitados)&&insumos.contains('Entregados')?null:checkBox,  //no puede ser el contador i
+                                 onChanged:(insumosEntregados>=insumosSolicitados)&&insumos.contains('Entregados')?null:(bool dato){
                                    aux=true;
                                    setState(() {
                                     // mapItems.update(tituloSolicitud, (value) => null)
@@ -270,7 +297,7 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
                                title:  Container(child: Row(
                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                  children: [
-                                   Text(nombre[0].toUpperCase()+nombre.substring(1)),
+                                   Text(nombre[0].toUpperCase()+nombre.substring(1),style: TextStyle(color: (insumosEntregados>=insumosSolicitados)&&insumos.contains('Entregados')?Colors.grey[600]:Colors.black,)),
                                    //Container(color: Colors.yellow,child: Text('ff')),
                                  ],
                                )),
@@ -278,7 +305,7 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
                                 
                                
                                trailing: Container(
-                               alignment: Alignment.center,
+                               alignment: Alignment.centerRight,
                                  //color: Colors.yellow,
                                  width: anchoPantalla*0.4,
                                  child: nombre.contains('router')?Container(
@@ -288,16 +315,19 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
                                      children: [
                                        Icon(Icons.control_point_duplicate),
                                        SizedBox(width: anchoPantalla*0.03),
-                                       textForm(controller,'',firebaseBloc,),
+                                       (insumosEntregados>=insumosSolicitados)&&insumos.contains('Entregados')? Container():textForm(controller,'',firebaseBloc,),
                                      
-                                       Text(entregables), 
+                                       Text(entregables,style: TextStyle(color: (insumosEntregados>=insumosSolicitados)&&insumos.contains('Entregados')? Colors.grey:Colors.black,),), 
                                        SizedBox(width: anchoPantalla*0.03),
-                                       Text(cantidad),
+                                       Text(cantidad,style: TextStyle(color: (insumosEntregados>=insumosSolicitados)&&insumos.contains('Entregados')? Colors.grey:Colors.black,)),
+                                       SizedBox(width: anchoPantalla*0.02),
                                      ],
                                    ),
                                  ):Container(
-                                   alignment: Alignment.center,
+                                   //color: Colors.red,
                                    width: anchoPantalla*0.4,
+                                   
+                                   alignment: Alignment.centerRight,
                                    child: Container(
                                      //color: Colors.blue,
                                      
@@ -308,12 +338,12 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
                                      mainAxisAlignment: MainAxisAlignment.end,
                                      children: [
                                        
-                                       SizedBox(width: anchoPantalla*0.03),
+                                       //SizedBox(width: anchoPantalla*0.03),
                                        
-                                       textForm(controller,'',firebaseBloc,),
-                                       Text(entregables),
+                                       (insumosEntregados>=insumosSolicitados)&&insumos.contains('Entregados')? Container():textForm(controller,'',firebaseBloc,),
+                                       Text(entregables,style: TextStyle(color: (insumosEntregados>=insumosSolicitados)&&insumos.contains('Entregados')? Colors.grey:Colors.black,),),
                                        SizedBox(width: anchoPantalla*0.03),
-                                       Text(cantidad),
+                                       Text(cantidad,style: TextStyle(color: (insumosEntregados>=insumosSolicitados)&&insumos.contains('Entregados')? Colors.grey:Colors.black,)),
                                        SizedBox(width: anchoPantalla*0.02),
                                      ],
                                    )),
@@ -454,17 +484,26 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
           if(varCamposCantidades[0]==idFecha1){ 
            if(value.text.isEmpty){
               listaCantidadesEntregablesCopia.forEach((element) { 
-                element.forEach((key, value) { 
+                element.forEach((key1, value1) { 
                   List<String> lisAux2=new List();
-                  lisAux2=key.toString().split('|');
+                  lisAux2=key1.toString().split('|');
                   if(lisAux2[0]==idFecha1&&lisAux2[1]==varCamposCantidades[1]){
-                    valor=value;
+                    valor=value1;
                   }
                 });
               });
                
            }else{
-             valor=value.text;
+             listaCantidadesEntregablesCopia.forEach((element) { 
+                element.forEach((key1, value1) { 
+                  List<String> lisAux2=new List();
+                  lisAux2=key1.toString().split('|');
+                  if(lisAux2[0]==idFecha1&&lisAux2[1]==varCamposCantidades[1]){
+                    valor=(int.parse(value1)+int.parse(value.text)).toString();
+                  }
+                });
+             });
+             
            }
            mapAux[varCamposCantidades[1]]=valor;
           }
@@ -486,13 +525,14 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
        
          
        if(detalles.isNotEmpty){ 
-        String detallesEtiqueta='detalles|${DateTime.now().day}|${DateTime.now().month}|${DateTime.now().hour}|${DateTime.now().minute}';    
+      
+       String detallesEtiqueta='detalles|${DateTime.now().day}|${DateTime.now().month}|${DateTime.now().hour}|${DateTime.now().minute}';    
        prefactibilidad.
         document(widget.numeroOS).
         collection('insumos').
         document(idFecha1).
           updateData({
-            'insumos'         : 'Preparados-'+ DateTime.now().day.toString() +'|'+  DateTime.now().month.toString()+'|'+  DateTime.now().hour.toString(),
+            'insumos'         : 'Preparados-'+ DateTime.now().day.toString() + DateTime.now().month.toString()+  DateTime.now().year.toString()+  DateTime.now().hour.toString()+DateTime.now().minute.toString(),
             'timestamp'       : DateTime.now(),
             'materiales'      : listaMap,
             detallesEtiqueta  : detalles
@@ -503,7 +543,7 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
         collection('insumos').
         document(idFecha1).
           updateData({
-            'insumos'         : 'Preparados-'+ DateTime.now().day.toString() +'|'+  DateTime.now().month.toString()+'|'+  DateTime.now().hour.toString()+'|'+DateTime.now().minute.toString(),
+            'insumos'         : 'Preparados-'+ DateTime.now().day.toString() + DateTime.now().month.toString()+  DateTime.now().year.toString()+  DateTime.now().hour.toString()+DateTime.now().minute.toString(),
             'timestamp'       : DateTime.now(),
             'materiales'      : listaMap,
            
@@ -512,13 +552,14 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
          prefactibilidad
             .document(widget.numeroOS)
             .updateData({
-            'insumos': 'Preparados-'+ DateTime.now().day.toString() +'|'+  DateTime.now().month.toString()+'|'+  DateTime.now().hour.toString(),
+            'insumos': 'Preparados-'+ DateTime.now().day.toString() + DateTime.now().month.toString()+  DateTime.now().year.toString()+  DateTime.now().hour.toString()+DateTime.now().minute.toString(),
             'Estado' : 'Iniciado'
             });       
  
         
       }  
-      mensajePantalla('Insumos registrados exitosamente!');
+      mensajePantalla('Insumos preparados exitosamente!');
+      //setState(() { });
       //aux=false;
       Navigator.pop(context);
     }
@@ -531,6 +572,29 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
                   backgroundColor: Colors.grey
             );  
          }
+
+     entregarInsumos(FirebaseBloc firebaseBloc){
+      List<DocumentSnapshot> docs=firebaseBloc.listaInsumosSolicitadosController.value;
+      String recceptor='Receptor|'+ DateTime.now().day.toString() +  DateTime.now().month.toString()+  DateTime.now().year.toString()+  DateTime.now().hour.toString();
+      for (var i = 0; i < docs.length; i++) {
+        prefactibilidad.
+        document(widget.numeroOS).
+        collection('insumos').
+        document(docs[i]['id']).
+          updateData({
+            'insumos'         : 'Entregados-'+ DateTime.now().day.toString() +  DateTime.now().month.toString()+  DateTime.now().year.toString() +  DateTime.now().hour.toString(),
+            'receptor'         : {'Mario Baraco':materialesParaReceptor} 
+          }); 
+         prefactibilidad
+            .document(widget.numeroOS)
+            .updateData({
+            'insumos': 'Entregados-'+ DateTime.now().day.toString() +  DateTime.now().month.toString()+  DateTime.now().year.toString()+  DateTime.now().hour.toString(),
+           
+            }); 
+      }
+      mensajePantalla('Insumos entregados exitosamente!');
+          
+     }    
     subTitulos(String subTitulo) {
         
         return Card(
@@ -621,6 +685,29 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
         );
       }           
                                             
-                   
+    opcionesEntrega(FirebaseBloc firebaseBloc){
+    return  PopupMenuButton<String>(
+             elevation: 85.0,
+             icon: Icon(Icons.linear_scale,size: 30.0, color:Theme.of(context).accentColor),
+             padding: EdgeInsets.only(right: 0),
+             shape: RoundedRectangleBorder(
+               borderRadius: BorderRadius.circular(10.0),
+             ),
+             onSelected: (String newValue){
+             setState(() {
+              opcionPrepararId=newValue;
+         
+              if(opcionPrepararId=='Preparados'){
+                sendDatos(firebaseBloc);
+              }  
+              
+              if(opcionPrepararId=='Entregar'){
+                entregarInsumos(firebaseBloc);
+              }              
+             });
+             },
+             itemBuilder: (BuildContext context)=> popupOpcionesPrepararInsumos
+           );
+  }             
 
 }

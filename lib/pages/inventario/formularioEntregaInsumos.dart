@@ -222,14 +222,14 @@ class _EntregaInsumosState extends State<EntregaInsumos> {
           'timestamp'       : DateTime.now(),
           'id'              : solicitudInsumoN,
           'ordenServicioId' : numeroOs,
-          'insumos'         : 'En espera'
+          'insumos'         : 'En espera-'+DateTime.now().day.toString() +  DateTime.now().month.toString()+  DateTime.now().year.toString() +  DateTime.now().hour.toString()
         }); 
        
        
        prefactibilidad
             .document(numeroOs)
             .updateData({
-            'insumos': 'En espera-'+ DateTime.now().day.toString() +  DateTime.now().month.toString(),
+            'insumos': 'En espera-'+DateTime.now().day.toString() +  DateTime.now().month.toString()+  DateTime.now().year.toString() +  DateTime.now().hour.toString(),
             'Estado' : 'Iniciado'
             }); 
        

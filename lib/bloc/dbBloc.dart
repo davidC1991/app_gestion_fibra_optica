@@ -45,7 +45,7 @@ class FirebaseBloc{
      final numeroOrdenServicioController = new BehaviorSubject<String>();
      final datosUsuarioController = new BehaviorSubject<Map<String,dynamic>>();
      final ultimaRegistroInsumoController = new BehaviorSubject<Map<String,dynamic>>();
-     final itemNombreController = new BehaviorSubject<String>();
+     final listaInsumosSolicitadosController = new BehaviorSubject<List<DocumentSnapshot>>();
      
     
     
@@ -77,7 +77,7 @@ class FirebaseBloc{
     Stream<String> get idUsuarioControllerStream => idUsuarioController;
     Stream<Map<String,dynamic>> get datosUsuarioControllerStream => datosUsuarioController;
     Stream<String> get numeroOrdenServicioControllerStream => numeroOrdenServicioController;
-    Stream<String> get itemNombreControllerStream => itemNombreController;
+  
      
   
     getOservicios()async {
@@ -155,7 +155,8 @@ class FirebaseBloc{
       idUsuarioController?.close();
       datosUsuarioController?.close();
       numeroOrdenServicioController?.close();
-      itemNombreController?.close();
+      listaInsumosSolicitadosController?.close();
+     
       ultimaRegistroInsumoController?.close();
     }
   

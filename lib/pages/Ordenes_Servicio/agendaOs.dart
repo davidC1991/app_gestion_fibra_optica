@@ -85,13 +85,20 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
     super.dispose();
     bloc.dispose();
   } 
+
+  getDatos(FirebaseBloc firebaseBloc)async{
+    await firebaseBloc.getOservicios();
+  }
   @override
   Widget build(BuildContext context) {
      final firebaseBloc  = Provider.firebaseBloc(context);
      //BORRA TODOS LOS ITEMS ESCOGIDOS EN LA SOLICITUD DE INSUMOS---
+     firebaseBloc.anchoPantallaController.sink.add(MediaQuery.of(context).size.width);
+     firebaseBloc.altoPantallaController.sink.add(MediaQuery.of(context).size.height);
       firebaseBloc.itemsSeleccionadosController.sink.add(null);
      //---------------------------------------------------------------
-    firebaseBloc.getOservicios();
+     getDatos(firebaseBloc);
+    
     return Scaffold(
      body:  streamAgendaOrdenes(firebaseBloc)
   );

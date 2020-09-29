@@ -203,9 +203,9 @@ class _EntregaInsumosState extends State<EntregaInsumos> {
         }
     }
     if(!camposVacios){
-    Map<String,dynamic> materiales= Map();
+    Map<String,List<dynamic>> materiales= Map();
     for (var i = 0; i < listItems.length; i++) {
-       materiales[listItems[i].data['nombreProducto']]=listTextEditingController[i].text;
+       materiales[listItems[i].data['nombreProducto']]=[listTextEditingController[i].text,false,'0'];
     }
     
     String solicitudInsumoN='insumo-'+ DateTime.now().toString();
@@ -221,7 +221,8 @@ class _EntregaInsumosState extends State<EntregaInsumos> {
           'materiales'      : materiales,
           'timestamp'       : DateTime.now(),
           'id'              : solicitudInsumoN,
-          'ordenServicioId' : numeroOs
+          'ordenServicioId' : numeroOs,
+          'insumos'         : 'En espera'
         }); 
        
        

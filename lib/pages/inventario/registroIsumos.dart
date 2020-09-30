@@ -30,12 +30,16 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
   List<Map<String,dynamic>> listaItemsNombres=new List();
   List<Map<String,dynamic>> listaItemsCantidad=new List();
   List<Map<String,dynamic>> listaEntregables=new List();
+  List<Map<String,dynamic>> listPreparados=new List();
   List<Map<String,dynamic>> listaCantidadesEntregablesCopia=new List();
+  List<Map<String,dynamic>> listaCantidadesPreparadasCopia=new List();
   List<bool> listaBool=new List();
   List<String> listaKey=new List();
   List<String> listaValue=new List();
   List<Map<String,dynamic>> listaCantidadesEntregadas=new List();
+  List<Map<String,dynamic>> listaCantidadesPreparadas=new List();
   List<Map<String,List<dynamic>>> materialesParaReceptor=new List();
+  bool entregar=false;
    static const opcionesPrepararInsumos = [
     'Preparados',
     'Entregar',
@@ -99,6 +103,7 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
               listaValue.clear();
               listaBool.clear();
               listaCantidadesEntregadas.clear();
+              listaCantidadesPreparadas.clear();
               //listaCampoCantidadController.clear();
               
 
@@ -107,13 +112,24 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
                 listaValue.add(value[0]);
                 listaBool.add(value[1]);
                 listaCantidadesEntregadas.add({key:value[2]});
+                listaCantidadesPreparadas.add({key:value[3]});
                 listaCampoCantidadController.add({tituloSolicitud+'|'+key:TextEditingController()});
               });
-               List<String> entregables=new List(); 
+
+              List<String> entregables=new List(); 
               listaCantidadesEntregadas.forEach((element) { 
                 element.forEach((key, value) { 
                   listaCantidadesEntregablesCopia.add({tituloSolicitud+'|'+key:value});
                    entregables.add(value);
+                });
+                
+              });
+             
+              List<String> preparados=new List(); 
+              listaCantidadesPreparadas.forEach((element) { 
+                element.forEach((key, value) {
+                  listaCantidadesPreparadasCopia.add({tituloSolicitud+'|'+key:value}); 
+                   preparados.add(value);
                 });
                 
               });
@@ -136,10 +152,11 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
             });
             listaItemsNombres.add({tituloSolicitud:nombres});  
             listaEntregables.add({tituloSolicitud:entregables});
+            listPreparados.add({tituloSolicitud:preparados});
             listaItemsCantidad.add({tituloSolicitud:cantidades});
             listaMapaItems.add({tituloSolicitud:boleanos});
            //CICLO PARA ARMAR LA LISTA DE MATERIALES QUE SE ESTAN ENTREGANDO 
-            listaEntregables.forEach((element){
+            listPreparados.forEach((element){
               element.forEach((keyId, valueListaCantidades) { 
                 if(docs[j].data['id']==keyId){
                   
@@ -175,13 +192,26 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
             return  Column(
               children: [
                 subTitulos(docs[j].data['id']),
+                Container(
+                  alignment: Alignment.center,
+                  //color: Colors.purple,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      tituloTablaIsumos(anchoPantalla*0.27,'Item',Colors.white),
+                      tituloTablaIsumos(anchoPantalla*0.59,'P',Colors.white),
+                      tituloTablaIsumos(anchoPantalla*0.044,'E',Colors.white), 
+                      tituloTablaIsumos(anchoPantalla*0.055,'S',Colors.white),
+                    ],
+                  ),
+                ),
                 ListView.builder(
                   physics: NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   itemCount: listaItemsNombres[j][tituloSolicitud].length,
                   itemBuilder: (context, i){
                     
-                     return solicitudInsumos(listaEntregables[j][tituloSolicitud][i],listaItemsNombres[j][tituloSolicitud][i],listaItemsCantidad[j][tituloSolicitud][i],anchoPantalla,i,insumosEstado,tituloSolicitud,firebaseBloc,listaMapaItems[j][tituloSolicitud][i],j);
+                     return solicitudInsumos(listPreparados[j][tituloSolicitud][i],listaEntregables[j][tituloSolicitud][i],listaItemsNombres[j][tituloSolicitud][i],listaItemsCantidad[j][tituloSolicitud][i],anchoPantalla,i,insumosEstado,tituloSolicitud,firebaseBloc,listaMapaItems[j][tituloSolicitud][i],j);
                   }
                 
                  ),
@@ -201,7 +231,7 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
                 );
               }
             
-              Widget solicitudInsumos(String entregables,String nombre, String cantidad,double anchoPantalla, int i,String insumos,String tituloSolicitud,FirebaseBloc firebaseBloc, bool checkBox, int j) {
+              Widget solicitudInsumos(String preparados, String entregables,String nombre, String cantidad,double anchoPantalla, int i,String insumos,String tituloSolicitud,FirebaseBloc firebaseBloc, bool checkBox, int j) {
                // bool aux_1=false;
                int insumosSolicitados=int.parse(cantidad);
                int insumosEntregados=int.parse(entregables); 
@@ -227,14 +257,14 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
                   },
                   
                   child: SingleChildScrollView(
-                    child: materialesSolicitados(entregables,insumos, i, nombre, anchoPantalla, cantidad,firebaseBloc, checkBox,tituloSolicitud,j),
+                    child: materialesSolicitados(preparados,entregables,insumos, i, nombre, anchoPantalla, cantidad,firebaseBloc, checkBox,tituloSolicitud,j),
                       
                     ),
                   );
                 
               }
 
-              Column materialesSolicitados(String entregables,String insumos, int i, String nombre, double anchoPantalla, String cantidad, FirebaseBloc firebaseBloc,bool checkBox, String tituloSolicitud,int j) {
+              Column materialesSolicitados(String preparados,String entregables,String insumos, int i, String nombre, double anchoPantalla, String cantidad, FirebaseBloc firebaseBloc,bool checkBox, String tituloSolicitud,int j) {
                 // print(listaCampoCantidadController);
                  List<String> varCamposCantidades= new List();
                  TextEditingController controller;
@@ -266,9 +296,9 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
                                 /*  tristate: insumos!='Preparados'?false:true,
                                  value: insumos!='Preparados'?listaCheckBoxes[i]:null,
                                  onChanged: insumos!='Preparados'?(bool value){ */
-                                 tristate: (insumosEntregados>=insumosSolicitados)&&insumos.contains('Entregados')?true:false,
-                                 value: (insumosEntregados>=insumosSolicitados)&&insumos.contains('Entregados')?null:checkBox,  //no puede ser el contador i
-                                 onChanged:(insumosEntregados>=insumosSolicitados)&&insumos.contains('Entregados')?null:(bool dato){
+                                 tristate: (insumosEntregados>=insumosSolicitados)?true:false,
+                                 value: (insumosEntregados>=insumosSolicitados)?null:checkBox,  //no puede ser el contador i
+                                 onChanged:(insumosEntregados>=insumosSolicitados)?null:(bool dato){
                                    aux=true;
                                    setState(() {
                                     // mapItems.update(tituloSolicitud, (value) => null)
@@ -297,7 +327,7 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
                                title:  Container(child: Row(
                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                  children: [
-                                   Text(nombre[0].toUpperCase()+nombre.substring(1),style: TextStyle(color: (insumosEntregados>=insumosSolicitados)&&insumos.contains('Entregados')?Colors.grey[600]:Colors.black,)),
+                                   Text(nombre[0].toUpperCase()+nombre.substring(1),style: TextStyle(color: (insumosEntregados>=insumosSolicitados)?Colors.grey[600]:Colors.black,)),
                                    //Container(color: Colors.yellow,child: Text('ff')),
                                  ],
                                )),
@@ -315,11 +345,13 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
                                      children: [
                                        Icon(Icons.control_point_duplicate),
                                        SizedBox(width: anchoPantalla*0.03),
-                                       (insumosEntregados>=insumosSolicitados)&&insumos.contains('Entregados')? Container():textForm(controller,'',firebaseBloc,),
+                                       (insumosEntregados>=insumosSolicitados)? Container():textForm(controller,'',firebaseBloc,),
                                      
-                                       Text(entregables,style: TextStyle(color: (insumosEntregados>=insumosSolicitados)&&insumos.contains('Entregados')? Colors.grey:Colors.black,),), 
+                                       Text(preparados,style: TextStyle(color: (insumosEntregados>=insumosSolicitados)? Colors.grey:Colors.black,),), 
                                        SizedBox(width: anchoPantalla*0.03),
-                                       Text(cantidad,style: TextStyle(color: (insumosEntregados>=insumosSolicitados)&&insumos.contains('Entregados')? Colors.grey:Colors.black,)),
+                                       Text(entregables,style: TextStyle(color: (insumosEntregados>=insumosSolicitados)? Colors.grey:Colors.black,),), 
+                                       SizedBox(width: anchoPantalla*0.03),
+                                       Text(cantidad,style: TextStyle(color: (insumosEntregados>=insumosSolicitados)? Colors.grey:Colors.black,)),
                                        SizedBox(width: anchoPantalla*0.02),
                                      ],
                                    ),
@@ -340,10 +372,12 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
                                        
                                        //SizedBox(width: anchoPantalla*0.03),
                                        
-                                       (insumosEntregados>=insumosSolicitados)&&insumos.contains('Entregados')? Container():textForm(controller,'',firebaseBloc,),
-                                       Text(entregables,style: TextStyle(color: (insumosEntregados>=insumosSolicitados)&&insumos.contains('Entregados')? Colors.grey:Colors.black,),),
+                                       (insumosEntregados>=insumosSolicitados)? Container():textForm(controller,'',firebaseBloc,),
+                                       Text(preparados,style: TextStyle(color: (insumosEntregados>=insumosSolicitados)? Colors.grey:Colors.black,),),
                                        SizedBox(width: anchoPantalla*0.03),
-                                       Text(cantidad,style: TextStyle(color: (insumosEntregados>=insumosSolicitados)&&insumos.contains('Entregados')? Colors.grey:Colors.black,)),
+                                       Text(entregables,style: TextStyle(color: (insumosEntregados>=insumosSolicitados)? Colors.grey:Colors.black,),),
+                                       SizedBox(width: anchoPantalla*0.03),
+                                       Text(cantidad,style: TextStyle(color: (insumosEntregados>=insumosSolicitados)? Colors.grey:Colors.black,)),
                                        SizedBox(width: anchoPantalla*0.02),
                                      ],
                                    )),
@@ -475,7 +509,10 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
         });
         List<String> varCamposCantidades=new List();
         Map<String,dynamic> mapAux= new Map();
+        Map<String,dynamic> mapAuxCamposCantidad= new Map();
         String valor='';
+        String valorCampos='';
+     
         listaCampoCantidadController.forEach((element) { 
          
          element.forEach((key, value) { 
@@ -488,23 +525,52 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
                   List<String> lisAux2=new List();
                   lisAux2=key1.toString().split('|');
                   if(lisAux2[0]==idFecha1&&lisAux2[1]==varCamposCantidades[1]){
-                    valor=value1;
+                    if(entregar==true){
+                     listaCantidadesPreparadasCopia.forEach((element2) { 
+                       element2.forEach((key4, value4) { 
+                         if(key4==key1){
+                           valor=(int.parse(value1)+int.parse(value4)).toString();
+                         }
+                       });
+                     });
+                      
+                     
+                    }else{
+                      valor=value1;
+                    }
+                   }
+                });
+              });
+              
+              if(entregar==false){
+              listaCantidadesPreparadasCopia.forEach((element) { 
+                element.forEach((key2,value2){
+                  List<String> lisAux3=new List();
+                  lisAux3=key2.toString().split('|');
+                   if(lisAux3[0]==idFecha1&&lisAux3[1]==varCamposCantidades[1]){
+                      valorCampos=value2;
                   }
                 });
               });
-               
+              }else{valorCampos='0';}
            }else{
              listaCantidadesEntregablesCopia.forEach((element) { 
                 element.forEach((key1, value1) { 
                   List<String> lisAux2=new List();
                   lisAux2=key1.toString().split('|');
                   if(lisAux2[0]==idFecha1&&lisAux2[1]==varCamposCantidades[1]){
+                    if(entregar==true){
                     valor=(int.parse(value1)+int.parse(value.text)).toString();
+                    }else{
+                    valor=value1;  
+                    }
+                    valorCampos=value.text;
                   }
                 });
              });
              
            }
+           mapAuxCamposCantidad[varCamposCantidades[1]]=valorCampos;
            mapAux[varCamposCantidades[1]]=valor;
           }
           });
@@ -520,13 +586,17 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
         //print(listAux[0][0]);
         for (var n = 0; n <  listAux.length; n++) {
           
-          listaMap[listAux[n][0]]=[listAux[n][1],listAux[n][2],mapAux[listAux[n][0]]];
+          listaMap[listAux[n][0]]=[listAux[n][1],listAux[n][2],mapAux[listAux[n][0]],mapAuxCamposCantidad[listAux[n][0]]];
+          //  item               =   cantidad   ,  checkBox   ,  Cantidad           , Cantidad preparada
+          //                         solicitada                  Entregada          , para entregar
+
         } 
        
-         
+       if(entregar==false){  
        if(detalles.isNotEmpty){ 
       
        String detallesEtiqueta='detalles|${DateTime.now().day}|${DateTime.now().month}|${DateTime.now().hour}|${DateTime.now().minute}';    
+       //if(listaMap.isNotEmpty){
        prefactibilidad.
         document(widget.numeroOS).
         collection('insumos').
@@ -536,9 +606,11 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
             'timestamp'       : DateTime.now(),
             'materiales'      : listaMap,
             detallesEtiqueta  : detalles
-          });   
+          }); 
+       //}  
       }else{
-         prefactibilidad.
+        //if(listaMap.isNotEmpty){
+        prefactibilidad.
         document(widget.numeroOS).
         collection('insumos').
         document(idFecha1).
@@ -547,7 +619,8 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
             'timestamp'       : DateTime.now(),
             'materiales'      : listaMap,
            
-          });   
+          }); 
+         //}
       }
          prefactibilidad
             .document(widget.numeroOS)
@@ -556,11 +629,33 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
             'Estado' : 'Iniciado'
             });       
  
+       
+      }else{
+       
+        prefactibilidad.
+        document(widget.numeroOS).
+        collection('insumos').
+        document(idFecha1).
+          updateData({
+            'materiales' : listaMap,
+            'insumos'    : 'Entregados-'+ DateTime.now().day.toString() +  DateTime.now().month.toString()+  DateTime.now().year.toString() +  DateTime.now().hour.toString(),
+           
+          });
+        prefactibilidad
+          .document(widget.numeroOS)
+          .updateData({
+          'insumos': 'Entregados-'+ DateTime.now().day.toString() +  DateTime.now().month.toString()+  DateTime.now().year.toString()+  DateTime.now().hour.toString(),
+            });  
+
+      }
         
       }  
-      mensajePantalla('Insumos preparados exitosamente!');
+     
       //setState(() { });
       //aux=false;
+      if(entregar==false){
+      mensajePantalla('Insumos preparados exitosamente!'); 
+      }
       Navigator.pop(context);
     }
       void mensajePantalla(String mensaje) {
@@ -577,24 +672,47 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
       List<DocumentSnapshot> docs=firebaseBloc.listaInsumosSolicitadosController.value;
       String recceptor='Receptor|'+ DateTime.now().day.toString() +  DateTime.now().month.toString()+  DateTime.now().year.toString()+  DateTime.now().hour.toString();
       for (var i = 0; i < docs.length; i++) {
-        prefactibilidad.
-        document(widget.numeroOS).
-        collection('insumos').
-        document(docs[i]['id']).
-          updateData({
-            'insumos'         : 'Entregados-'+ DateTime.now().day.toString() +  DateTime.now().month.toString()+  DateTime.now().year.toString() +  DateTime.now().hour.toString(),
-            'receptor'         : {'Mario Baraco':materialesParaReceptor} 
-          }); 
-         prefactibilidad
-            .document(widget.numeroOS)
-            .updateData({
-            'insumos': 'Entregados-'+ DateTime.now().day.toString() +  DateTime.now().month.toString()+  DateTime.now().year.toString()+  DateTime.now().hour.toString(),
-           
-            }); 
+        List<Map<String,List<dynamic>>> listaReceptor=new List();
+        materialesParaReceptor.forEach((element) { 
+        element.forEach((key, value) {   
+          if(key==docs[i]['id']){
+            listaReceptor.add({key:value});
+          }
+         }); 
+        });  
+        if(listaReceptor.isNotEmpty){
+           prefactibilidad.
+           document(widget.numeroOS).
+           collection('insumos').
+           document(docs[i]['id']).
+             updateData({
+               'insumos'         : 'Entregados-'+ DateTime.now().day.toString() +  DateTime.now().month.toString()+  DateTime.now().year.toString() +  DateTime.now().hour.toString(),
+               recceptor         : {'Mario Baraco':listaReceptor} 
+             }); 
+           prefactibilidad
+               .document(widget.numeroOS)
+               .updateData({
+               'insumos': 'Entregados-'+ DateTime.now().day.toString() +  DateTime.now().month.toString()+  DateTime.now().year.toString()+  DateTime.now().hour.toString(),
+
+               }); 
+                 
+        }   
+          
       }
       mensajePantalla('Insumos entregados exitosamente!');
-          
-     }    
+      //Navigator.pop(context);    
+     }
+
+    Container tituloTablaIsumos(double anchoPantalla,String text, Color color) {
+    return Container(
+             //margin: EdgeInsets.only(left: anchoPantalla,top: 10),
+             alignment: Alignment.centerRight,
+             width: anchoPantalla,
+             //padding: EdgeInsets.only(left: 30),
+             child:Text(text,style: TextStyle(color: Colors.grey[600],fontSize: 16,fontWeight: FontWeight.bold),),
+             //color: color,
+           );
+      }    
     subTitulos(String subTitulo) {
         
         return Card(
@@ -703,6 +821,18 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
               
               if(opcionPrepararId=='Entregar'){
                 entregarInsumos(firebaseBloc);
+                //listaCampoCantidadController.clear();
+                for (var i = 0; i < listaCampoCantidadController.length; i++) {
+                  
+                 listaCampoCantidadController[i].forEach((key, value) { 
+                   listaCampoCantidadController[i]={key:TextEditingController(text:'')};
+                 });
+                
+              
+                }
+                entregar=true;
+                sendDatos(firebaseBloc);
+
               }              
              });
              },

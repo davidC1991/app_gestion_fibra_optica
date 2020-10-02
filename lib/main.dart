@@ -5,6 +5,7 @@ import 'package:audicol_fiber/pages/Ordenes_Servicio/tiposDeOS.dart';
 import 'package:audicol_fiber/pages/calculo_punto.dart';
 import 'package:audicol_fiber/pages/inicio_sesion/crearUsuario.dart';
 import 'package:audicol_fiber/pages/inicio_sesion/login.dart';
+import 'package:audicol_fiber/pages/inicio_sesion/painter.dart';
 import 'package:audicol_fiber/pages/inicio_sesion/registro.dart';
 import 'package:audicol_fiber/pages/inventario/crear_producto.dart';
 import 'package:audicol_fiber/pages/selector_pantalla.dart';
@@ -101,7 +102,8 @@ MaterialColor colorPickDisable = MaterialColor(0xFFFFE6E6E6, color);
           'CalculoCoordenada': (BuildContext context) => CalculoCoordenada(),
           'CrearProducto': (BuildContext context) => CrearProducto(),
           'CrearUsuario': (BuildContext context) => CrearUsuario(),
-          'CrearPrefactibilidad': (BuildContext context) => CrearPrefactibilidad()
+          'CrearPrefactibilidad': (BuildContext context) => CrearPrefactibilidad(),
+          
           
          
           

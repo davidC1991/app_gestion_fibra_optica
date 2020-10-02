@@ -1,10 +1,15 @@
+import 'dart:io';
+import 'dart:ui';
+
 import 'package:audicol_fiber/bloc/provider.dart';
+import 'package:audicol_fiber/clases/tomarFoto.dart';
 import 'package:audicol_fiber/pages/selector_pantalla.dart';
 import 'package:audicol_fiber/widgets/header.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:screenshot/screenshot.dart';
 
 
 class RegistroInsumos extends StatefulWidget {
@@ -16,6 +21,7 @@ class RegistroInsumos extends StatefulWidget {
 
 class _RegistroInsumosState extends State<RegistroInsumos> {
   bool aux=false; 
+  TextEditingController firmaController= TextEditingController();
   List<TextEditingController> listaController=new List();
   List<Map<String,TextEditingController>> listaCampoCantidadController=new List();
   List<Map<String,TextEditingController>> listaCampoCantidadControllerFinal=new List();
@@ -40,6 +46,22 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
   List<Map<String,dynamic>> listaCantidadesPreparadas=new List();
   List<Map<String,List<dynamic>>> materialesParaReceptor=new List();
   bool entregar=false;
+  
+  TomarFoto takePhoto=  TomarFoto();
+ 
+
+  int _counter = 0;
+  File _imageFile;
+
+  //Create an instance of ScreenshotController
+  ScreenshotController screenshotController = ScreenshotController();
+  @override
+  void initState() { 
+    super.initState();
+  }
+    
+
+
    static const opcionesPrepararInsumos = [
     'Preparados',
     'Entregar',
@@ -70,166 +92,170 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
           opcionesEntrega(firebaseBloc)
         ],
       ),
-      body:  StreamBuilder<QuerySnapshot>(
-        stream: prefactibilidad.document(widget.numeroOS).collection('insumos').snapshots(),
-        builder: (context, AsyncSnapshot <QuerySnapshot>snapshot) {
-          print('--------------');
-          if(snapshot.hasData){
-          List<DocumentSnapshot> docs=snapshot.data.documents;
-          firebaseBloc.listaInsumosSolicitadosController.sink.add(docs);
-          //listaMapaItems.clear();
-          print(docs);
-          return ListView.builder(
-            //physics: NeverScrollableScrollPhysics(),
-            shrinkWrap: true,
-            itemCount: docs.length,
-            itemBuilder: (context, j){
-            String insumosEstado=docs[j].data['insumos'];
-            String tituloSolicitud=docs[j].data['id'];
-           
-            item= snapshot.data.documents[j].data['materiales']; 
-           // print(item);
-            //firebaseBloc.ultimaRegistroInsumoController.sink.add(item);
-           
-         
-           if(aux==false){
-             // listaItemsNombres.clear();
-             // listaItemsCantidad.clear();
-              if(j==docs.length-1){
-                aux=true;
-               
-                }
-              listaKey.clear();
-              listaValue.clear();
-              listaBool.clear();
-              listaCantidadesEntregadas.clear();
-              listaCantidadesPreparadas.clear();
-              //listaCampoCantidadController.clear();
-              
-
-              item.forEach((key, value) { 
-                listaKey.add(key);
-                listaValue.add(value[0]);
-                listaBool.add(value[1]);
-                listaCantidadesEntregadas.add({key:value[2]});
-                listaCantidadesPreparadas.add({key:value[3]});
-                listaCampoCantidadController.add({tituloSolicitud+'|'+key:TextEditingController()});
-              });
-
-              List<String> entregables=new List(); 
-              listaCantidadesEntregadas.forEach((element) { 
-                element.forEach((key, value) { 
-                  listaCantidadesEntregablesCopia.add({tituloSolicitud+'|'+key:value});
-                   entregables.add(value);
-                });
-                
-              });
-             
-              List<String> preparados=new List(); 
-              listaCantidadesPreparadas.forEach((element) { 
-                element.forEach((key, value) {
-                  listaCantidadesPreparadasCopia.add({tituloSolicitud+'|'+key:value}); 
-                   preparados.add(value);
-                });
-                
-              });
-              
-           
-           
-             List<bool> boleanos=new List();    
-            listaBool.forEach((element) { 
-              boleanos.add(element);
-            });
-
-            List<String> nombres=new List();    
-            listaKey.forEach((element) { 
-              nombres.add(element);
-            });
-
-            List<String> cantidades=new List();    
-            listaValue.forEach((element) { 
-              cantidades.add(element);
-            });
-            listaItemsNombres.add({tituloSolicitud:nombres});  
-            listaEntregables.add({tituloSolicitud:entregables});
-            listPreparados.add({tituloSolicitud:preparados});
-            listaItemsCantidad.add({tituloSolicitud:cantidades});
-            listaMapaItems.add({tituloSolicitud:boleanos});
-           //CICLO PARA ARMAR LA LISTA DE MATERIALES QUE SE ESTAN ENTREGANDO 
-            listPreparados.forEach((element){
-              element.forEach((keyId, valueListaCantidades) { 
-                if(docs[j].data['id']==keyId){
-                  
-                    for (var i = 0; i < valueListaCantidades.length; i++) {
-                      if(int.parse(valueListaCantidades[i])!=0){
-                      materialesParaReceptor.add({keyId:[nombres[i],valueListaCantidades[i]]});  
-                      }
-                    }
-                }
-              });
-            });
-
-            print(listaItemsNombres);
-            print(listaEntregables);
-            print(listaMapaItems);
-           // print(materialesParaReceptor);
-          
-            //materialesParaReceptor
-           
-            
-           }else{
-            
-              /* listaCampoCantidadController.clear();
-              item.forEach((key, value) { 
-                listaCampoCantidadController.add({tituloSolicitud+'|'+key:TextEditingController()});
-              }); */
-              
-           }
-            if(docs.length-1==j){
-              idSolicitud=docs[j].data['id'];
-            }
-            
-            return  Column(
-              children: [
-                subTitulos(docs[j].data['id']),
-                Container(
-                  alignment: Alignment.center,
-                  //color: Colors.purple,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      tituloTablaIsumos(anchoPantalla*0.27,'Item',Colors.white),
-                      tituloTablaIsumos(anchoPantalla*0.59,'P',Colors.white),
-                      tituloTablaIsumos(anchoPantalla*0.044,'E',Colors.white), 
-                      tituloTablaIsumos(anchoPantalla*0.055,'S',Colors.white),
-                    ],
-                  ),
-                ),
-                ListView.builder(
-                  physics: NeverScrollableScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: listaItemsNombres[j][tituloSolicitud].length,
-                  itemBuilder: (context, i){
-                    
-                     return solicitudInsumos(listPreparados[j][tituloSolicitud][i],listaEntregables[j][tituloSolicitud][i],listaItemsNombres[j][tituloSolicitud][i],listaItemsCantidad[j][tituloSolicitud][i],anchoPantalla,i,insumosEstado,tituloSolicitud,firebaseBloc,listaMapaItems[j][tituloSolicitud][i],j);
-                  }
-                
-                 ),
-              ],
-            ); 
-            }
-          
-           );
-          }else{
-            return Center(child: Text('No hay solicitudes de insumos'));
-          }
-            
-    
-                    }
-                  ),
+      body:  streamInsumos(firebaseBloc, anchoPantalla),
            
                 );
+       }
+
+  StreamBuilder<QuerySnapshot> streamInsumos(FirebaseBloc firebaseBloc, double anchoPantalla) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: prefactibilidad.document(widget.numeroOS).collection('insumos').snapshots(),
+      builder: (context, AsyncSnapshot <QuerySnapshot>snapshot) {
+        print('--------------');
+        if(snapshot.hasData){
+        List<DocumentSnapshot> docs=snapshot.data.documents;
+        firebaseBloc.listaInsumosSolicitadosController.sink.add(docs);
+        //listaMapaItems.clear();
+        print(docs);
+        return ListView.builder(
+          //physics: NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          itemCount: docs.length,
+          itemBuilder: (context, j){
+          String insumosEstado=docs[j].data['insumos'];
+          String tituloSolicitud=docs[j].data['id'];
+         
+          item= snapshot.data.documents[j].data['materiales']; 
+         // print(item);
+          //firebaseBloc.ultimaRegistroInsumoController.sink.add(item);
+         
+       
+         if(aux==false){
+           // listaItemsNombres.clear();
+           // listaItemsCantidad.clear();
+            if(j==docs.length-1){
+              aux=true;
+             
               }
+            listaKey.clear();
+            listaValue.clear();
+            listaBool.clear();
+            listaCantidadesEntregadas.clear();
+            listaCantidadesPreparadas.clear();
+            //listaCampoCantidadController.clear();
+            
+
+            item.forEach((key, value) { 
+              listaKey.add(key);
+              listaValue.add(value[0]);
+              listaBool.add(value[1]);
+              listaCantidadesEntregadas.add({key:value[2]});
+              listaCantidadesPreparadas.add({key:value[3]});
+              listaCampoCantidadController.add({tituloSolicitud+'|'+key:TextEditingController()});
+            });
+
+            List<String> entregables=new List(); 
+            listaCantidadesEntregadas.forEach((element) { 
+              element.forEach((key, value) { 
+                listaCantidadesEntregablesCopia.add({tituloSolicitud+'|'+key:value});
+                 entregables.add(value);
+              });
+              
+            });
+           
+            List<String> preparados=new List(); 
+            listaCantidadesPreparadas.forEach((element) { 
+              element.forEach((key, value) {
+                listaCantidadesPreparadasCopia.add({tituloSolicitud+'|'+key:value}); 
+                 preparados.add(value);
+              });
+              
+            });
+            
+         
+         
+           List<bool> boleanos=new List();    
+          listaBool.forEach((element) { 
+            boleanos.add(element);
+          });
+
+          List<String> nombres=new List();    
+          listaKey.forEach((element) { 
+            nombres.add(element);
+          });
+
+          List<String> cantidades=new List();    
+          listaValue.forEach((element) { 
+            cantidades.add(element);
+          });
+          listaItemsNombres.add({tituloSolicitud:nombres});  
+          listaEntregables.add({tituloSolicitud:entregables});
+          listPreparados.add({tituloSolicitud:preparados});
+          listaItemsCantidad.add({tituloSolicitud:cantidades});
+          listaMapaItems.add({tituloSolicitud:boleanos});
+         //CICLO PARA ARMAR LA LISTA DE MATERIALES QUE SE ESTAN ENTREGANDO 
+          listPreparados.forEach((element){
+            element.forEach((keyId, valueListaCantidades) { 
+              if(docs[j].data['id']==keyId){
+                
+                  for (var i = 0; i < valueListaCantidades.length; i++) {
+                    if(int.parse(valueListaCantidades[i])!=0){
+                    materialesParaReceptor.add({keyId:[nombres[i],valueListaCantidades[i]]});  
+                    }
+                  }
+              }
+            });
+          });
+
+          print(listaItemsNombres);
+          print(listaEntregables);
+          print(listaMapaItems);
+         // print(materialesParaReceptor);
+        
+          //materialesParaReceptor
+         
+          
+         }else{
+          
+            /* listaCampoCantidadController.clear();
+            item.forEach((key, value) { 
+              listaCampoCantidadController.add({tituloSolicitud+'|'+key:TextEditingController()});
+            }); */
+            
+         }
+          if(docs.length-1==j){
+            idSolicitud=docs[j].data['id'];
+          }
+          
+          return  Column(
+            children: [
+              subTitulos(docs[j].data['id']),
+              Container(
+                alignment: Alignment.center,
+                //color: Colors.purple,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    tituloTablaIsumos(anchoPantalla*0.27,'Item',Colors.white),
+                    tituloTablaIsumos(anchoPantalla*0.59,'P',Colors.white),
+                    tituloTablaIsumos(anchoPantalla*0.044,'E',Colors.white), 
+                    tituloTablaIsumos(anchoPantalla*0.055,'S',Colors.white),
+                  ],
+                ),
+              ),
+              ListView.builder(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: listaItemsNombres[j][tituloSolicitud].length,
+                itemBuilder: (context, i){
+                  
+                   return solicitudInsumos(listPreparados[j][tituloSolicitud][i],listaEntregables[j][tituloSolicitud][i],listaItemsNombres[j][tituloSolicitud][i],listaItemsCantidad[j][tituloSolicitud][i],anchoPantalla,i,insumosEstado,tituloSolicitud,firebaseBloc,listaMapaItems[j][tituloSolicitud][i],j);
+                }
+              
+               ),
+            ],
+          ); 
+          }
+        
+         );
+        }else{
+          return Center(child: Text('No hay solicitudes de insumos'));
+        }
+          
+  
+                  }
+                );
+  }
             
               Widget solicitudInsumos(String preparados, String entregables,String nombre, String cantidad,double anchoPantalla, int i,String insumos,String tituloSolicitud,FirebaseBloc firebaseBloc, bool checkBox, int j) {
                // bool aux_1=false;
@@ -668,26 +694,33 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
             );  
          }
 
-     entregarInsumos(FirebaseBloc firebaseBloc){
+     entregarInsumos(FirebaseBloc firebaseBloc,  String mediaUrlFirma)async{
+     
       List<DocumentSnapshot> docs=firebaseBloc.listaInsumosSolicitadosController.value;
-      String recceptor='Receptor|'+ DateTime.now().day.toString() +  DateTime.now().month.toString()+  DateTime.now().year.toString()+  DateTime.now().hour.toString();
+      String recceptor='Receptor|'+ DateTime.now().day.toString() +  DateTime.now().month.toString()+  DateTime.now().year.toString()+  DateTime.now().hour.toString()+  DateTime.now().minute.toString();
+      int cont_aux3=0;
       for (var i = 0; i < docs.length; i++) {
         List<Map<String,List<dynamic>>> listaReceptor=new List();
         materialesParaReceptor.forEach((element) { 
         element.forEach((key, value) {   
           if(key==docs[i]['id']){
+            if(mediaUrlFirma.isNotEmpty){
+            value.add(mediaUrlFirma);
+            }
             listaReceptor.add({key:value});
           }
          }); 
         });  
         if(listaReceptor.isNotEmpty){
+         
+           cont_aux3++;
            prefactibilidad.
            document(widget.numeroOS).
            collection('insumos').
            document(docs[i]['id']).
              updateData({
                'insumos'         : 'Entregados-'+ DateTime.now().day.toString() +  DateTime.now().month.toString()+  DateTime.now().year.toString() +  DateTime.now().hour.toString(),
-               recceptor         : {'Mario Baraco':listaReceptor} 
+               recceptor         : {firmaController.text:listaReceptor} 
              }); 
            prefactibilidad
                .document(widget.numeroOS)
@@ -695,11 +728,17 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
                'insumos': 'Entregados-'+ DateTime.now().day.toString() +  DateTime.now().month.toString()+  DateTime.now().year.toString()+  DateTime.now().hour.toString(),
 
                }); 
-                 
+           
         }   
-          
       }
-      mensajePantalla('Insumos entregados exitosamente!');
+       
+       if(cont_aux3>0){
+          mensajePantalla('Insumos entregados exitosamente!');
+          return cont_aux3;
+       }else{
+         mensajePantalla('No hay insumos que entregar!');
+         return cont_aux3;
+       }
       //Navigator.pop(context);    
      }
 
@@ -820,18 +859,19 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
               }  
               
               if(opcionPrepararId=='Entregar'){
-                entregarInsumos(firebaseBloc);
+                mostrarCuadroFirma(context,firebaseBloc);
+               /*  entregarInsumos(firebaseBloc);
                 //listaCampoCantidadController.clear();
                 for (var i = 0; i < listaCampoCantidadController.length; i++) {
                   
                  listaCampoCantidadController[i].forEach((key, value) { 
                    listaCampoCantidadController[i]={key:TextEditingController(text:'')};
-                 });
+                 }); 
                 
               
                 }
                 entregar=true;
-                sendDatos(firebaseBloc);
+                sendDatos(firebaseBloc); */
 
               }              
              });
@@ -840,4 +880,191 @@ class _RegistroInsumosState extends State<RegistroInsumos> {
            );
   }             
 
+ mostrarCuadroFirma(BuildContext context, FirebaseBloc firebaseBloc) {
+        List<Offset> points=[];
+        return showDialog(
+          context: context,
+          builder: (context)=>StatefulBuilder(
+            builder: (BuildContext context, void Function(void Function()) setState) { 
+              return GestureDetector(
+                onTap: (){
+                  FocusScope.of(context).requestFocus(new FocusNode());
+                },
+                child: AlertDialog(
+                  scrollable: true,
+                titlePadding: EdgeInsets.all(15.0),  
+                insetPadding: EdgeInsets.only(bottom: 0,top:0,right: 10,left:10),
+                actionsPadding: EdgeInsets.all(0.0),
+                contentPadding: EdgeInsets.only(left: 15.0, right: 15.0),   
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                title: Center(child: Text('Ingrese la informacion de quien recibe los insumos!')),
+                content: Screenshot(
+                  controller:screenshotController,
+                  child: Column(
+                      //color: Colors.brown,
+                    //  width: ancho*0.55,
+                    //  height: alto*0.55,
+                    //crossAxisAlignment: CrossAxisAlignment.center,
+                    //mainAxisAlignment: MainAxisAlignment.center,
+                      children:[
+                         textFormMac(firmaController, 'Escriba el nombre del receptor'),
+                         Stack(
+                           children:[
+                            
+                             Container(
+                      
+                              width: firebaseBloc.anchoPantallaController.value*0.90,
+                              height: firebaseBloc.altoPantallaController.value*0.30,
+                              child:
+                               //---INGRESANDO 'geo' se activa la opcion de toma de coordenadas por el celular---------------
+                               
+                               GestureDetector(
+                                 onPanDown: (details){
+                                   setState(() {
+                                     points.add(details.localPosition);
+                                   });
+                                 },
+                                 onPanUpdate: (details){
+                                    setState(() {
+                                      points.add(details.localPosition);
+                                   });
+                                 },
+                                 onPanEnd: (details){
+                                    setState(() {
+                                      points.add(null);
+                                   });
+                                 },
+                                 child: ClipRRect(
+                                   borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                                   child: CustomPaint(
+                                      painter: MyCustomPainter(points:points),
+                                    ),
+                                   ) 
+                                 )
+                       
+                               ),
+                            
+                             Positioned(
+                               top:15,
+                               child: Text('   Firme aqui..',style: TextStyle(color:Colors.white),)),
+                             Positioned(
+                               top:200,
+                               left:15 ,
+                               child: Text('__________________________________________',style: TextStyle(color:Colors.white),)),
+                           ]
+                         ), 
+                      ] 
+                    ),
+                ),
+               
+                      
+            actions: <Widget>[
+                FlatButton(
+                    child: Text('Cancelar'),
+                    onPressed: (){
+                      Navigator.pop(context);
+                    },
+                  ),
+                FlatButton(
+                    child:Text('Entregar'),
+                    onPressed: ()async{
+
+                    String mediaUrlFirm='';
+                   
+                      if(firmaController.text.isNotEmpty){        
+
+
+                      
+                        if(materialesParaReceptor.isNotEmpty){
+                         mediaUrlFirm= await capturarFirma(); 
+                         entregarInsumos(firebaseBloc,mediaUrlFirm);
+                        //listaCampoCantidadController.clear();
+                       
+                        for (var i = 0; i < listaCampoCantidadController.length; i++) {
+                         listaCampoCantidadController[i].forEach((key, value) { 
+                           listaCampoCantidadController[i]={key:TextEditingController(text:'')};
+                         }); 
+                        }
+
+                        entregar=true;
+                        sendDatos(firebaseBloc); 
+                        Navigator.pop(context);
+                        }else{
+                           mensajePantalla('No hay insumos que entregar!');
+                        }  
+                        
+                      
+                        
+                     }else{
+                        mensajePantalla('Escriba un nombre!');
+                     }
+                        
+
+
+                        
+                    },
+                  ),  
+            ],  
+            ),
+              );
+             },
+             
+          )
+        );
+ }
+ Future<String>capturarFirma( )async{
+  
+   String mediaUrlFirma='';
+   await screenshotController.capture().then((File image) async {
+            //print("Capture Done");
+           mediaUrlFirma = await takePhoto.uploadImage(image);
+          //  setState(() {
+          //    _imageFile = image;
+          //  });
+           // final result = await ImageGallerySaver.save(image.readAsBytesSync()); // Save image to gallery,  Needs plugin  https://pub.dev/packages/image_gallery_saver
+            print(mediaUrlFirma);
+             
+            //print("File Saved to Gallery");
+          }).catchError((onError) {
+            print(onError);
+          });
+    return mediaUrlFirma;       
+ }
+}
+
+
+class MyCustomPainter extends CustomPainter{
+  
+  List<Offset> points;
+  MyCustomPainter({this.points});
+  @override
+  void paint(Canvas canvas, Size size) {
+      Paint background = Paint()..color= Colors.deepPurpleAccent;
+      Rect rect= Rect.fromLTWH(0, 0, size.width, size.height);
+      canvas.drawRect(rect,background);
+      
+      Paint paint = Paint();
+      paint.color= Colors.white;
+      paint.strokeWidth=2.0;
+      paint.isAntiAlias=true;
+      paint.strokeCap=StrokeCap.round;
+     // if(points!=null&&points.isNotEmpty){
+      for (var i = 0; i < points.length; i++) {
+        if(points[i]!=null&&points[i+1]!=null){
+          canvas.drawLine(points[i],points[i+1],paint);
+        }else if(points[i]!=null&&points[i+1]==null){
+          canvas.drawPoints(PointMode.points, [points[i]], paint);
+        }
+      }
+     //}
+    }
+  
+    @override
+    bool shouldRepaint(CustomPainter oldDelegate) {
+    // TODO: implement shouldRepaint
+    return true;
+  }
+  
 }

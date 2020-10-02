@@ -50,6 +50,7 @@ dependencies:
   geolocator:
   flutter_spinkit: "^4.1.2"
   slimy_card: ^1.0.4
+  screenshot: ^0.2.0
   
 dev_dependencies:
   flutter_test:

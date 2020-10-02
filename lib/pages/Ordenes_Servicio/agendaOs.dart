@@ -343,7 +343,8 @@ class _PantallaOrdenesServicioState extends State<PantallaOrdenesServicio> {
                       SizedBox(width: 50,),
                       GestureDetector(
                         onTap: (){
-                          Navigator.push(context, MaterialPageRoute(builder: (context)=> DetallesOrdenServicio()));
+                         // Navigator.push(context, MaterialPageRoute(builder: (context)=> DetallesOrdenServicio(d:datoOs)));
+                           Navigator.push(context, MaterialPageRoute(builder: (context)=> DetallesOrdenServicio(datoOs)));
                         },
                         child: Text(
                           'Leer mas',
